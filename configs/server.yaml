@@ -1,0 +1,12 @@
+dataset_path: /datasets/deepfake
+
+dataset_limit: null
+
+batch_size: 64
+epochs: 20
+num_workers: 8
+
+model: efficientnet_b0
+
+checkpoint_interval: 500
+failure_prob: 0.001

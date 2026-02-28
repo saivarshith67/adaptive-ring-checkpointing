@@ -1,0 +1,11 @@
+dataset_path: datasets/dev
+dataset_limit: 200
+
+batch_size: 8
+epochs: 2
+num_workers: 0
+
+model: resnet18
+
+checkpoint_interval: 50
+failure_prob: 0.01
