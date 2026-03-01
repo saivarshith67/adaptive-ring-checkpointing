@@ -8,4 +8,4 @@ num_workers: 0
 model: resnet18
 
 checkpoint_interval: 50
-failure_prob: 0.01
+failure_rate_per_sec: 0.02

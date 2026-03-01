@@ -11,7 +11,7 @@ class Config:
     num_workers: int
     model: str
     checkpoint_interval: int
-    failure_prob: float
+    failure_rate_per_second : float
 
 
 def load_config(path: str) -> Config:
