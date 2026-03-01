@@ -1,7 +1,7 @@
 import argparse
 import torch
-from torch.utils.data import DataLoader
 import torch.nn.functional as F
+from torch.utils.data import DataLoader
 
 from src.coci.models.model import get_model
 from src.coci.data_ingestor.cifar import get_cifar100_dataset
@@ -10,6 +10,60 @@ from src.coci.checkpointing.checkpoint_manager import CheckpointManager
 from src.coci.fault.fault_injector import FaultInjector
 
 
+# -------------------------------------------------
+# Training for One Epoch
+# -------------------------------------------------
+def train_one_epoch(model, loader, optimizer, device, fault_injector=None, inject_fault=False):
+    model.train()
+    total_loss = 0
+
+    for batch_idx, (images, labels) in enumerate(loader):
+
+        images = images.to(device)
+        labels = labels.to(device)
+
+        outputs = model(images)
+        loss = F.cross_entropy(outputs, labels)
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        total_loss += loss.item()
+
+        # 🔥 Poisson mid-epoch failure
+        if inject_fault and fault_injector is not None:
+            fault_injector.maybe_fail()
+
+    return total_loss
+
+
+# -------------------------------------------------
+# Evaluation
+# -------------------------------------------------
+def evaluate(model, loader, device):
+    model.eval()
+    correct = 0
+    total = 0
+
+    with torch.no_grad():
+        for images, labels in loader:
+            images = images.to(device)
+            labels = labels.to(device)
+
+            outputs = model(images)
+            _, predicted = torch.max(outputs, 1)
+
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+    accuracy = 100 * correct / total
+    return accuracy
+
+
+# -------------------------------------------------
+# Main
+# -------------------------------------------------
 def main():
 
     # -------------------------
@@ -25,16 +79,15 @@ def main():
     parser.add_argument(
         "--inject_fault",
         action="store_true",
-        help="Enable fault injection"
+        help="Enable Poisson fault injection"
     )
 
     args = parser.parse_args()
 
     # -------------------------
-    # Config selection
+    # Config
     # -------------------------
     config_path = "configs/dev.yaml" if args.mode == "dev" else "configs/server.yaml"
-
     print(f"\nRunning in {args.mode.upper()} mode")
     print(f"Loading config: {config_path}")
 
@@ -70,91 +123,63 @@ def main():
     )
 
     # -------------------------
-    # Model
+    # Model & Optimizer
     # -------------------------
     model = get_model(cfg.model, num_classes=100)
     model.to(device)
-    failure_probability = cfg.failure_prob
 
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
     # -------------------------
-    # Checkpoint + Fault Setup
+    # Checkpoint + Fault
     # -------------------------
     checkpoint_manager = CheckpointManager()
     start_epoch = checkpoint_manager.load_latest(model, optimizer)
 
-    fault_injector = FaultInjector(failure_probability=failure_probability)
+    fault_injector = None
+    if args.inject_fault:
+        fault_injector = FaultInjector(
+            failure_rate_per_second=cfg.failure_rate_per_second
+        )
 
     # -------------------------
-    # Training loop
+    # Training Loop
     # -------------------------
     try:
         for epoch in range(start_epoch, cfg.epochs):
 
-            model.train()
-            total_loss = 0
+            loss = train_one_epoch(
+                model,
+                train_loader,
+                optimizer,
+                device,
+                fault_injector=fault_injector,
+                inject_fault=args.inject_fault
+            )
 
-            for images, labels in train_loader:
+            print(f"Epoch {epoch+1}/{cfg.epochs}, Loss: {loss:.4f}")
 
-                images = images.to(device)
-                labels = labels.to(device)
+            accuracy = evaluate(model, test_loader, device)
+            print(f"Test Accuracy: {accuracy:.2f}%")
 
-                outputs = model(images)
-                loss = F.cross_entropy(outputs, labels)
-
-                optimizer.zero_grad()
-                loss.backward()
-                optimizer.step()
-
-                total_loss += loss.item()
-
-            print(f"Epoch {epoch+1}/{cfg.epochs}, Loss: {total_loss:.4f}")
-
-            evaluate(model, test_loader, device)
-
-            # Save checkpoint every epoch
-            checkpoint_manager.save(model, optimizer, epoch, total_loss)
-
-            # Fault injection
-            if args.inject_fault:
-                fault_injector.maybe_fail()
+            checkpoint_manager.save(model, optimizer, epoch, loss)
 
     except RuntimeError as e:
-        print(f"Training interrupted due to failure: {e}")
+        print(f"\n💥 Training interrupted due to failure: {e}")
 
-    # Print MTBF stats
-    if args.inject_fault:
+    # -------------------------
+    # MTBF Report
+    # -------------------------
+    if args.inject_fault and fault_injector is not None:
         total_time, failures = fault_injector.get_stats()
+
         if failures > 0:
             mtbf = total_time / failures
             print(f"\nTotal Runtime: {total_time:.2f}s")
             print(f"Failures: {failures}")
-            print(f"Estimated MTBF: {mtbf:.2f}s")
+            print(f"Measured MTBF: {mtbf:.2f}s")
         else:
             print("\nNo failures occurred.")
-
-
-def evaluate(model, loader, device):
-
-    model.eval()
-    correct = 0
-    total = 0
-
-    with torch.no_grad():
-        for images, labels in loader:
-
-            images = images.to(device)
-            labels = labels.to(device)
-
-            outputs = model(images)
-            _, predicted = torch.max(outputs, 1)
-
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
-
-    acc = 100 * correct / total
-    print(f"Test Accuracy: {acc:.2f}%")
 
 
 if __name__ == "__main__":
