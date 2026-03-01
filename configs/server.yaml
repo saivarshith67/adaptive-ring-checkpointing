@@ -10,5 +10,7 @@ model: resnet50
 
 checkpoint_interval: 500
 failure_rate_per_sec: 0.02
+fixed_interval: 30
+checkpoint_cost_estimate: 3.0
 
 strategy: epoch
