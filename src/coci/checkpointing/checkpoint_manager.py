@@ -27,21 +27,24 @@ class CheckpointManager:
 
     def load_latest(self, model, optimizer):
         files = [f for f in os.listdir(self.checkpoint_dir) if f.endswith(".pt")]
-
+        
         if not files:
             print("[Checkpoint] No checkpoint found. Starting fresh.")
             return 0
-
-        latest = sorted(files)[-1]
+        
+        def extract_epoch(filename):
+            return int(filename.split("_")[-1].split(".")[0])
+        
+        latest = max(files, key=extract_epoch)
         path = os.path.join(self.checkpoint_dir, latest)
-
+        
         checkpoint = torch.load(path)
-
+        
         model.load_state_dict(checkpoint["model_state_dict"])
         optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
-
+        
         start_epoch = checkpoint["epoch"] + 1
-
+        
         print(f"[Checkpoint] Resumed from {latest}")
-
+        
         return start_epoch
