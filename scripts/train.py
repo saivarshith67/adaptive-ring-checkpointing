@@ -6,6 +6,8 @@ import torch.nn.functional as F
 from src.coci.models.model import get_model
 from src.coci.data.cifar import get_cifar100_dataset
 from src.coci.config import load_config
+from src.coci.checkpointing.checkpoint_manager import CheckpointManager
+from src.coci.fault.fault_injector import FaultInjector
 
 
 def main():
@@ -20,16 +22,18 @@ def main():
         default="dev",
         help="Run mode: dev (local) or server (HPC)"
     )
+    parser.add_argument(
+        "--inject_fault",
+        action="store_true",
+        help="Enable fault injection"
+    )
 
     args = parser.parse_args()
 
     # -------------------------
-    # Select config file
+    # Config selection
     # -------------------------
-    if args.mode == "dev":
-        config_path = "configs/dev.yaml"
-    else:
-        config_path = "configs/server.yaml"
+    config_path = "configs/dev.yaml" if args.mode == "dev" else "configs/server.yaml"
 
     print(f"\nRunning in {args.mode.upper()} mode")
     print(f"Loading config: {config_path}")
@@ -37,7 +41,7 @@ def main():
     cfg = load_config(config_path)
 
     # -------------------------
-    # Device auto-detection
+    # Device
     # -------------------------
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
@@ -70,34 +74,65 @@ def main():
     # -------------------------
     model = get_model(cfg.model, num_classes=100)
     model.to(device)
+    failure_probability = cfg.failure_prob
 
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
     # -------------------------
+    # Checkpoint + Fault Setup
+    # -------------------------
+    checkpoint_manager = CheckpointManager()
+    start_epoch = checkpoint_manager.load_latest(model, optimizer)
+
+    fault_injector = FaultInjector(failure_probability=failure_probability)
+
+    # -------------------------
     # Training loop
     # -------------------------
-    for epoch in range(cfg.epochs):
+    try:
+        for epoch in range(start_epoch, cfg.epochs):
 
-        model.train()
-        total_loss = 0
+            model.train()
+            total_loss = 0
 
-        for images, labels in train_loader:
+            for images, labels in train_loader:
 
-            images = images.to(device)
-            labels = labels.to(device)
+                images = images.to(device)
+                labels = labels.to(device)
 
-            outputs = model(images)
-            loss = F.cross_entropy(outputs, labels)
+                outputs = model(images)
+                loss = F.cross_entropy(outputs, labels)
 
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
 
-            total_loss += loss.item()
+                total_loss += loss.item()
 
-        print(f"Epoch {epoch+1}/{cfg.epochs}, Loss: {total_loss:.4f}")
+            print(f"Epoch {epoch+1}/{cfg.epochs}, Loss: {total_loss:.4f}")
 
-        evaluate(model, test_loader, device)
+            evaluate(model, test_loader, device)
+
+            # Save checkpoint every epoch
+            checkpoint_manager.save(model, optimizer, epoch, total_loss)
+
+            # Fault injection
+            if args.inject_fault:
+                fault_injector.maybe_fail()
+
+    except RuntimeError as e:
+        print(f"Training interrupted due to failure: {e}")
+
+    # Print MTBF stats
+    if args.inject_fault:
+        total_time, failures = fault_injector.get_stats()
+        if failures > 0:
+            mtbf = total_time / failures
+            print(f"\nTotal Runtime: {total_time:.2f}s")
+            print(f"Failures: {failures}")
+            print(f"Estimated MTBF: {mtbf:.2f}s")
+        else:
+            print("\nNo failures occurred.")
 
 
 def evaluate(model, loader, device):
