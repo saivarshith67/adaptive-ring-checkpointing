@@ -2,7 +2,6 @@ import argparse
 import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-import time
 
 from src.coci.models.model import get_model
 from src.coci.data_ingestor.cifar import get_cifar100_dataset
@@ -13,7 +12,7 @@ from src.coci.fault.fault_injector import FaultInjector
 
 
 # -------------------------------------------------
-# Training Loop (Batch-Level Control)
+# Training Loop
 # -------------------------------------------------
 def train(
     model,
@@ -47,14 +46,13 @@ def train(
 
             total_loss += loss.item()
 
-            # 🔥 Strategy-based checkpointing
-            if strategy.should_checkpoint():
-                checkpoint_time = checkpoint_manager.save(
-                    model, optimizer, epoch, total_loss
-                )
-                strategy.update_checkpoint_time()
+            # 🔥 Time-based strategies (fixed / young_daly)
+            if cfg.strategy != "epoch":
+                if strategy.should_checkpoint():
+                    checkpoint_manager.save(model, optimizer, epoch, total_loss)
+                    strategy.update_checkpoint_time()
 
-            # 🔥 Poisson failure
+            # 🔥 Poisson mid-epoch failure
             if inject_fault and fault_injector is not None:
                 fault_injector.maybe_fail()
 
@@ -63,7 +61,7 @@ def train(
         accuracy = evaluate(model, test_loader, device)
         print(f"Test Accuracy: {accuracy:.2f}%")
 
-        # If epoch-based strategy, checkpoint here
+        # 🔥 Epoch-based checkpointing (only once per epoch)
         if cfg.strategy == "epoch":
             checkpoint_manager.save(model, optimizer, epoch, total_loss)
 
@@ -138,13 +136,13 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
     # -------------------------
-    # Checkpoint
+    # Checkpoint Setup
     # -------------------------
     checkpoint_manager = CheckpointManager()
     start_epoch = checkpoint_manager.load_latest(model, optimizer)
 
     # -------------------------
-    # Fault Injection
+    # Fault Injection Setup
     # -------------------------
     fault_injector = None
     if args.inject_fault:
@@ -155,11 +153,12 @@ def main():
     # -------------------------
     # Strategy Setup
     # -------------------------
-
-    # For Young/Daly, we need checkpoint cost & MTBF
-    # You can initially estimate these manually
     checkpoint_cost = cfg.checkpoint_cost_estimate
-    mtbf_estimate = 1.0 / cfg.failure_rate_per_second if cfg.failure_rate_per_second > 0 else 1e9
+    mtbf_estimate = (
+        1.0 / cfg.failure_rate_per_second
+        if cfg.failure_rate_per_second > 0
+        else 1e9
+    )
 
     strategy = CheckpointStrategyFactory.create(
         cfg,
