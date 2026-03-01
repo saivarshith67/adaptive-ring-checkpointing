@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader
 import torch.nn.functional as F
 
 from src.coci.models.model import get_model
-from src.coci.data.cifar import get_cifar100_dataset
+from src.coci.data_ingestor.cifar import get_cifar100_dataset
 from src.coci.config import load_config
 from src.coci.checkpointing.checkpoint_manager import CheckpointManager
 from src.coci.fault.fault_injector import FaultInjector
