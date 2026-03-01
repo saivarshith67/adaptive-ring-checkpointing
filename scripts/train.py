@@ -2,6 +2,9 @@ import argparse
 import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
+import json
+from datetime import datetime
+import sys
 
 from src.coci.models.model import get_model
 from src.coci.data_ingestor.cifar import get_cifar100_dataset
@@ -46,13 +49,13 @@ def train(
 
             total_loss += loss.item()
 
-            # 🔥 Time-based strategies (fixed / young_daly)
+            # 🔥 Time-based checkpointing
             if cfg.strategy != "epoch":
                 if strategy.should_checkpoint():
                     checkpoint_manager.save(model, optimizer, epoch, total_loss)
                     strategy.update_checkpoint_time()
 
-            # 🔥 Poisson mid-epoch failure
+            # 🔥 Poisson failure
             if inject_fault and fault_injector is not None:
                 fault_injector.maybe_fail()
 
@@ -61,7 +64,7 @@ def train(
         accuracy = evaluate(model, test_loader, device)
         print(f"Test Accuracy: {accuracy:.2f}%")
 
-        # 🔥 Epoch-based checkpointing (only once per epoch)
+        # 🔥 Epoch strategy checkpoint
         if cfg.strategy == "epoch":
             checkpoint_manager.save(model, optimizer, epoch, total_loss)
 
@@ -111,7 +114,7 @@ def main():
         print(f"GPU: {torch.cuda.get_device_name(0)}")
 
     # -------------------------
-    # Dataset
+    # Data
     # -------------------------
     train_loader = DataLoader(
         get_cifar100_dataset(train=True),
@@ -136,13 +139,17 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
     # -------------------------
-    # Checkpoint Setup
+    # Checkpoint Resume
     # -------------------------
     checkpoint_manager = CheckpointManager()
     start_epoch = checkpoint_manager.load_latest(model, optimizer)
 
+    if start_epoch >= cfg.epochs:
+        print("Training already completed.")
+        sys.exit(0)
+
     # -------------------------
-    # Fault Injection Setup
+    # Fault Injection
     # -------------------------
     fault_injector = None
     if args.inject_fault:
@@ -184,20 +191,35 @@ def main():
             start_epoch=start_epoch
         )
 
+        print("\nTraining finished successfully.")
+        sys.exit(0)
+
     except RuntimeError as e:
         print(f"\n💥 Training interrupted: {e}")
 
-    # -------------------------
-    # MTBF Report
-    # -------------------------
-    if args.inject_fault and fault_injector is not None:
-        total_time, failures = fault_injector.get_stats()
-        if failures > 0:
-            print(f"\nTotal Runtime: {total_time:.2f}s")
-            print(f"Failures: {failures}")
-            print(f"Measured MTBF: {total_time / failures:.2f}s")
-        else:
-            print("\nNo failures occurred.")
+        if args.inject_fault and fault_injector is not None:
+            total_time, failures = fault_injector.get_stats()
+
+            if failures > 0:
+                mtbf = total_time / failures
+
+                print(f"\nTotal Runtime: {total_time:.2f}s")
+                print(f"Failures: {failures}")
+                print(f"Measured MTBF: {mtbf:.2f}s")
+
+                # 🔥 Persist experiment stats
+                log_entry = {
+                    "timestamp": datetime.now().isoformat(),
+                    "strategy": cfg.strategy,
+                    "runtime_sec": total_time,
+                    "failures": failures,
+                    "measured_mtbf": mtbf
+                }
+
+                with open("experiment_log.jsonl", "a") as f:
+                    f.write(json.dumps(log_entry) + "\n")
+
+        sys.exit(1)
 
 
 if __name__ == "__main__":
