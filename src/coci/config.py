@@ -12,6 +12,9 @@ class Config:
     model: str
     checkpoint_interval: int
     failure_rate_per_second : float
+    strategy : str
+    fixed_interval : float
+    checkpoint_cost_estimate : float
 
 
 def load_config(path: str) -> Config:

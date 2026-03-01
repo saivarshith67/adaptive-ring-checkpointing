@@ -10,3 +10,5 @@ model: resnet50
 
 checkpoint_interval: 500
 failure_rate_per_sec: 0.02
+
+strategy: epoch
