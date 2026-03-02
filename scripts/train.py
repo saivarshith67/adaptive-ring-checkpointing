@@ -3,6 +3,7 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 import json
+import time
 from datetime import datetime
 import sys
 
@@ -30,10 +31,12 @@ def train(
     inject_fault=False,
     start_epoch=0
 ):
+
     for epoch in range(start_epoch, cfg.epochs):
 
         model.train()
-        total_loss = 0
+        total_loss = 0.0
+        epoch_start = time.time()
 
         for batch_idx, (images, labels) in enumerate(train_loader):
 
@@ -49,24 +52,38 @@ def train(
 
             total_loss += loss.item()
 
-            # 🔥 Time-based checkpointing
+            # -------------------------
+            # Time-based checkpointing
+            # -------------------------
             if cfg.strategy != "epoch":
                 if strategy.should_checkpoint():
                     checkpoint_manager.save(model, optimizer, epoch, total_loss)
                     strategy.update_checkpoint_time()
 
-            # 🔥 Poisson failure
+            # -------------------------
+            # Fault Injection
+            # -------------------------
             if inject_fault and fault_injector is not None:
                 fault_injector.maybe_fail()
 
-        print(f"Epoch {epoch+1}/{cfg.epochs}, Loss: {total_loss:.4f}")
+        epoch_time = time.time() - epoch_start
+
+        print(
+            f"Epoch {epoch+1}/{cfg.epochs} | "
+            f"Loss: {total_loss:.4f} | "
+            f"Time: {epoch_time:.2f}s"
+        )
 
         accuracy = evaluate(model, test_loader, device)
         print(f"Test Accuracy: {accuracy:.2f}%")
 
-        # 🔥 Epoch strategy checkpoint
+        # -------------------------
+        # Epoch-based checkpointing
+        # -------------------------
         if cfg.strategy == "epoch":
             checkpoint_manager.save(model, optimizer, epoch, total_loss)
+
+    return True
 
 
 # -------------------------------------------------
@@ -88,7 +105,7 @@ def evaluate(model, loader, device):
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
-    return 100 * correct / total
+    return 100.0 * correct / total
 
 
 # -------------------------------------------------
@@ -102,7 +119,12 @@ def main():
 
     args = parser.parse_args()
 
-    config_path = "configs/dev.yaml" if args.mode == "dev" else "configs/server.yaml"
+    config_path = (
+        "configs/dev.yaml"
+        if args.mode == "dev"
+        else "configs/server.yaml"
+    )
+
     cfg = load_config(config_path)
 
     print(f"\nRunning in {args.mode.upper()} mode")
@@ -110,6 +132,7 @@ def main():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}")
+
     if device.type == "cuda":
         print(f"GPU: {torch.cuda.get_device_name(0)}")
 
@@ -139,7 +162,7 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
     # -------------------------
-    # Checkpoint Resume
+    # Checkpoint Manager
     # -------------------------
     checkpoint_manager = CheckpointManager()
     start_epoch = checkpoint_manager.load_latest(model, optimizer)
@@ -161,6 +184,7 @@ def main():
     # Strategy Setup
     # -------------------------
     checkpoint_cost = cfg.checkpoint_cost_estimate
+
     mtbf_estimate = (
         1.0 / cfg.failure_rate_per_second
         if cfg.failure_rate_per_second > 0
@@ -172,6 +196,14 @@ def main():
         checkpoint_cost=checkpoint_cost,
         mtbf=mtbf_estimate
     )
+
+    # 🔥 Reset timer after resume
+    strategy.update_checkpoint_time()
+
+    # -------------------------
+    # Global Runtime Start
+    # -------------------------
+    overall_start_time = time.time()
 
     # -------------------------
     # Train
@@ -191,33 +223,70 @@ def main():
             start_epoch=start_epoch
         )
 
-        print("\nTraining finished successfully.")
+        total_runtime = time.time() - overall_start_time
+
+        failures = 0
+        measured_mtbf = None
+
+        if args.inject_fault and fault_injector is not None:
+            total_time, failures = fault_injector.get_stats()
+            if failures > 0:
+                measured_mtbf = total_time / failures
+
+        summary = {
+            "timestamp": datetime.now().isoformat(),
+            "strategy": cfg.strategy,
+            "total_runtime_sec": total_runtime,
+            "num_checkpoints": checkpoint_manager.num_checkpoints,
+            "total_checkpoint_time_sec": checkpoint_manager.total_checkpoint_time,
+            "failures": failures,
+            "measured_mtbf": measured_mtbf,
+        }
+
+        print("\n========== EXPERIMENT SUMMARY ==========")
+        for k, v in summary.items():
+            print(f"{k}: {v}")
+        print("========================================\n")
+
+        with open(
+            f"final_experiment_log_{cfg.strategy}.jsonl", "a"
+        ) as f:
+            f.write(json.dumps(summary) + "\n")
+
+        print("Training finished successfully.")
         sys.exit(0)
 
     except RuntimeError as e:
+
         print(f"\n💥 Training interrupted: {e}")
 
         if args.inject_fault and fault_injector is not None:
             total_time, failures = fault_injector.get_stats()
 
+            measured_mtbf = None
             if failures > 0:
-                mtbf = total_time / failures
+                measured_mtbf = total_time / failures
 
-                print(f"\nTotal Runtime: {total_time:.2f}s")
-                print(f"Failures: {failures}")
-                print(f"Measured MTBF: {mtbf:.2f}s")
+            crash_summary = {
+                "timestamp": datetime.now().isoformat(),
+                "strategy": cfg.strategy,
+                "crashed": True,
+                "runtime_until_crash_sec": total_time,
+                "num_checkpoints": checkpoint_manager.num_checkpoints,
+                "total_checkpoint_time_sec": checkpoint_manager.total_checkpoint_time,
+                "failures": failures,
+                "measured_mtbf": measured_mtbf,
+            }
 
-                # 🔥 Persist experiment stats
-                log_entry = {
-                    "timestamp": datetime.now().isoformat(),
-                    "strategy": cfg.strategy,
-                    "runtime_sec": total_time,
-                    "failures": failures,
-                    "measured_mtbf": mtbf
-                }
+            print("\n========== CRASH SUMMARY ==========")
+            for k, v in crash_summary.items():
+                print(f"{k}: {v}")
+            print("===================================\n")
 
-                with open("experiment_log.jsonl", "a") as f:
-                    f.write(json.dumps(log_entry) + "\n")
+            with open(
+                f"crash_experiment_log_{cfg.strategy}.jsonl", "a"
+            ) as f:
+                f.write(json.dumps(crash_summary) + "\n")
 
         sys.exit(1)
 

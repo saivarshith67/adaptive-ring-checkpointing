@@ -12,5 +12,5 @@ checkpoint_interval: 500
 fixed_interval: 30
 checkpoint_cost_estimate: 3.0
 
-failure_rate_per_second: 0.02
+failure_rate_per_second: 0.002
 strategy: epoch
