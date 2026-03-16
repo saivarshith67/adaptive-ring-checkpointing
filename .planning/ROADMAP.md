@@ -31,7 +31,10 @@
 4. Only rank 0 prints logs to console (no duplicate output)
 5. Epoch counter is synchronized across all GPU workers
 
-**Plans:** TBD
+**Plans:** 2 plans
+
+- [ ] 01-distributed-infrastructure-01-PLAN.md — Distributed infrastructure module and torchrun entry point
+- [ ] 01-distributed-infrastructure-02-PLAN.md — DistributedSampler integration and rank-aware logging
 
 ---
 
@@ -79,7 +82,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Distributed Infrastructure | 0/1 | Not started | - |
+| 1. Distributed Infrastructure | 0/2 | Ready to execute | - |
 | 2. DDP Model & Checkpoint Integration | 0/1 | Not started | - |
 | 3. Dataset Integration | 0/1 | Not started | - |
 
