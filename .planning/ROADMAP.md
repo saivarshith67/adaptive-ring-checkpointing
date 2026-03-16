@@ -8,7 +8,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Distributed Infrastructure** - Initialize multi-GPU training foundation with process group and data distribution
+- [x] **Phase 1: Distributed Infrastructure** - Initialize multi-GPU training foundation with process group and data distribution
 - [ ] **Phase 2: DDP Model & Checkpoint Integration** - Wrap model with DDP, implement rank-aware checkpointing and metrics aggregation
 - [ ] **Phase 3: Dataset Integration** - Integrate DFD dataset with face detection preprocessing
 
@@ -33,8 +33,8 @@
 
 **Plans:** 2 plans
 
-- [ ] 01-distributed-infrastructure-01-PLAN.md — Distributed infrastructure module and torchrun entry point
-- [ ] 01-distributed-infrastructure-02-PLAN.md — DistributedSampler integration and rank-aware logging
+- [x] 01-distributed-infrastructure-01-PLAN.md — Distributed infrastructure module and torchrun entry point
+- [x] 01-distributed-infrastructure-02-PLAN.md — DistributedSampler integration and rank-aware logging
 
 ---
 
@@ -82,7 +82,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Distributed Infrastructure | 0/2 | Ready to execute | - |
+| 1. Distributed Infrastructure | 2/2 | Completed | 2026-03-16 |
 | 2. DDP Model & Checkpoint Integration | 0/1 | Not started | - |
 | 3. Dataset Integration | 0/1 | Not started | - |
 
