@@ -76,7 +76,9 @@
 4. Image transforms produce correctly sized tensors for model input
 5. Checkpoint can save/load successfully when using DFD dataset
 
-**Plans:** TBD
+**Plans:** 1 plan
+
+- [x] 03-dataset-integration-01-PLAN.md — DFD dataset loader with MTCNN, EfficientNet-B0 model, kagglehub integration
 
 ---
 
@@ -86,7 +88,7 @@
 |-------|----------------|--------|-----------|
 | 1. Distributed Infrastructure | 2/2 | Completed | 2026-03-16 |
 | 2. DDP Model & Checkpoint Integration | 1/1 | Completed | 2026-03-16 |
-| 3. Dataset Integration | 0/1 | Not started | - |
+| 3. Dataset Integration | 1/1 | In progress | - |
 
 ---
 
