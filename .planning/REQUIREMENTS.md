@@ -10,20 +10,20 @@
 - [ ] **MGPU-01**: Initialize distributed process group for multi-GPU coordination
 - [ ] **MGPU-02**: Add torchrun-based entry point for proper DDP process launch
 - [ ] **MGPU-03**: Implement rank-aware code paths (rank 0 vs other ranks)
-- [ ] **MGPU-04**: Wrap model with DistributedDataParallel (DDP)
-- [ ] **MGPU-05**: Convert BatchNorm layers to SyncBatchNorm for cross-GPU synchronization
+- [x] **MGPU-04**: Wrap model with DistributedDataParallel (DDP)
+- [x] **MGPU-05**: Convert BatchNorm layers to SyncBatchNorm for cross-GPU synchronization
 
 ### Data Parallelism
 
 - [ ] **DATA-01**: Integrate DistributedSampler for proper data partitioning across GPUs
 - [ ] **DATA-02**: Synchronize epoch count across all GPU workers
-- [ ] **DATA-03**: Seed data loading workers identically across ranks for reproducibility
+- [x] **DATA-03**: Seed data loading workers identically across ranks for reproducibility
 
 ### Checkpoint Integration
 
-- [ ] **CKPT-01**: Save checkpoint from model.module.state_dict() (not wrapped DDP model)
-- [ ] **CKPT-02**: Load checkpoint with map_location to handle multi-GPU to single-GPU migration
-- [ ] **CKPT-03**: Coordinate checkpoint save operations to run only on rank 0
+- [x] **CKPT-01**: Save checkpoint from model.module.state_dict() (not wrapped DDP model)
+- [x] **CKPT-02**: Load checkpoint with map_location to handle multi-GPU to single-GPU migration
+- [x] **CKPT-03**: Coordinate checkpoint save operations to run only on rank 0
 - [ ] **CKPT-04**: Verify checkpoint compatibility with DDP state_dict keys
 
 ### Dataset Integration
@@ -35,8 +35,8 @@
 
 ### Metrics & Logging
 
-- [ ] **METR-01**: Implement all-reduce operation for aggregating loss across GPUs
-- [ ] **METR-02**: Aggregate accuracy metrics across all ranks
+- [x] **METR-01**: Implement all-reduce operation for aggregating loss across GPUs
+- [x] **METR-02**: Aggregate accuracy metrics across all ranks
 - [ ] **METR-03**: Ensure logging only occurs on rank 0 to avoid duplicate output
 
 ## v2 Requirements
@@ -64,21 +64,21 @@
 | MGPU-01 | Phase 1 | Pending |
 | MGPU-02 | Phase 1 | Pending |
 | MGPU-03 | Phase 1 | Pending |
-| MGPU-04 | Phase 2 | Pending |
-| MGPU-05 | Phase 2 | Pending |
+| MGPU-04 | Phase 2 | Complete |
+| MGPU-05 | Phase 2 | Complete |
 | DATA-01 | Phase 1 | Pending |
 | DATA-02 | Phase 1 | Pending |
-| DATA-03 | Phase 2 | Pending |
-| CKPT-01 | Phase 2 | Pending |
-| CKPT-02 | Phase 2 | Pending |
-| CKPT-03 | Phase 2 | Pending |
+| DATA-03 | Phase 2 | Complete |
+| CKPT-01 | Phase 2 | Complete |
+| CKPT-02 | Phase 2 | Complete |
+| CKPT-03 | Phase 2 | Complete |
 | CKPT-04 | Phase 3 | Pending |
 | DATA-04 | Phase 3 | Pending |
 | DATA-05 | Phase 3 | Pending |
 | DATA-06 | Phase 3 | Pending |
 | DATA-07 | Phase 3 | Pending |
-| METR-01 | Phase 2 | Pending |
-| METR-02 | Phase 2 | Pending |
+| METR-01 | Phase 2 | Complete |
+| METR-02 | Phase 2 | Complete |
 | METR-03 | Phase 1 | Pending |
 
 **Coverage:**

@@ -5,34 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-03-16)
 
 **Core value:** Enable reliable long-running deep learning training with minimal checkpoint overhead through adaptive ring-based checkpoint strategies.
-**Current focus:** Phase 1 - Distributed Infrastructure
+**Current focus:** Phase 2 - DDP Model & Checkpoint Integration
 
 ## Current Position
 
-Phase: 1 of 3 (Distributed Infrastructure)
-Plan: 2 of 2 in current phase
+Phase: 2 of 3 (DDP Model & Checkpoint Integration)
+Plan: 1 of 1 in current phase
 Status: Completed
-Last activity: 2026-03-16 — Phase 1 completed
+Last activity: 2026-03-16 — Phase 2 plan 1 completed
 
-Progress: [████████████] 100%
+Progress: [████████████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
+- Total plans completed: 3
 - Average duration: 5 min
-- Total execution time: 0.1 hours
+- Total execution time: 0.2 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 - Distributed Infrastructure | 2/2 | 2 | 5min |
-| 2 - DDP Model & Checkpoint | 0/1 | 0 | - |
+| 2 - DDP Model & Checkpoint | 1/1 | 1 | 5min |
 | 3 - Dataset Integration | 0/1 | 0 | - |
 
 **Recent Trend:**
-- No plans completed yet
+- Phase 2 completed (DDP model & checkpoint integration)
 
 *Updated after each plan completion*
 
@@ -44,6 +44,9 @@ Progress: [████████████] 100%
 - Graceful single-process fallback when not launched via torchrun
 - Fixed seed (42) for reproducible data partitioning
 - Persistent workers enabled for DataLoader when num_workers > 0
+- Used model.module.state_dict() for DDP checkpoint compatibility
+- All-reduce for metrics aggregation (sum then divide by world_size)
+- Checkpoint saves only on rank 0 with barrier() sync
 
 ### Pending Todos
 
@@ -56,5 +59,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-16
-Stopped at: Completed Phase 1 - Distributed Infrastructure (2/2 plans)
+Stopped at: Completed Phase 2 - DDP Model & Checkpoint Integration (1/1 plans)
 Resume file: None

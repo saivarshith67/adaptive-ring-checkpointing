@@ -9,7 +9,7 @@
 ## Phases
 
 - [x] **Phase 1: Distributed Infrastructure** - Initialize multi-GPU training foundation with process group and data distribution
-- [ ] **Phase 2: DDP Model & Checkpoint Integration** - Wrap model with DDP, implement rank-aware checkpointing and metrics aggregation
+- [x] **Phase 2: DDP Model & Checkpoint Integration** - Wrap model with DDP, implement rank-aware checkpointing and metrics aggregation
 - [ ] **Phase 3: Dataset Integration** - Integrate DFD dataset with face detection preprocessing
 
 ---
@@ -55,7 +55,9 @@
 6. Saved checkpoint can be loaded back and training resumes correctly
 7. Checkpoint state_dict is compatible with DDP (no "module." prefix issues)
 
-**Plans:** TBD
+**Plans:** 1 plan
+
+- [x] 02-ddp-model-checkpoint-integration-01-PLAN.md — DDP model wrapping, SyncBatchNorm, checkpoint integration, metrics aggregation
 
 ---
 
@@ -83,7 +85,7 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Distributed Infrastructure | 2/2 | Completed | 2026-03-16 |
-| 2. DDP Model & Checkpoint Integration | 0/1 | Not started | - |
+| 2. DDP Model & Checkpoint Integration | 1/1 | Completed | 2026-03-16 |
 | 3. Dataset Integration | 0/1 | Not started | - |
 
 ---
