@@ -1,65 +1,153 @@
 import argparse
 import torch
-from torch.utils.data import DataLoader
 import torch.nn.functional as F
+from torch.utils.data import DataLoader
+import json
+import time
+from datetime import datetime
+import sys
 
 from src.coci.models.model import get_model
-from src.coci.data.cifar import get_cifar100_dataset
+from src.coci.data_ingestor.cifar import get_cifar100_dataset
 from src.coci.config import load_config
+from src.coci.checkpointing.checkpoint_manager import CheckpointManager
+from src.coci.checkpointing.strategy import CheckpointStrategyFactory
+from src.coci.fault.fault_injector import FaultInjector
 
 
+# -------------------------------------------------
+# Training Loop
+# -------------------------------------------------
+def train(
+    model,
+    train_loader,
+    test_loader,
+    optimizer,
+    device,
+    cfg,
+    checkpoint_manager,
+    strategy,
+    fault_injector=None,
+    inject_fault=False,
+    start_epoch=0
+):
+
+    for epoch in range(start_epoch, cfg.epochs):
+
+        model.train()
+        total_loss = 0.0
+        epoch_start = time.time()
+
+        for batch_idx, (images, labels) in enumerate(train_loader):
+
+            images = images.to(device)
+            labels = labels.to(device)
+
+            outputs = model(images)
+            loss = F.cross_entropy(outputs, labels)
+
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            total_loss += loss.item()
+
+            # -------------------------
+            # Time-based checkpointing
+            # -------------------------
+            if cfg.strategy != "epoch":
+                if strategy.should_checkpoint():
+                    checkpoint_manager.save(model, optimizer, epoch, total_loss)
+                    strategy.update_checkpoint_time()
+
+            # -------------------------
+            # Fault Injection
+            # -------------------------
+            if inject_fault and fault_injector is not None:
+                fault_injector.maybe_fail()
+
+        epoch_time = time.time() - epoch_start
+
+        print(
+            f"Epoch {epoch+1}/{cfg.epochs} | "
+            f"Loss: {total_loss:.4f} | "
+            f"Time: {epoch_time:.2f}s"
+        )
+
+        accuracy = evaluate(model, test_loader, device)
+        print(f"Test Accuracy: {accuracy:.2f}%")
+
+        # -------------------------
+        # Epoch-based checkpointing
+        # -------------------------
+        if cfg.strategy == "epoch":
+            checkpoint_manager.save(model, optimizer, epoch, total_loss)
+
+    return True
+
+
+# -------------------------------------------------
+# Evaluation
+# -------------------------------------------------
+def evaluate(model, loader, device):
+    model.eval()
+    correct = 0
+    total = 0
+
+    with torch.no_grad():
+        for images, labels in loader:
+            images = images.to(device)
+            labels = labels.to(device)
+
+            outputs = model(images)
+            _, predicted = torch.max(outputs, 1)
+
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+    return 100.0 * correct / total
+
+
+# -------------------------------------------------
+# Main
+# -------------------------------------------------
 def main():
 
-    # -------------------------
-    # Argument parser
-    # -------------------------
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--mode",
-        choices=["dev", "server"],
-        default="dev",
-        help="Run mode: dev (local) or server (HPC)"
-    )
+    parser.add_argument("--mode", choices=["dev", "server"], default="dev")
+    parser.add_argument("--inject_fault", action="store_true")
 
     args = parser.parse_args()
 
-    # -------------------------
-    # Select config file
-    # -------------------------
-    if args.mode == "dev":
-        config_path = "configs/dev.yaml"
-    else:
-        config_path = "configs/server.yaml"
-
-    print(f"\nRunning in {args.mode.upper()} mode")
-    print(f"Loading config: {config_path}")
+    config_path = (
+        "configs/dev.yaml"
+        if args.mode == "dev"
+        else "configs/server.yaml"
+    )
 
     cfg = load_config(config_path)
 
-    # -------------------------
-    # Device auto-detection
-    # -------------------------
+    print(f"\nRunning in {args.mode.upper()} mode")
+    print(f"Using strategy: {cfg.strategy}")
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Using device: {device}")
+    print(f"Device: {device}")
 
     if device.type == "cuda":
         print(f"GPU: {torch.cuda.get_device_name(0)}")
 
     # -------------------------
-    # Dataset
+    # Data
     # -------------------------
-    train_dataset = get_cifar100_dataset(train=True)
-    test_dataset = get_cifar100_dataset(train=False)
-
     train_loader = DataLoader(
-        train_dataset,
+        get_cifar100_dataset(train=True),
         batch_size=cfg.batch_size,
         shuffle=True,
         num_workers=cfg.num_workers,
     )
 
     test_loader = DataLoader(
-        test_dataset,
+        get_cifar100_dataset(train=False),
         batch_size=cfg.batch_size,
         shuffle=False,
         num_workers=cfg.num_workers,
@@ -74,52 +162,133 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
     # -------------------------
-    # Training loop
+    # Checkpoint Manager
     # -------------------------
-    for epoch in range(cfg.epochs):
+    checkpoint_manager = CheckpointManager()
+    start_epoch = checkpoint_manager.load_latest(model, optimizer)
 
-        model.train()
-        total_loss = 0
+    if start_epoch >= cfg.epochs:
+        print("Training already completed.")
+        sys.exit(0)
 
-        for images, labels in train_loader:
+    # -------------------------
+    # Fault Injection
+    # -------------------------
+    fault_injector = None
+    if args.inject_fault:
+        fault_injector = FaultInjector(
+            failure_rate_per_second=cfg.failure_rate_per_second
+        )
 
-            images = images.to(device)
-            labels = labels.to(device)
+    # -------------------------
+    # Strategy Setup
+    # -------------------------
+    checkpoint_cost = cfg.checkpoint_cost_estimate
 
-            outputs = model(images)
-            loss = F.cross_entropy(outputs, labels)
+    mtbf_estimate = (
+        1.0 / cfg.failure_rate_per_second
+        if cfg.failure_rate_per_second > 0
+        else 1e9
+    )
 
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+    strategy = CheckpointStrategyFactory.create(
+        cfg,
+        checkpoint_cost=checkpoint_cost,
+        mtbf=mtbf_estimate
+    )
 
-            total_loss += loss.item()
+    # 🔥 Reset timer after resume
+    strategy.update_checkpoint_time()
 
-        print(f"Epoch {epoch+1}/{cfg.epochs}, Loss: {total_loss:.4f}")
+    # -------------------------
+    # Global Runtime Start
+    # -------------------------
+    overall_start_time = time.time()
 
-        evaluate(model, test_loader, device)
+    # -------------------------
+    # Train
+    # -------------------------
+    try:
+        train(
+            model,
+            train_loader,
+            test_loader,
+            optimizer,
+            device,
+            cfg,
+            checkpoint_manager,
+            strategy,
+            fault_injector=fault_injector,
+            inject_fault=args.inject_fault,
+            start_epoch=start_epoch
+        )
 
+        total_runtime = time.time() - overall_start_time
 
-def evaluate(model, loader, device):
+        failures = 0
+        measured_mtbf = None
 
-    model.eval()
-    correct = 0
-    total = 0
+        if args.inject_fault and fault_injector is not None:
+            total_time, failures = fault_injector.get_stats()
+            if failures > 0:
+                measured_mtbf = total_time / failures
 
-    with torch.no_grad():
-        for images, labels in loader:
+        summary = {
+            "timestamp": datetime.now().isoformat(),
+            "strategy": cfg.strategy,
+            "total_runtime_sec": total_runtime,
+            "num_checkpoints": checkpoint_manager.num_checkpoints,
+            "total_checkpoint_time_sec": checkpoint_manager.total_checkpoint_time,
+            "failures": failures,
+            "measured_mtbf": measured_mtbf,
+        }
 
-            images = images.to(device)
-            labels = labels.to(device)
+        print("\n========== EXPERIMENT SUMMARY ==========")
+        for k, v in summary.items():
+            print(f"{k}: {v}")
+        print("========================================\n")
 
-            outputs = model(images)
-            _, predicted = torch.max(outputs, 1)
+        with open(
+            f"final_experiment_log_{cfg.strategy}.jsonl", "a"
+        ) as f:
+            f.write(json.dumps(summary) + "\n")
 
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
+        print("Training finished successfully.")
+        sys.exit(0)
 
-    acc = 100 * correct / total
-    print(f"Test Accuracy: {acc:.2f}%")
+    except RuntimeError as e:
+
+        print(f"\n💥 Training interrupted: {e}")
+
+        if args.inject_fault and fault_injector is not None:
+            total_time, failures = fault_injector.get_stats()
+
+            measured_mtbf = None
+            if failures > 0:
+                measured_mtbf = total_time / failures
+
+            crash_summary = {
+                "timestamp": datetime.now().isoformat(),
+                "strategy": cfg.strategy,
+                "crashed": True,
+                "runtime_until_crash_sec": total_time,
+                "num_checkpoints": checkpoint_manager.num_checkpoints,
+                "total_checkpoint_time_sec": checkpoint_manager.total_checkpoint_time,
+                "failures": failures,
+                "measured_mtbf": measured_mtbf,
+            }
+
+            print("\n========== CRASH SUMMARY ==========")
+            for k, v in crash_summary.items():
+                print(f"{k}: {v}")
+            print("===================================\n")
+
+            with open(
+                f"crash_experiment_log_{cfg.strategy}.jsonl", "a"
+            ) as f:
+                f.write(json.dumps(crash_summary) + "\n")
+
+        sys.exit(1)
 
 
 if __name__ == "__main__":
