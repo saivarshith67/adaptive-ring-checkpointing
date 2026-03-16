@@ -14,12 +14,14 @@ multi-GPU training structure with:
 import argparse
 import sys
 import time
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
+from torch.nn.parallel import DistributedDataParallel as DDP
 from torchvision import datasets, transforms
 
 # Add project root to path
@@ -35,9 +37,23 @@ from src.coci.distributed import (
     is_distributed_initialized,
     barrier,
     log_on_main,
+    reduce_metrics,
 )
 from src.coci.models.model import get_model
 from src.coci.config import load_config
+from src.coci.checkpointing.checkpoint_manager import CheckpointManager
+
+
+# -------------------------------------------------
+# Worker Seeding for Reproducibility
+# -------------------------------------------------
+def seed_worker(worker_id):
+    """
+    Seed worker for reproducible data loading across epochs.
+    Ensures each worker uses a different but deterministic random seed.
+    """
+    worker_seed = torch.initial_seed() % 2**32
+    np.random.seed(worker_seed)
 
 
 # -------------------------------------------------
@@ -103,6 +119,7 @@ def get_distributed_dataloader(
         num_workers=num_workers,
         pin_memory=True,
         persistent_workers=num_workers > 0,
+        worker_init_fn=seed_worker,
     )
 
     return dataloader
@@ -161,7 +178,7 @@ def evaluate(model, test_loader, device):
         device: Device to evaluate on.
 
     Returns:
-        float: Accuracy percentage.
+        tuple: (correct, total, accuracy) - counts and percentage for aggregation.
     """
     model.eval()
     correct = 0
@@ -178,7 +195,8 @@ def evaluate(model, test_loader, device):
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
-    return 100.0 * correct / total if total > 0 else 0.0
+    accuracy = 100.0 * correct / total if total > 0 else 0.0
+    return correct, total, accuracy
 
 
 # -------------------------------------------------
@@ -263,17 +281,31 @@ def main():
     model = get_model(cfg.model, num_classes=100)
     model.to(device)
 
-    # Wrap with DDP (will be added in Phase 2)
-    # model = nn.parallel.DistributedDataParallel(model, device_ids=[local_rank])
+    # Convert BatchNorm to SyncBatchNorm for multi-GPU training
+    # SyncBatchNorm synchronizes batch statistics across all GPUs
+    model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
+
+    # Wrap with DDP for distributed training
+    # DDP handles gradient synchronization across GPUs automatically
+    model = DDP(model, device_ids=[local_rank], output_device=local_rank)
 
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
+
+    # -------------------------
+    # Checkpoint Manager
+    # -------------------------
+    checkpoint_manager = CheckpointManager(is_ddp_wrapped=True)
+
+    # Try to resume from checkpoint
+    start_epoch = checkpoint_manager.load_latest(model, optimizer, device)
+    log_on_main(f"Resuming from epoch {start_epoch}")
 
     # -------------------------
     # Training Loop
     # -------------------------
     log_on_main("\nStarting training...")
 
-    for epoch in range(cfg.epochs):
+    for epoch in range(start_epoch, cfg.epochs):
         epoch_start = time.time()
 
         # Train one epoch
@@ -287,16 +319,25 @@ def main():
 
         epoch_time = time.time() - epoch_start
 
-        # Evaluate (only rank 0 reports)
-        accuracy = evaluate(model, test_loader, device)
+        # Evaluate - get local metrics
+        correct, total, local_acc = evaluate(model, test_loader, device)
+
+        # Aggregate metrics across all GPUs
+        if is_distributed_initialized():
+            avg_loss, avg_acc = reduce_metrics(avg_loss, correct, total, world_size)
+        else:
+            avg_acc = local_acc
 
         # Log results (rank 0 only)
         log_on_main(
             f"Epoch {epoch + 1}/{cfg.epochs} | "
             f"Loss: {avg_loss:.4f} | "
-            f"Accuracy: {accuracy:.2f}% | "
+            f"Accuracy: {avg_acc:.2f}% | "
             f"Time: {epoch_time:.2f}s"
         )
+
+        # Save checkpoint (rank 0 only)
+        checkpoint_manager.save(model, optimizer, epoch + 1, avg_loss)
 
     # -------------------------
     # Cleanup

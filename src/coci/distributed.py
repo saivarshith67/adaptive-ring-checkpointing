@@ -182,3 +182,57 @@ def log_on_main(*args, **kwargs):
     """
     if is_main_process():
         print(*args, **kwargs)
+
+
+# -------------------------------------------------
+# Metrics Aggregation
+# -------------------------------------------------
+def reduce_metrics(loss, correct, total, world_size):
+    """
+    Reduce metrics across all ranks using all-reduce.
+
+    This aggregates loss, correct predictions, and total samples
+    from all distributed processes to compute global metrics.
+
+    Args:
+        loss: Local loss value from this rank.
+        correct: Number of correct predictions from this rank.
+        total: Total number of samples from this rank.
+        world_size: Number of distributed processes.
+
+    Returns:
+        tuple: (avg_loss, avg_acc) - Global average loss and accuracy.
+    """
+    import torch
+
+    # Create tensors for all-reduce
+    loss_tensor = (
+        torch.tensor(loss, dtype=torch.float32, device="cuda")
+        if torch.cuda.is_available()
+        else torch.tensor(loss, dtype=torch.float32)
+    )
+    correct_tensor = (
+        torch.tensor(correct, dtype=torch.float32, device="cuda")
+        if torch.cuda.is_available()
+        else torch.tensor(correct, dtype=torch.float32)
+    )
+    total_tensor = (
+        torch.tensor(total, dtype=torch.float32, device="cuda")
+        if torch.cuda.is_available()
+        else torch.tensor(total, dtype=torch.float32)
+    )
+
+    if is_distributed_initialized():
+        dist.all_reduce(loss_tensor, op=dist.ReduceOp.SUM)
+        dist.all_reduce(correct_tensor, op=dist.ReduceOp.SUM)
+        dist.all_reduce(total_tensor, op=dist.ReduceOp.SUM)
+
+    # Compute global averages
+    avg_loss = loss_tensor.item() / world_size if world_size > 0 else loss
+    avg_acc = (
+        100.0 * correct_tensor.item() / total_tensor.item()
+        if total_tensor.item() > 0
+        else 0.0
+    )
+
+    return avg_loss, avg_acc
