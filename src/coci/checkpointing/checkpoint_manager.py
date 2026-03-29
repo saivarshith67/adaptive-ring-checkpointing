@@ -14,7 +14,17 @@ class CheckpointManager:
         self.num_checkpoints = 0
         self.total_checkpoint_time = 0.0
 
-    def save(self, model, optimizer, epoch, loss):
+    def save(self, model, optimizer, epoch, loss, metric=None):
+        """
+        Save a checkpoint.
+
+        Args:
+            model: The model to save (or DDP-wrapped model).
+            optimizer: The optimizer to save.
+            epoch: Current epoch number.
+            loss: Current loss value.
+            metric: Optional metric value (e.g., accuracy) to save.
+        """
         # Only rank 0 saves checkpoint to avoid file conflicts
         rank = dist.get_rank() if dist.is_available() and dist.is_initialized() else 0
         if rank != 0:
@@ -33,15 +43,17 @@ class CheckpointManager:
             model.module.state_dict() if self.is_ddp_wrapped else model.state_dict()
         )
 
-        torch.save(
-            {
-                "epoch": epoch,
-                "model_state_dict": state_dict,
-                "optimizer_state_dict": optimizer.state_dict(),
-                "loss": loss,
-            },
-            path,
-        )
+        checkpoint_data = {
+            "epoch": epoch,
+            "model_state_dict": state_dict,
+            "optimizer_state_dict": optimizer.state_dict(),
+            "loss": loss,
+        }
+
+        if metric is not None:
+            checkpoint_data["metric"] = metric
+
+        torch.save(checkpoint_data, path)
 
         duration = time.time() - start
 
