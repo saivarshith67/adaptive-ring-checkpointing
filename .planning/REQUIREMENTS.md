@@ -24,14 +24,14 @@
 - [x] **CKPT-01**: Save checkpoint from model.module.state_dict() (not wrapped DDP model)
 - [x] **CKPT-02**: Load checkpoint with map_location to handle multi-GPU to single-GPU migration
 - [x] **CKPT-03**: Coordinate checkpoint save operations to run only on rank 0
-- [ ] **CKPT-04**: Verify checkpoint compatibility with DDP state_dict keys
+- [x] **CKPT-04**: Verify checkpoint compatibility with DDP state_dict keys
 
 ### Dataset Integration
 
-- [ ] **DATA-04**: Integrate kagglehub for downloading DFD dataset
-- [ ] **DATA-05**: Create dataset loader for Deep Fake Detection image dataset
-- [ ] **DATA-06**: Add face detection preprocessing using MTCNN from facenet-pytorch
-- [ ] **DATA-07**: Configure image transforms compatible with face detection output
+- [x] **DATA-04**: Integrate kagglehub for downloading DFD dataset
+- [x] **DATA-05**: Create dataset loader for Deep Fake Detection image dataset
+- [x] **DATA-06**: Add face detection preprocessing using MTCNN from facenet-pytorch
+- [x] **DATA-07**: Configure image transforms compatible with face detection output
 
 ### Metrics & Logging
 
@@ -72,11 +72,11 @@
 | CKPT-01 | Phase 2 | Complete |
 | CKPT-02 | Phase 2 | Complete |
 | CKPT-03 | Phase 2 | Complete |
-| CKPT-04 | Phase 3 | Pending |
-| DATA-04 | Phase 3 | Pending |
-| DATA-05 | Phase 3 | Pending |
-| DATA-06 | Phase 3 | Pending |
-| DATA-07 | Phase 3 | Pending |
+| CKPT-04 | Phase 3 | Complete |
+| DATA-04 | Phase 3 | Complete |
+| DATA-05 | Phase 3 | Complete |
+| DATA-06 | Phase 3 | Complete |
+| DATA-07 | Phase 3 | Complete |
 | METR-01 | Phase 2 | Complete |
 | METR-02 | Phase 2 | Complete |
 | METR-03 | Phase 1 | Pending |
