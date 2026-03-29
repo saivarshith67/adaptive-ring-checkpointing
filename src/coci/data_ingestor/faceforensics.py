@@ -21,6 +21,7 @@ from torchvision import transforms
 from PIL import Image
 import kagglehub
 import numpy as np
+from typing import Optional
 
 # Try to import MTCNN from facenet-pytorch
 try:
@@ -77,10 +78,10 @@ def get_faceforensics_transforms(include_resize=False):
 
 def precompute_face_crops(
     dataset_root: str,
-    cache_dir: str = None,
+    cache_dir: Optional[str] = None,
     compression: str = "c23",
     batch_size: int = 32,
-    device: str = None,
+    device: Optional[str] = None,
 ):
     """
     Pre-compute face crops using MTCNN and cache to disk.
@@ -274,11 +275,11 @@ class FaceForensicsDataset(Dataset):
         self,
         root: str,
         transform=None,
-        limit: int = None,
+        limit: Optional[int] = None,
         compression: str = "c23",
-        device: str = None,
+        device: Optional[str] = None,
         use_precropped: bool = True,
-        cache_dir: str = None,
+        cache_dir: Optional[str] = None,
     ):
         self.root = root
         self.transform = transform or get_faceforensics_transforms(include_resize=False)
