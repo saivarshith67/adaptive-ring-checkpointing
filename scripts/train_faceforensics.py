@@ -56,6 +56,7 @@ from src.coci.data_ingestor.faceforensics import (
     FaceForensicsDataset,
     download_faceforensics_dataset,
     get_faceforensics_transforms,
+    precompute_face_crops,
 )
 from src.coci.checkpointing.checkpoint_manager import CheckpointManager
 from src.coci.config import (
@@ -111,6 +112,7 @@ def get_faceforensics_dataloader(
     compression: str = "c23",
     limit: int = None,
     train: bool = True,
+    use_precropped: bool = True,
 ):
     """
     Create DataLoader with DistributedSampler for FaceForensics++ dataset.
@@ -124,15 +126,21 @@ def get_faceforensics_dataloader(
         compression: Compression level (c23 or c40)
         limit: Limit number of samples (for development)
         train: Whether this is training (enables shuffling)
+        use_precropped: Use pre-computed face crops (recommended)
 
     Returns:
         DataLoader with DistributedSampler
     """
+    cache_dir = os.path.join(dataset_path, "crops")
+    transform = get_faceforensics_transforms(include_resize=not use_precropped)
+
     dataset = FaceForensicsDataset(
         root=dataset_path,
-        transform=get_faceforensics_transforms(),
+        transform=transform,
         compression=compression,
         limit=limit,
+        use_precropped=use_precropped,
+        cache_dir=cache_dir,
     )
 
     sampler = DistributedSampler(
@@ -304,6 +312,17 @@ Examples:
         help="Download FaceForensics++ dataset via kagglehub and exit",
     )
     parser.add_argument(
+        "--precrop",
+        action="store_true",
+        default=True,
+        help="Pre-compute face crops before training (recommended, default: True)",
+    )
+    parser.add_argument(
+        "--no-precrop",
+        action="store_true",
+        help="Skip pre-computing face crops (slower but uses less disk space)",
+    )
+    parser.add_argument(
         "--dataset-path",
         type=str,
         default=DEFAULT_CONFIG["dataset_path"],
@@ -446,16 +465,36 @@ Examples:
     log_on_main("=" * 70 + "\n")
 
     # -------------------------
+    # Pre-compute Face Crops (recommended for speed)
+    # -------------------------
+    use_precropped = not args.no_precrop
+    cache_dir = os.path.join(args.dataset_path, "crops")
+
+    if use_precropped and not os.path.exists(os.path.join(cache_dir, "manifest.json")):
+        log_on_main("\nPre-computing face crops (one-time setup)...")
+        log_on_main("This may take a while but makes training much faster.")
+        precompute_face_crops(
+            dataset_root=args.dataset_path,
+            cache_dir=cache_dir,
+            compression=args.compression,
+            batch_size=64,
+            device=str(device),
+        )
+
+    # -------------------------
     # Create Datasets
     # -------------------------
     log_on_main("Loading FaceForensics++ dataset...")
 
-    # Load full dataset for splitting
+    transform = get_faceforensics_transforms(include_resize=not use_precropped)
+
     full_dataset = FaceForensicsDataset(
         root=args.dataset_path,
-        transform=get_faceforensics_transforms(),
+        transform=transform,
         compression=args.compression,
         limit=args.limit,
+        use_precropped=use_precropped,
+        cache_dir=cache_dir,
     )
 
     dataset_size = len(full_dataset)
