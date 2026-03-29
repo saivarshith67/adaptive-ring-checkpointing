@@ -1,14 +1,14 @@
 # Phase 3: Dataset Integration - Research
 
-**Researched:** 2026-03-16
-**Domain:** Deep Learning Training Pipeline - Dataset Integration
+**Researched:** 2026-03-29
+**Domain:** Deep Learning Training Pipeline - FaceForensics++ Dataset Integration
 **Confidence:** HIGH
 
 ## Summary
 
-This phase integrates the Deep Fake Detection (DFD) dataset from Kaggle with MTCNN face detection preprocessing and EfficientNet-B0 for binary classification. The research covers dataset download via kagglehub, face detection pipeline using facenet-pytorch, image transforms for 224x224 input, and checkpoint compatibility with the new model architecture.
+This phase integrates the FaceForensics++ dataset from Kaggle with MTCNN face detection preprocessing and EfficientNet-B0 for binary classification. The research covers dataset download via kagglehub, face detection pipeline using facenet-pytorch, image transforms for 224x224 input, checkpoint compatibility with the new model architecture, and multi-GPU training via existing DDP infrastructure.
 
-**Primary recommendation:** Use `kagglehub.dataset_download()` for DFD dataset, MTCNN for face detection with torchvision transforms for 224x224 ImageNet-normalized input, and modify EfficientNet-B0 classifier for binary real/fake classification.
+**Primary recommendation:** Use `kagglehub.dataset_download()` for FaceForensics++ dataset (hungle3401/faceforensics), MTCNN for face detection with torchvision transforms for 224x224 ImageNet-normalized input, and modify EfficientNet-B0 classifier for binary real/fake classification. Leverage existing Phase 1/2 DDP infrastructure for multi-GPU training.
 
 ---
 
@@ -16,10 +16,11 @@ This phase integrates the Deep Fake Detection (DFD) dataset from Kaggle with MTC
 ## User Constraints (from CONTEXT.md)
 
 ### Locked Decisions
-- Use Deep Fake Detection (DFD) dataset from Kaggle via kagglehub
+- Use FaceForensics++ dataset from Kaggle via kagglehub (hungle3401/faceforensics)
 - Use MTCNN from facenet-pytorch for face detection preprocessing
 - Use EfficientNet-B0 as base classifier (alternative: ResNet-50)
 - Image size: 224x224 for model input
+- Multi-GPU via existing DDP infrastructure from Phase 1/2
 
 ### Claude's Discretion
 - Specific data augmentation strategies (albumentations vs torchvision)
@@ -29,10 +30,11 @@ This phase integrates the Deep Fake Detection (DFD) dataset from Kaggle with MTC
 - Whether to use pretrained weights or train from scratch
 
 ### Deferred Ideas (OUT OF SCOPE)
-- Video frame extraction (currently image-based dataset)
+- Video frame extraction optimization (currently image-based)
 - Real-time inference pipeline
 - Advanced augmentation strategies
 - Model ensemble approaches
+- Multi-manipulation classification (Deepfakes, Face2Face, FaceSwap, NeuralTextures)
 </user_constraints>
 
 <phase_requirements>
@@ -41,8 +43,8 @@ This phase integrates the Deep Fake Detection (DFD) dataset from Kaggle with MTC
 | ID | Description | Research Support |
 |----|-------------|-----------------|
 | CKPT-04 | Verify checkpoint compatibility with DDP state_dict keys | Existing checkpoint_manager.py uses model.module.state_dict() - compatible with DDP |
-| DATA-04 | Integrate kagglehub for downloading DFD dataset | kagglehub.dataset_download() API verified |
-| DATA-05 | Create dataset loader for Deep Fake Detection image dataset | Dataset class structure defined with real/fake labels |
+| DATA-04 | Integrate kagglehub for downloading FaceForensics++ dataset | kagglehub.dataset_download() API verified for Kaggle datasets |
+| DATA-05 | Create dataset loader for FaceForensics++ image dataset | Dataset class structure defined with real/fake labels |
 | DATA-06 | Add face detection preprocessing using MTCNN from facenet-pytorch | MTCNN API and integration patterns documented |
 | DATA-07 | Configure image transforms compatible with face detection output | 224x224 transforms with ImageNet normalization specified |
 </phase_requirements>
@@ -54,16 +56,17 @@ This phase integrates the Deep Fake Detection (DFD) dataset from Kaggle with MTC
 ### Core
 | Library | Version | Purpose | Why Standard |
 |---------|---------|---------|--------------|
-| kagglehub | >=0.3.0 | Download DFD dataset from Kaggle | Official Kaggle Python client |
+| kagglehub | >=0.3.0 | Download FaceForensics++ from Kaggle | Official Kaggle Python client |
 | facenet-pytorch | >=2.5.0 | MTCNN face detection | Most popular PyTorch MTCNN implementation |
 | torch | >=2.0 | Core ML framework | Already in project |
 | torchvision | >=0.15 | Models, transforms | Already in project |
 
-### Supporting
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| Pillow | latest | Image loading for MTCNN | Required by facenet-pytorch |
-| opencv-python | latest | Image loading in dataset | Already in project (cv2) |
+### Supporting (Multi-GPU from Phase 1/2)
+| Library | Purpose | When to Use |
+|---------|---------|-------------|
+| torch.distributed | DDP process group | Multi-GPU training (Phase 1) |
+| DistributedSampler | Data partitioning | Multi-GPU training (Phase 1) |
+| checkpoint_manager.py | Checkpoint save/load | Phase 2 |
 
 ### Alternatives Considered
 | Instead of | Could Use | Tradeoff |
@@ -79,6 +82,42 @@ pip install kagglehub facenet-pytorch
 
 ---
 
+## Dataset: FaceForensics++
+
+### Dataset Overview
+FaceForensics++ is a large-scale video dataset for forgery detection in human faces. The Kaggle version (hungle3401/faceforensics) contains:
+- Original video sequences from YouTube (1000 videos)
+- Manipulated sequences using Deepfakes, Face2Face, FaceSwap, and NeuralTextures
+- Multiple compression levels (c23 = visually lossless, ~10GB)
+
+### Expected Directory Structure (Kaggle version)
+```
+faceforensics/
+├── original_sequences/
+│   └── youtube/
+│       └── c23/
+│           └── images/          # Real images (frames from original videos)
+│               └── 000/         # Video folders
+│               └── 001/
+│               └── ...
+├── manipulated_sequences/
+│   └── Deepfakes/
+│       └── c23/
+│           └── images/          # Fake images (Deepfakes manipulation)
+│               └── 000/
+│               └── 001/
+│               └── ...
+│   └── Face2Face/
+│   └── FaceSwap/
+│   └── NeuralTextures/
+```
+
+### Binary Classification Labels
+- **Real (0):** Images from `original_sequences/youtube/c23/images`
+- **Fake (1):** Images from `manipulated_sequences/Deepfakes/c23/images` (using Deepfakes as primary manipulation method)
+
+---
+
 ## Architecture Patterns
 
 ### Recommended Project Structure
@@ -86,36 +125,39 @@ pip install kagglehub facenet-pytorch
 src/
 ├── coci/
 │   ├── data_ingestor/
-│   │   ├── dfd.py              # NEW: DFD dataset loader
+│   │   ├── faceforensics.py    # NEW: FaceForensics++ dataset loader
 │   │   ├── cifar.py            # Existing
 │   │   └── dataset.py          # Existing base class
 │   ├── models/
 │   │   ├── model.py            # Modified for EfficientNet-B0
-│   │   └── face_detector.py    # NEW: MTCNN wrapper
+│   │   └── face_detector.py    # Existing/updated MTCNN wrapper
 │   └── checkpointing/
-│       └── checkpoint_manager.py  # Modified for model config
+│       └── checkpoint_manager.py  # Existing from Phase 2
+│   └── distributed.py          # Existing from Phase 1
 ```
 
-### Pattern 1: DFD Dataset Loader with Face Detection
-**What:** Dataset class that loads DFD images, applies MTCNN face detection, and returns face-cropped images
-**When to use:** For training binary classifier on DFD dataset
+### Pattern 1: FaceForensics++ Dataset Loader with Face Detection
+**What:** Dataset class that loads FaceForensics++ images, applies MTCNN face detection, and returns face-cropped images
+**When to use:** For training binary classifier on FaceForensics++ dataset
 **Example:**
 ```python
-# Source: Research - dataset loader pattern
+# Source: Research - FaceForensics++ dataset loader pattern
 import os
 from torch.utils.data import Dataset
 from PIL import Image
 from facenet_pytorch import MTCNN
 import torchvision.transforms as transforms
+import torch
 
 
-class DFDFaceDataset(Dataset):
-    """DFD dataset with MTCNN face detection preprocessing."""
+class FaceForensicsDataset(Dataset):
+    """FaceForensics++ dataset with MTCNN face detection preprocessing."""
     
-    def __init__(self, root, transform=None, limit=None):
+    def __init__(self, root, split='train', transform=None, limit=None):
         """
         Args:
-            root: Path to DFD dataset (contains 'real' and 'fake' subdirs)
+            root: Path to FaceForensics++ dataset root
+            split: 'train', 'val', or 'test' for data split
             transform: Optional transforms for face-cropped images
             limit: Limit number of samples (for development)
         """
@@ -133,19 +175,34 @@ class DFDFaceDataset(Dataset):
         self.transform = transform or self._default_transform()
         
         # Load image paths with labels
+        # Structure: root/original_sequences/youtube/c23/images/{video_id}/*.png
+        #            root/manipulated_sequences/Deepfakes/c23/images/{video_id}/*.png
         images = []
-        for label_name in ["real", "fake"]:
-            folder = os.path.join(root, label_name)
-            if os.path.exists(folder):
-                for file in os.listdir(folder):
-                    if file.lower().endswith(('.png', '.jpg', '.jpeg')):
-                        images.append((os.path.join(folder, file), label_name))
+        
+        # Real images (label=0)
+        real_root = os.path.join(root, 'original_sequences', 'youtube', 'c23', 'images')
+        if os.path.exists(real_root):
+            for video_folder in os.listdir(real_root):
+                video_path = os.path.join(real_root, video_folder)
+                if os.path.isdir(video_path):
+                    for file in os.listdir(video_path):
+                        if file.lower().endswith(('.png', '.jpg', '.jpeg')):
+                            images.append((os.path.join(video_path, file), 0))  # 0 = real
+        
+        # Fake images (label=1) - using Deepfakes as primary manipulation
+        fake_root = os.path.join(root, 'manipulated_sequences', 'Deepfakes', 'c23', 'images')
+        if os.path.exists(fake_root):
+            for video_folder in os.listdir(fake_root):
+                video_path = os.path.join(fake_root, video_folder)
+                if os.path.isdir(video_path):
+                    for file in os.listdir(video_path):
+                        if file.lower().endswith(('.png', '.jpg', '.jpeg')):
+                            images.append((os.path.join(video_path, file), 1))  # 1 = fake
         
         if limit:
             images = images[:limit]
         
         self.images = images
-        self.label_map = {"real": 0, "fake": 1}
     
     def _default_transform(self):
         """Default transforms: 224x224 with ImageNet normalization."""
@@ -186,9 +243,7 @@ class DFDFaceDataset(Dataset):
         if self.transform:
             face = self.transform(face)
         
-        label_idx = self.label_map[label]
-        
-        return face, label_idx
+        return face, label
 ```
 
 ### Pattern 2: EfficientNet-B0 Binary Classifier
@@ -216,7 +271,6 @@ def get_efficientnet_binary(pretrained=True):
     num_features = model.classifier[1].in_features
     
     # Replace classifier for binary classification
-    # Option 1: 2-class output (for CrossEntropyLoss)
     model.classifier = nn.Sequential(
         nn.Dropout(p=0.2, inplace=True),
         nn.Linear(num_features, 2)
@@ -226,23 +280,23 @@ def get_efficientnet_binary(pretrained=True):
 ```
 
 ### Pattern 3: kagglehub Dataset Download
-**What:** Download DFD dataset programmatically
+**What:** Download FaceForensics++ dataset programmatically
 **When to Use:** For automated dataset acquisition in training scripts
 **Example:**
 ```python
-# Source: kagglehub GitHub documentation
+# Source: kagglehub documentation for Kaggle datasets
 import kagglehub
 import os
 
 
-def download_dfd_dataset():
+def download_faceforensics_dataset():
     """
-    Download Deep Fake Detection dataset from Kaggle.
+    Download FaceForensics++ dataset from Kaggle.
     
     Returns path to downloaded dataset.
     """
     # Download latest version of the dataset
-    path = kagglehub.dataset_download('sanikatiwarekar/deep-fake-detection-dfd-entire-original-dataset')
+    path = kagglehub.dataset_download('hungle3401/faceforensics')
     
     print(f"Dataset downloaded to: {path}")
     return path
@@ -250,36 +304,58 @@ def download_dfd_dataset():
 
 # Usage
 if __name__ == "__main__":
-    dataset_path = download_dfd_dataset()
-    # Expected structure: dataset_path/real/*, dataset_path/fake/*
+    dataset_path = download_faceforensics_dataset()
+    # Expected structure: dataset_path/original_sequences/..., dataset_path/manipulated_sequences/...
 ```
 
-### Pattern 4: Training Script Integration
-**What:** Update training_distributed.py to use DFD dataset
-**When to Use:** For distributed training with DFD dataset
+### Pattern 4: Multi-GPU Training Integration
+**What:** Update training_distributed.py to use FaceForensics++ dataset with DDP
+**When to Use:** For distributed training with FaceForensics++ dataset
 **Example:**
 ```python
-# Source: Modified train_distributed.py pattern
-from src.coci.data_ingestor.dfd import DFDFaceDataset
+# Source: Integration of Phase 1/2 DDP infrastructure with Phase 3 dataset
+from src.coci.data_ingestor.faceforensics import FaceForensicsDataset, download_faceforensics_dataset
 from src.coci.models.model import get_efficientnet_binary
+from src.coci.distributed import setup_distributed, cleanup_distributed, is_main_process, barrier
+from torch.utils.data import DataLoader
+from torch.utils.data.distributed import DistributedSampler
 
 
-def get_dfd_dataset(root, train=True, transform=None):
-    """Get DFD dataset with face detection."""
-    dataset = DFDFaceDataset(
+def get_faceforensics_dataloader(root, batch_size, num_workers, rank, world_size, train=True):
+    """Get FaceForensics++ DataLoader with DistributedSampler for multi-GPU."""
+    dataset = FaceForensicsDataset(
         root=root,
-        transform=transform,
-        limit=None  # Remove limit for full training
+        split='train' if train else 'val',
+        transform=None  # Use default transforms
     )
-    return dataset
+    
+    sampler = DistributedSampler(
+        dataset,
+        num_replicas=world_size,
+        rank=rank,
+        shuffle=True,
+        seed=42,
+        drop_last=False
+    )
+    
+    dataloader = DataLoader(
+        dataset,
+        batch_size=batch_size,
+        num_workers=num_workers,
+        sampler=sampler,
+        pin_memory=True,
+        persistent_workers=num_workers > 0
+    )
+    
+    return dataloader, sampler
 
 
 # In main():
-# Replace CIFAR with DFD
-train_dataset = get_dfd_dataset(
-    root="./data/dfd",  # After kagglehub download
-    train=True
-)
+# Download dataset (once, on rank 0)
+if is_main_process():
+    dataset_path = download_faceforensics_dataset()
+barrier()  # Wait for download to complete
+
 # For binary classification with 2 classes
 model = get_efficientnet_binary(pretrained=True)
 model.to(device)
@@ -290,10 +366,8 @@ model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
 # Wrap with DDP
 model = DDP(model, device_ids=[local_rank], output_device=local_rank)
 
-# Binary classification uses CrossEntropyLoss or BCEWithLogitsLoss
-criterion = nn.CrossEntropyLoss()  # 2-class output
-# OR
-criterion = nn.BCEWithLogitsLoss()  # 1 output with sigmoid
+# Binary classification uses CrossEntropyLoss
+criterion = nn.CrossEntropyLoss()
 ```
 
 ---
@@ -306,8 +380,10 @@ criterion = nn.BCEWithLogitsLoss()  # 1 output with sigmoid
 | Dataset download | Manual download + extraction | kagglehub.dataset_download() | Programmatic, reproducible |
 | ImageNet pretrained weights | Train from scratch | ImageNet pretrained EfficientNet-B0 | Faster convergence, better generalization |
 | Image normalization | Custom mean/std | ImageNet stats (0.485, 0.456, 0.406) / (0.229, 0.224, 0.225) | Matches pretrained model expectations |
+| Multi-GPU training | Custom parallel code | Existing DDP from Phase 1/2 | Tested, efficient, standard PyTorch |
+| Data partitioning | Custom sharding | DistributedSampler | Handles edge cases, maintains reproducibility |
 
-**Key insight:** MTCNN handles face detection, alignment, and cropping in one pipeline. Building from scratch would require training a face detector model and implementing landmark detection for alignment.
+**Key insight:** MTCNN handles face detection, alignment, and cropping in one pipeline. Building from scratch would require training a face detector model and implementing landmark detection for alignment. Use existing Phase 1/2 infrastructure for multi-GPU - it's already tested and working.
 
 ---
 
@@ -349,7 +425,7 @@ torch.save({
     'model_state_dict': state_dict,
     'optimizer_state_dict': optimizer.state_dict(),
     'loss': loss,
-    'model_config': {'num_classes': 2, 'model_name': 'efficientnet_b0'},  # NEW
+    'model_config': {'num_classes': 2, 'model_name': 'efficientnet_b0'},
 }, path)
 ```
 
@@ -368,93 +444,51 @@ os.environ['KAGGLE_USERNAME'] = 'your_username'
 os.environ['KAGGLE_KEY'] = 'your_key'
 ```
 
-### Pitfall 5: DFD Dataset Structure
-**What goes wrong:** Dataset path doesn't contain expected real/fake subdirectories
-**Why it happens:** DFD dataset structure differs from assumed format
-**How to avoid:** Verify dataset structure after download
+### Pitfall 5: FaceForensics++ Dataset Structure
+**What goes wrong:** Dataset path doesn't contain expected directory structure
+**Why it happens:** FaceForensics++ structure differs from assumed format (video folders, compression levels)
+**How to avoid:** Verify dataset structure after download, adapt paths as needed
 ```python
 # Check what's in the downloaded dataset
 import os
-dataset_path = kagglehub.dataset_download('sanikatiwarekar/deep-fake-detection-dfd-entire-original-dataset')
-print(os.listdir(dataset_path))  # Verify structure
+dataset_path = kagglehub.dataset_download('hungle3401/faceforensics')
+print(os.listdir(dataset_path))  # Verify top-level structure
+```
+
+### Pitfall 6: Video vs Image Structure
+**What goes wrong:** Kaggle dataset contains videos, not extracted frames
+**Why it happens:** Some FaceForensics++ versions have videos that need frame extraction
+**How to avoid:** Check if c23/images folder exists; if not, extract frames from videos using ffmpeg
+```python
+# If images don't exist, extract frames
+# Use ffmpeg: ffmpeg -i video.mp4 -vf fps=1 frame_%04d.png
 ```
 
 ---
 
-## Code Examples
+## Multi-GPU Training (Phase 1/2 Integration)
 
-### Image Transforms for EfficientNet-B0
-```python
-# Source: torchvision.models.EfficientNet_B0_Weights documentation
-from torchvision import transforms
+### Existing Infrastructure
+Phase 1 and Phase 2 already provide:
+- `src/coci/distributed.py`: Process group setup, rank detection, barrier
+- `scripts/train_distributed.py`: torchrun-compatible entry point
+- `src/coci/checkpointing/checkpoint_manager.py`: DDP-aware checkpoint save/load
 
-# Training transforms with augmentation
-train_transform = transforms.Compose([
-    transforms.Resize((256, 256)),  # Slightly larger for random crop
-    transforms.RandomHorizontalFlip(),
-    transforms.RandomRotation(10),
-    transforms.ColorJitter(brightness=0.2, contrast=0.2),
-    transforms.ToTensor(),
-    transforms.Normalize(
-        mean=[0.485, 0.456, 0.406],
-        std=[0.229, 0.224, 0.225]
-    )
-])
+### Integration Points
+1. **Dataset loader** → returns batches compatible with existing training loop
+2. **Model** → get_efficientnet_binary() returns model compatible with DDP wrapping
+3. **Config** → DATASET_TYPE, MODEL_NAME, NUM_CLASSES updated for FaceForensics++
 
-# Validation transforms (no augmentation)
-val_transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize(
-        mean=[0.485, 0.456, 0.406],
-        std=[0.229, 0.224, 0.225]
-    )
-])
-```
-
-### DDP Checkpoint with Model Config
-```python
-# Source: checkpoint_manager.py modification for architecture change
-def save(self, model, optimizer, epoch, loss, model_config=None):
-    """Save checkpoint with optional model config."""
-    rank = dist.get_rank() if dist.is_available() and dist.is_initialized() else 0
-    if rank != 0:
-        if dist.is_available() and dist.is_initialized():
-            dist.barrier()
-        return
-    
-    path = os.path.join(self.checkpoint_dir, f"checkpoint_epoch_{epoch}.pt")
-    
-    state_dict = (
-        model.module.state_dict() if self.is_ddp_wrapped else model.state_dict()
-    )
-    
-    checkpoint = {
-        "epoch": epoch,
-        "model_state_dict": state_dict,
-        "optimizer_state_dict": optimizer.state_dict(),
-        "loss": loss,
-    }
-    
-    # Add model config if provided
-    if model_config:
-        checkpoint["model_config"] = model_config
-    
-    torch.save(checkpoint, path)
-    
-    if dist.is_available() and dist.is_initialized():
-        dist.barrier()
-
-
-def load_latest(self, model, optimizer, device):
-    """Load checkpoint, optionally validate architecture."""
-    # ... existing loading code ...
-    
-    # Validate model config if present
-    if "model_config" in checkpoint:
-        saved_config = checkpoint["model_config"]
-        # Could validate num_classes matches, etc.
-        print(f"Checkpoint model config: {saved_config}")
+### Launch Command
+```bash
+# Multi-GPU training with torchrun
+torchrun \
+    --nproc_per_node=4 \
+    --nnodes=1 \
+    scripts/train_distributed.py \
+    --dataset faceforensics \
+    --model efficientnet_b0 \
+    --batch_size 32
 ```
 
 ---
@@ -465,30 +499,36 @@ def load_latest(self, model, optimizer, device):
 |--------------|------------------|--------------|--------|
 | Face crop manually | MTCNN automated detection | 2019+ (MTCNN release) | Reliable face detection |
 | Train CNN from scratch | ImageNet pretrained + fine-tune | 2014+ (transfer learning普及) | Better convergence |
-| Single GPU training | DDP multi-GPU | Standard in PyTorch | Scale to multiple GPUs |
-| CIFAR-100 | DFD binary classification | Current phase | Domain-specific task |
+| Single GPU training | DDP multi-GPU | Phase 1/2 completed | Scale to multiple GPUs |
+| CIFAR-100 | FaceForensics++ binary classification | Current phase | Domain-specific deepfake detection |
 
 **Deprecated/outdated:**
 - FaceNet InceptionResnetV1 for classification: Use EfficientNet-B0 instead (simpler, better documented)
 - Custom face detection: MTCNN from facenet-pytorch is the standard
+- DataParallel: Use DDP (Phase 1/2 infrastructure)
 
 ---
 
 ## Open Questions
 
-1. **DFD Dataset Structure Verification**
-   - What we know: kagglehub downloads to a path, but exact subdirectory structure needs verification
-   - What's unclear: Whether DFD has train/val/test split, exact folder names (case-sensitive?)
+1. **FaceForensics++ Dataset Structure on Kaggle**
+   - What we know: Kaggle dataset slug is hungle3401/faceforensics
+   - What's unclear: Exact folder structure in Kaggle version (images vs videos, compression levels)
    - Recommendation: After first download, inspect and adapt dataset loader
 
 2. **Face Detection Performance**
    - What we know: MTCNN works well on frontal faces
-   - What's unclear: Detection rate on DFD dataset (could contain various poses)
+   - What's unclear: Detection rate on FaceForensics++ (could contain various poses, quality)
    - Recommendation: Log detection failure rate during initial training runs
 
-3. **MTCNN vs RetinaFace for Better Detection**
+3. **Frame Extraction vs Pre-extracted Images**
+   - What we know: FaceForensics++ is originally a video dataset
+   - What's unclear: Does Kaggle version have extracted frames or videos?
+   - Recommendation: Check for images folder; if not found, use ffmpeg for extraction
+
+4. **MTCNN vs RetinaFace for Better Detection**
    - What we know: MTCNN is standard, RetinaFace may be more robust
-   - What's unclear: Whether MTCNN accuracy is sufficient for DFD
+   - What's unclear: Whether MTCNN accuracy is sufficient for FaceForensics++
    - Recommendation: Start with MTCNN, upgrade if needed
 
 ---
@@ -507,7 +547,7 @@ def load_latest(self, model, optimizer, device):
 | Req ID | Behavior | Test Type | Automated Command | File Exists? |
 |--------|----------|-----------|-------------------|-------------|
 | CKPT-04 | Checkpoint compatibility with DDP state_dict | manual | Verify checkpoint save/load works with EfficientNet | ❌ |
-| DATA-04 | kagglehub download | manual | `python -c "import kagglehub; print(kagglehub.dataset_download('sanikatiwarekar/deep-fake-detection-dfd-entire-original-dataset'))"` | ❌ |
+| DATA-04 | kagglehub download | manual | `python -c "import kagglehub; print(kagglehub.dataset_download('hungle3401/faceforensics'))"` | ❌ |
 | DATA-05 | Dataset loader | manual | Verify dataset returns correct batch shapes | ❌ |
 | DATA-06 | MTCNN face detection | unit | Test face detection on sample images | ❌ |
 | DATA-07 | Image transforms | unit | Verify 224x224 output with correct normalization | ❌ |
@@ -518,7 +558,7 @@ def load_latest(self, model, optimizer, device):
 - **Phase gate:** Manual verification of all requirements
 
 ### Wave 0 Gaps
-- [ ] `tests/test_dfd_dataset.py` — covers DATA-05, DATA-07
+- [ ] `tests/test_faceforensics_dataset.py` — covers DATA-05, DATA-07
 - [ ] `tests/test_mtcnn_detection.py` — covers DATA-06  
 - [ ] `tests/test_checkpoint_ddp.py` — covers CKPT-04
 - [ ] Framework install: `pip install pytest` — if tests desired
@@ -534,13 +574,15 @@ def load_latest(self, model, optimizer, device):
 - kagglehub GitHub: https://github.com/Kaggle/kagglehub - Dataset download API
 - facenet-pytorch GitHub: https://github.com/timesler/facenet-pytorch - MTCNN usage
 - torchvision models documentation: https://docs.pytorch.org/vision/0.15/models/generated/torchvision.models.efficientnet_b0.html - EfficientNet-B0
+- FaceForensics++ GitHub: https://github.com/ondyari/FaceForensics - Original dataset structure
 
 ### Secondary (MEDIUM confidence)
-- EfficientNet transfer learning tutorials on DebuggerCafe
+- EfficientNet transfer learning tutorials
 - MTCNN integration patterns from facenet-pytorch examples
+- PyTorch DDP documentation for multi-GPU integration
 
 ### Tertiary (LOW confidence)
-- Web search for DFD dataset structure - needs verification after first download
+- Kaggle FaceForensics++ dataset page: https://www.kaggle.com/datasets/hungle3401/faceforensics - needs verification after first download
 
 ---
 
@@ -550,6 +592,7 @@ def load_latest(self, model, optimizer, device):
 - Standard stack: HIGH - All libraries verified, well-documented
 - Architecture: HIGH - Existing DDP code, new dataset integration pattern clear
 - Pitfalls: MEDIUM - Common issues identified, device/face detection edge cases
+- Multi-GPU: HIGH - Phase 1/2 infrastructure already tested
 
-**Research date:** 2026-03-16
-**Valid until:** 2026-04-16 (30 days for stable stack)
+**Research date:** 2026-03-29
+**Valid until:** 2026-04-28 (30 days for stable stack)
