@@ -5,12 +5,21 @@ FaceForensics++ Deepfake Detection Training Script
 A unified training script for deepfake detection on the FaceForensics++ dataset.
 Supports both single-GPU and multi-GPU (via torchrun) training.
 
+Key Features (integrated from Kaggle notebook patterns):
+    - Video-level processing with multi-frame sampling
+    - CNN backbone with temporal aggregation (LSTM/GRU or mean pooling)
+    - Efficient video loading with pre-extracted frame caching
+    - Multi-GPU support via DistributedDataParallel (DDP)
+
 Usage:
     # Single GPU
     python scripts/train_faceforensics.py
 
     # Multi-GPU (recommended)
     torchrun --nproc_per_node=2 scripts/train_faceforensics.py
+
+    # Multi-GPU with 4 GPUs
+    torchrun --nproc_per_node=4 scripts/train_faceforensics.py
 
     # With custom settings
     python scripts/train_faceforensics.py --epochs 50 --batch_size 32 --lr 1e-4
@@ -20,19 +29,27 @@ Usage:
 
     # Resume from checkpoint
     python scripts/train_faceforensics.py --resume
+
+    # Use temporal model (LSTM aggregation)
+    python scripts/train_faceforensics.py --temporal-model lstm --num-frames 16
+
+    # Use mean pooling (faster, single-frame equivalent)
+    python scripts/train_faceforensics.py --temporal-model mean
 """
 
 import argparse
 import os
 import sys
 import time
+import json
 from pathlib import Path
+from typing import List, Optional, Tuple
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 from torch.utils.data.distributed import DistributedSampler
 from torch.nn.parallel import DistributedDataParallel as DDP
 
@@ -51,9 +68,10 @@ from src.coci.distributed import (
     log_on_main,
     reduce_metrics,
 )
-from src.coci.models.model import get_model
+from src.coci.models.model import get_model, get_multiframe_model
 from src.coci.data_ingestor.faceforensics import (
     FaceForensicsDataset,
+    VideoFaceForensicsDataset,
     download_faceforensics_dataset,
     get_faceforensics_transforms,
     precompute_face_crops,
@@ -76,13 +94,16 @@ DEFAULT_CONFIG = {
     "model": MODEL_NAME,
     "num_classes": NUM_CLASSES,
     "epochs": 20,
-    "batch_size": 32,
+    "batch_size": 8,  # Reduced for video processing (multiple frames)
     "lr": 1e-4,
     "weight_decay": 1e-5,
     "num_workers": 4,
     "checkpoint_dir": "./checkpoints",
     "checkpoint_interval": 5,  # Save every N epochs
     "device": "cuda" if torch.cuda.is_available() else "cpu",
+    # Video processing settings
+    "num_frames": 8,  # Frames to sample per video
+    "temporal_model": "mean",  # Aggregation: "mean", "lstm", "gru", "attention"
 }
 
 
@@ -113,6 +134,8 @@ def get_faceforensics_dataloader(
     limit: int = None,
     train: bool = True,
     use_precropped: bool = True,
+    video_mode: bool = False,
+    num_frames: int = 8,
 ):
     """
     Create DataLoader with DistributedSampler for FaceForensics++ dataset.
@@ -127,21 +150,35 @@ def get_faceforensics_dataloader(
         limit: Limit number of samples (for development)
         train: Whether this is training (enables shuffling)
         use_precropped: Use pre-computed face crops (recommended)
+        video_mode: If True, use video-level dataset (multiple frames per video)
+        num_frames: Number of frames to sample per video (for video_mode)
 
     Returns:
         DataLoader with DistributedSampler
     """
     cache_dir = os.path.join(dataset_path, "crops")
-    transform = get_faceforensics_transforms(include_resize=not use_precropped)
 
-    dataset = FaceForensicsDataset(
-        root=dataset_path,
-        transform=transform,
-        compression=compression,
-        limit=limit,
-        use_precropped=use_precropped,
-        cache_dir=cache_dir,
-    )
+    if video_mode:
+        # Video-level dataset: groups frames by video
+        dataset = VideoFaceForensicsDataset(
+            root=dataset_path,
+            compression=compression,
+            limit=limit,
+            use_precropped=use_precropped,
+            cache_dir=cache_dir,
+            num_frames=num_frames,
+        )
+    else:
+        # Image-level dataset: individual frames
+        transform = get_faceforensics_transforms(include_resize=not use_precropped)
+        dataset = FaceForensicsDataset(
+            root=dataset_path,
+            transform=transform,
+            compression=compression,
+            limit=limit,
+            use_precropped=use_precropped,
+            cache_dir=cache_dir,
+        )
 
     sampler = DistributedSampler(
         dataset,
@@ -168,7 +205,9 @@ def get_faceforensics_dataloader(
 # -------------------------------------------------
 # Training Functions
 # -------------------------------------------------
-def train_epoch(model, train_loader, optimizer, device, epoch, sampler=None):
+def train_epoch(
+    model, train_loader, optimizer, device, epoch, sampler=None, video_mode=False
+):
     """
     Train for one epoch.
 
@@ -179,6 +218,7 @@ def train_epoch(model, train_loader, optimizer, device, epoch, sampler=None):
         device: Device to train on
         epoch: Current epoch number
         sampler: DistributedSampler for epoch synchronization
+        video_mode: If True, expects (frames, labels) where frames is (B, T, C, H, W)
 
     Returns:
         tuple: (avg_loss, correct, total) - local metrics
@@ -193,12 +233,37 @@ def train_epoch(model, train_loader, optimizer, device, epoch, sampler=None):
     correct = 0
     total = 0
 
-    for batch_idx, (images, labels) in enumerate(train_loader):
-        images = images.to(device)
-        labels = labels.to(device)
+    for batch_idx, batch in enumerate(train_loader):
+        if video_mode:
+            # Video mode: batch is (frames, labels) where frames is (B, T, C, H, W)
+            frames, labels = batch
+            frames = frames.to(device)
+            labels = labels.to(device)
 
-        optimizer.zero_grad()
-        outputs = model(images)
+            # frames shape: (batch_size, num_frames, channels, height, width)
+            batch_size = frames.shape[0]
+            num_frames = frames.shape[1]
+
+            # Reshape for model: (batch_size * num_frames, channels, height, width)
+            frames = frames.view(-1, *frames.shape[2:])
+
+            optimizer.zero_grad()
+            outputs = model(frames)  # Shape: (batch_size * num_frames, num_classes)
+
+            # Reshape outputs: (batch_size, num_frames, num_classes)
+            outputs = outputs.view(batch_size, num_frames, -1)
+
+            # Aggregate frame predictions (mean across frames)
+            outputs = outputs.mean(dim=1)  # Shape: (batch_size, num_classes)
+        else:
+            # Image mode: batch is (images, labels)
+            images, labels = batch
+            images = images.to(device)
+            labels = labels.to(device)
+
+            optimizer.zero_grad()
+            outputs = model(images)
+
         loss = F.cross_entropy(outputs, labels)
         loss.backward()
         optimizer.step()
@@ -220,9 +285,15 @@ def train_epoch(model, train_loader, optimizer, device, epoch, sampler=None):
     return avg_loss, correct, total
 
 
-def evaluate(model, test_loader, device):
+def evaluate(model, test_loader, device, video_mode=False):
     """
     Evaluate the model on test/validation data.
+
+    Args:
+        model: The neural network model
+        test_loader: Test/validation data loader
+        device: Device to evaluate on
+        video_mode: If True, expects (frames, labels) where frames is (B, T, C, H, W)
 
     Returns:
         tuple: (avg_loss, correct, total, accuracy) - local metrics
@@ -233,11 +304,25 @@ def evaluate(model, test_loader, device):
     total = 0
 
     with torch.no_grad():
-        for images, labels in test_loader:
-            images = images.to(device)
-            labels = labels.to(device)
+        for batch in test_loader:
+            if video_mode:
+                frames, labels = batch
+                frames = frames.to(device)
+                labels = labels.to(device)
 
-            outputs = model(images)
+                batch_size = frames.shape[0]
+                num_frames = frames.shape[1]
+
+                frames = frames.view(-1, *frames.shape[2:])
+                outputs = model(frames)
+                outputs = outputs.view(batch_size, num_frames, -1).mean(dim=1)
+            else:
+                images, labels = batch
+                images = images.to(device)
+                labels = labels.to(device)
+
+                outputs = model(images)
+
             loss = F.cross_entropy(outputs, labels)
 
             total_loss += loss.item()
@@ -394,6 +479,26 @@ Examples:
         help=f"DataLoader workers (default: {DEFAULT_CONFIG['num_workers']})",
     )
 
+    # Video processing arguments (integrated from Kaggle notebook patterns)
+    parser.add_argument(
+        "--video-mode",
+        action="store_true",
+        help="Process videos at video-level (sample multiple frames per video)",
+    )
+    parser.add_argument(
+        "--num-frames",
+        type=int,
+        default=DEFAULT_CONFIG["num_frames"],
+        help=f"Number of frames to sample per video in video mode (default: {DEFAULT_CONFIG['num_frames']})",
+    )
+    parser.add_argument(
+        "--temporal-model",
+        type=str,
+        default=DEFAULT_CONFIG["temporal_model"],
+        choices=["mean", "lstm", "gru", "attention"],
+        help=f"Temporal aggregation method (default: {DEFAULT_CONFIG['temporal_model']})",
+    )
+
     # Checkpoint arguments
     parser.add_argument(
         "--checkpoint-dir",
@@ -459,6 +564,11 @@ Examples:
     log_on_main(f"Learning Rate: {args.lr}")
     log_on_main(f"Checkpoint:    {args.checkpoint_dir}")
     log_on_main("-" * 70)
+    log_on_main(f"Video Mode:    {args.video_mode}")
+    if args.video_mode:
+        log_on_main(f"Frames/Video:  {args.num_frames}")
+        log_on_main(f"Temporal Agg:  {args.temporal_model}")
+    log_on_main("-" * 70)
     log_on_main(f"Rank:          {rank} / {world_size}")
     log_on_main(f"Device:        {device}")
     log_on_main(f"Pretrained:    {not args.no_pretrained}")
@@ -486,74 +596,124 @@ Examples:
     # -------------------------
     log_on_main("Loading FaceForensics++ dataset...")
 
-    transform = get_faceforensics_transforms(include_resize=not use_precropped)
+    if args.video_mode:
+        # Video-level dataset: groups frames by video
+        full_dataset = VideoFaceForensicsDataset(
+            root=args.dataset_path,
+            compression=args.compression,
+            limit=args.limit,
+            use_precropped=use_precropped,
+            cache_dir=cache_dir,
+            num_frames=args.num_frames,
+        )
 
-    full_dataset = FaceForensicsDataset(
-        root=args.dataset_path,
-        transform=transform,
-        compression=args.compression,
-        limit=args.limit,
-        use_precropped=use_precropped,
-        cache_dir=cache_dir,
-    )
+        # Video dataset handles its own train/val split internally
+        log_on_main(f"Video dataset loaded: {len(full_dataset)} videos")
+        log_on_main(f"  Frames per video: {args.num_frames}")
 
-    dataset_size = len(full_dataset)
-    train_size = int(args.split * dataset_size)
-    val_size = dataset_size - train_size
+        # Create distributed dataloaders for video mode
+        train_loader, train_sampler = get_faceforensics_dataloader(
+            args.dataset_path,
+            args.batch_size,
+            args.num_workers,
+            rank,
+            world_size,
+            compression=args.compression,
+            limit=args.limit,
+            train=True,
+            video_mode=True,
+            num_frames=args.num_frames,
+        )
 
-    # Split dataset
-    torch.manual_seed(42)
-    train_dataset, val_dataset = torch.utils.data.random_split(
-        full_dataset, [train_size, val_size]
-    )
+        val_loader, val_sampler = get_faceforensics_dataloader(
+            args.dataset_path,
+            args.batch_size,
+            args.num_workers,
+            rank,
+            world_size,
+            compression=args.compression,
+            limit=args.limit,
+            train=False,
+            video_mode=True,
+            num_frames=args.num_frames,
+        )
 
-    log_on_main(f"Dataset loaded: {dataset_size} samples")
-    log_on_main(f"  Train: {train_size} | Val: {val_size}")
+        # For validation, use the same sampler for simple loader
+        val_loader_simple = val_loader
 
-    # Create distributed dataloaders
-    train_loader, train_sampler = get_faceforensics_dataloader(
-        args.dataset_path,
-        args.batch_size,
-        args.num_workers,
-        rank,
-        world_size,
-        compression=args.compression,
-        limit=args.limit,
-        train=True,
-    )
+        log_on_main(f"Train videos: {len(train_loader)} batches")
+        log_on_main(f"Val videos:   {len(val_loader)} batches")
 
-    val_loader, val_sampler = get_faceforensics_dataloader(
-        args.dataset_path,
-        args.batch_size,
-        args.num_workers,
-        rank,
-        world_size,
-        compression=args.compression,
-        limit=args.limit,
-        train=False,
-    )
+    else:
+        # Image-level dataset: individual frames
+        transform = get_faceforensics_transforms(include_resize=not use_precropped)
 
-    # Create val_sampler for non-distributed use
-    val_sampler_simple = DistributedSampler(
-        val_dataset,
-        num_replicas=world_size,
-        rank=rank,
-        shuffle=False,
-        seed=42,
-    )
+        full_dataset = FaceForensicsDataset(
+            root=args.dataset_path,
+            transform=transform,
+            compression=args.compression,
+            limit=args.limit,
+            use_precropped=use_precropped,
+            cache_dir=cache_dir,
+        )
 
-    val_loader_simple = DataLoader(
-        val_dataset,
-        batch_size=args.batch_size,
-        sampler=val_sampler_simple,
-        num_workers=args.num_workers,
-        pin_memory=True,
-        persistent_workers=args.num_workers > 0,
-    )
+        dataset_size = len(full_dataset)
+        train_size = int(args.split * dataset_size)
+        val_size = dataset_size - train_size
 
-    log_on_main(
-        f"Train batches: {len(train_loader)} | Val batches: {len(val_loader_simple)}"
-    )
+        # Split dataset
+        torch.manual_seed(42)
+        train_dataset, val_dataset = torch.utils.data.random_split(
+            full_dataset, [train_size, val_size]
+        )
+
+        log_on_main(f"Dataset loaded: {dataset_size} samples")
+        log_on_main(f"  Train: {train_size} | Val: {val_size}")
+
+        # Create distributed dataloaders
+        train_loader, train_sampler = get_faceforensics_dataloader(
+            args.dataset_path,
+            args.batch_size,
+            args.num_workers,
+            rank,
+            world_size,
+            compression=args.compression,
+            limit=args.limit,
+            train=True,
+        )
+
+        val_loader, val_sampler = get_faceforensics_dataloader(
+            args.dataset_path,
+            args.batch_size,
+            args.num_workers,
+            rank,
+            world_size,
+            compression=args.compression,
+            limit=args.limit,
+            train=False,
+        )
+
+        # Create val_sampler for non-distributed use
+        val_sampler_simple = DistributedSampler(
+            val_dataset,
+            num_replicas=world_size,
+            rank=rank,
+            shuffle=False,
+            seed=42,
+        )
+
+        val_loader_simple = DataLoader(
+            val_dataset,
+            batch_size=args.batch_size,
+            sampler=val_sampler_simple,
+            num_workers=args.num_workers,
+            pin_memory=True,
+            persistent_workers=args.num_workers > 0,
+        )
+
+        log_on_main(
+            f"Train batches: {len(train_loader)} | Val batches: {len(val_loader_simple)}"
+        )
 
     # -------------------------
     # Model
@@ -561,12 +721,28 @@ Examples:
     log_on_main("\nInitializing model...")
 
     num_classes = 2  # Binary classification: real=0, fake=1
-    model = get_model(args.model, num_classes=num_classes)
 
-    # For pretrained, we already have pretrained weights via get_efficientnet_binary
-    # For non-pretrained models, we need to handle separately
-    if args.no_pretrained and args.model == "efficientnet_b0":
-        model = get_model(args.model, num_classes=num_classes)  # Will be random init
+    if args.video_mode:
+        # Multi-frame video model with temporal aggregation
+        model = get_multiframe_model(
+            backbone=args.model,
+            temporal_mode=args.temporal_model,
+            num_classes=num_classes,
+            pretrained=not args.no_pretrained,
+            hidden_size=256,
+            num_layers=1,
+        )
+        log_on_main(
+            f"Video model initialized: {args.model} + {args.temporal_model} aggregation"
+        )
+    else:
+        # Standard single-frame model
+        model = get_model(
+            args.model,
+            num_classes=num_classes,
+            pretrained=not args.no_pretrained,
+        )
+        log_on_main(f"Model initialized: {args.model} with {num_classes} classes")
 
     model.to(device)
 
@@ -576,7 +752,9 @@ Examples:
     # DDP wrapper
     model = DDP(model, device_ids=[local_rank] if torch.cuda.is_available() else None)
 
-    log_on_main(f"Model initialized: {args.model} with {num_classes} classes")
+    # Count parameters
+    num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    log_on_main(f"Trainable parameters: {num_params:,}")
 
     # -------------------------
     # Optimizer & Scheduler
@@ -623,7 +801,13 @@ Examples:
         log_on_main("-" * 40)
 
         train_loss, train_correct, train_total = train_epoch(
-            model, train_loader, optimizer, device, epoch, train_sampler
+            model,
+            train_loader,
+            optimizer,
+            device,
+            epoch,
+            train_sampler,
+            video_mode=args.video_mode,
         )
 
         # Synchronize after training
@@ -632,7 +816,7 @@ Examples:
 
         # Validation
         val_loss, val_correct, val_total, val_acc = evaluate(
-            model, val_loader_simple, device
+            model, val_loader_simple, device, video_mode=args.video_mode
         )
 
         # Update learning rate
