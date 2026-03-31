@@ -3,11 +3,14 @@ FaceForensics++ dataset loader with MTCNN face detection.
 
 Provides:
 - FaceForensicsDataset: PyTorch Dataset for FaceForensics++ images
+- VideoDatasetFast: Fast video-level dataset for pre-extracted .npy frames
 - download_faceforensics_dataset: Download dataset via kagglehub
 - get_faceforensics_transforms: Standard transforms for face images
 - precompute_face_crops: Pre-compute face crops for faster training
+- preextract_frames: Pre-extract frames from videos to .npy files
 
 Performance optimizations:
+- Pre-extract frames once and cache as .npy files (fastest loading)
 - Pre-compute face crops once and cache them (avoids MTCNN in __getitem__)
 - Memory-mapped storage for face crops
 - Batch processing for MTCNN
@@ -23,7 +26,11 @@ import kagglehub
 import numpy as np
 from typing import Optional
 
-# Try to import MTCNN from facenet-pytorch
+try:
+    import cv2
+except ImportError:
+    cv2 = None
+
 try:
     from facenet_pytorch import MTCNN
 except ImportError:
@@ -711,3 +718,154 @@ class VideoFaceForensicsDataset(Dataset):
         except Exception as e:
             # Return a blank frame on error
             return torch.zeros(3, 224, 224)
+
+
+class VideoDatasetFast(Dataset):
+    """
+    Fast video-level dataset that loads pre-extracted frames from .npy files.
+
+    This is the fastest loading mode - frames are pre-extracted from videos
+    and stored as numpy arrays (shape: [num_frames, height, width, channels]).
+
+    This matches the pattern from the Kaggle FaceForensics++ notebook where:
+    - Videos are pre-processed to extract N frames
+    - Frames are saved as .npy files (one file per video)
+    - Dataset loads .npy files directly (no video decoding)
+
+    Binary classification:
+    - Real = 0
+    - Fake = 1
+
+    Args:
+        root_dir (str): Root directory containing 'real' and 'fake' subdirectories.
+        transform (transforms.Compose, optional): Transform to apply to each frame.
+        num_frames (int): Number of frames per video. Defaults to 30.
+
+    Returns:
+        tuple: (frames_tensor, label) where frames_tensor is (num_frames, C, H, W).
+    """
+
+    def __init__(
+        self,
+        root_dir: str,
+        transform=None,
+        num_frames: int = 30,
+    ):
+        self.root_dir = root_dir
+        self.num_frames = num_frames
+        self.transform = transform or get_faceforensics_transforms(include_resize=False)
+        self.samples = []
+
+        self._load_samples()
+
+    def _load_samples(self):
+        """Load all .npy file paths from real/fake directories."""
+        for label_name, label in [("real", 0), ("fake", 1)]:
+            label_dir = os.path.join(self.root_dir, label_name)
+            if os.path.exists(label_dir):
+                for filename in os.listdir(label_dir):
+                    if filename.endswith(".npy"):
+                        npy_path = os.path.join(label_dir, filename)
+                        self.samples.append((npy_path, label))
+
+    def __len__(self):
+        return len(self.samples)
+
+    def __getitem__(self, idx):
+        """
+        Get frames from a single video.
+
+        Returns:
+            tuple: (frames_tensor, label) where:
+                - frames_tensor: Tensor of shape (num_frames, C, H, W)
+                - label: Integer label (0 for real, 1 for fake)
+        """
+        npy_path, label = self.samples[idx]
+        frames = np.load(npy_path)  # Shape: (num_frames, H, W, C)
+
+        if self.transform:
+            frames = [
+                self.transform(transforms.functional.to_pil_image(f)) for f in frames
+            ]
+            frames_tensor = torch.stack(frames)
+        else:
+            frames_tensor = torch.stack(
+                [
+                    transforms.ToTensor()(transforms.functional.to_pil_image(f))
+                    for f in frames
+                ]
+            )
+
+        return frames_tensor, label
+
+
+def preextract_frames(
+    root_dir: str,
+    output_dir: str,
+    num_frames: int = 30,
+    frame_size: int = 224,
+):
+    """
+    Pre-extract frames from videos and save as .npy files.
+
+    This function processes videos from the FaceForensics++ dataset and
+    extracts uniformly sampled frames, saving them as numpy arrays for
+    fast loading during training.
+
+    Args:
+        root_dir: Root directory containing 'real' and 'fake' subdirectories with .mp4 files.
+        output_dir: Output directory for .npy files (will create real/fake subdirs).
+        num_frames: Number of frames to extract per video.
+        frame_size: Size to resize frames to (default 224x224).
+
+    Example:
+        >>> preextract_frames(
+        ...     "/path/to/faceforensics/FF++",
+        ...     "/path/to/working/frames",
+        ...     num_frames=30
+        ... )
+    """
+    os.makedirs(output_dir, exist_ok=True)
+
+    for label in ["real", "fake"]:
+        src_folder = os.path.join(root_dir, label)
+        dst_folder = os.path.join(output_dir, label)
+        os.makedirs(dst_folder, exist_ok=True)
+
+        if not os.path.exists(src_folder):
+            print(f"[WARN] Source folder not found: {src_folder}")
+            continue
+
+        videos = [v for v in os.listdir(src_folder) if v.endswith(".mp4")]
+
+        for vid in videos:
+            vid_path = os.path.join(src_folder, vid)
+            out_path = os.path.join(dst_folder, vid.replace(".mp4", ".npy"))
+
+            if os.path.exists(out_path):
+                continue
+
+            cap = cv2.VideoCapture(vid_path)
+            total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            indices = np.linspace(0, total - 1, num_frames, dtype=int)
+
+            frames = []
+            for idx in indices:
+                cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
+                ret, frame = cap.read()
+                if ret:
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    frame = cv2.resize(frame, (frame_size, frame_size))
+                    frames.append(frame)
+            cap.release()
+
+            while len(frames) < num_frames:
+                frames.append(
+                    frames[-1]
+                    if frames
+                    else np.zeros((frame_size, frame_size, 3), dtype=np.uint8)
+                )
+
+            np.save(out_path, np.array(frames[:num_frames]))
+
+    print(f"[INFO] Frame pre-extraction complete. Output: {output_dir}")

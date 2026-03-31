@@ -72,9 +72,11 @@ from src.coci.models.model import get_model, get_multiframe_model
 from src.coci.data_ingestor.faceforensics import (
     FaceForensicsDataset,
     VideoFaceForensicsDataset,
+    VideoDatasetFast,
     download_faceforensics_dataset,
     get_faceforensics_transforms,
     precompute_face_crops,
+    preextract_frames,
 )
 from src.coci.checkpointing.checkpoint_manager import CheckpointManager
 from src.coci.config import (
@@ -498,6 +500,16 @@ Examples:
         choices=["mean", "lstm", "gru", "attention"],
         help=f"Temporal aggregation method (default: {DEFAULT_CONFIG['temporal_model']})",
     )
+    parser.add_argument(
+        "--fast-video-mode",
+        action="store_true",
+        help="Use pre-extracted .npy frames for fastest loading (run --extract-frames first)",
+    )
+    parser.add_argument(
+        "--extract-frames",
+        action="store_true",
+        help="Pre-extract frames from videos to .npy files for fast loading",
+    )
 
     # Checkpoint arguments
     parser.add_argument(
@@ -523,6 +535,24 @@ Examples:
     # Handle dataset download
     if args.download_dataset:
         download_and_prepare_dataset()
+        return 0
+
+    # Handle frame extraction
+    if args.extract_frames:
+        log_on_main("\n" + "=" * 60)
+        log_on_main("Pre-extracting frames from videos")
+        log_on_main("=" * 60)
+        frames_output_dir = os.path.join(args.dataset_path, "frames")
+        preextract_frames(
+            root_dir=args.dataset_path,
+            output_dir=frames_output_dir,
+            num_frames=args.num_frames,
+        )
+        log_on_main(f"\n✓ Frames extracted to: {frames_output_dir}")
+        log_on_main("\nYou can now run training with:")
+        log_on_main(
+            f"  python scripts/train_faceforensics.py --fast-video-mode --dataset-path {args.dataset_path}"
+        )
         return 0
 
     # -------------------------
@@ -564,10 +594,13 @@ Examples:
     log_on_main(f"Learning Rate: {args.lr}")
     log_on_main(f"Checkpoint:    {args.checkpoint_dir}")
     log_on_main("-" * 70)
-    log_on_main(f"Video Mode:    {args.video_mode}")
-    if args.video_mode:
+    log_on_main(f"Video Mode:    {args.video_mode or args.fast_video_mode}")
+    if args.video_mode or args.fast_video_mode:
         log_on_main(f"Frames/Video:  {args.num_frames}")
-        log_on_main(f"Temporal Agg:  {args.temporal_model}")
+        if args.fast_video_mode:
+            log_on_main(f"Fast Mode:     Pre-extracted .npy frames")
+        else:
+            log_on_main(f"Temporal Agg:  {args.temporal_model}")
     log_on_main("-" * 70)
     log_on_main(f"Rank:          {rank} / {world_size}")
     log_on_main(f"Device:        {device}")
@@ -596,7 +629,78 @@ Examples:
     # -------------------------
     log_on_main("Loading FaceForensics++ dataset...")
 
-    if args.video_mode:
+    if args.fast_video_mode:
+        # Fastest loading mode: use pre-extracted .npy frames
+        frames_dir = os.path.join(args.dataset_path, "frames")
+
+        if not os.path.exists(frames_dir):
+            log_on_main(f"\n✗ Extracted frames not found at: {frames_dir}")
+            log_on_main("\nRun frame extraction first:")
+            log_on_main(
+                f"  python scripts/train_faceforensics.py --extract-frames --dataset-path {args.dataset_path}"
+            )
+            if is_distributed_initialized():
+                cleanup_distributed()
+            return 1
+
+        full_dataset = VideoDatasetFast(
+            root_dir=frames_dir,
+            num_frames=args.num_frames,
+        )
+
+        dataset_size = len(full_dataset)
+        train_size = int(args.split * dataset_size)
+        val_size = dataset_size - train_size
+
+        torch.manual_seed(42)
+        train_dataset, val_dataset = torch.utils.data.random_split(
+            full_dataset, [train_size, val_size]
+        )
+
+        log_on_main(f"Fast video dataset loaded: {dataset_size} videos")
+        log_on_main(f"  Frames per video: {args.num_frames}")
+        log_on_main(f"  Train: {train_size} | Val: {val_size}")
+
+        train_sampler = DistributedSampler(
+            train_dataset,
+            num_replicas=world_size,
+            rank=rank,
+            shuffle=True,
+            seed=42,
+        )
+        val_sampler = DistributedSampler(
+            val_dataset,
+            num_replicas=world_size,
+            rank=rank,
+            shuffle=False,
+            seed=42,
+        )
+
+        train_loader = DataLoader(
+            train_dataset,
+            batch_size=args.batch_size,
+            sampler=train_sampler,
+            num_workers=args.num_workers,
+            pin_memory=True,
+            persistent_workers=args.num_workers > 0,
+            worker_init_fn=seed_worker,
+        )
+        val_loader = DataLoader(
+            val_dataset,
+            batch_size=args.batch_size,
+            sampler=val_sampler,
+            num_workers=args.num_workers,
+            pin_memory=True,
+            persistent_workers=args.num_workers > 0,
+            worker_init_fn=seed_worker,
+        )
+        val_loader_simple = val_loader
+
+        log_on_main(
+            f"Train batches: {len(train_loader)} | Val batches: {len(val_loader)}"
+        )
+
+    elif args.video_mode:
         # Video-level dataset: groups frames by video
         full_dataset = VideoFaceForensicsDataset(
             root=args.dataset_path,
@@ -807,7 +911,7 @@ Examples:
             device,
             epoch,
             train_sampler,
-            video_mode=args.video_mode,
+            video_mode=args.video_mode or args.fast_video_mode,
         )
 
         # Synchronize after training
@@ -816,7 +920,10 @@ Examples:
 
         # Validation
         val_loss, val_correct, val_total, val_acc = evaluate(
-            model, val_loader_simple, device, video_mode=args.video_mode
+            model,
+            val_loader_simple,
+            device,
+            video_mode=args.video_mode or args.fast_video_mode,
         )
 
         # Update learning rate

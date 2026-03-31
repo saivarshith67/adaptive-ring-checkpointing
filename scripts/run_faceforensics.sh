@@ -72,9 +72,15 @@ CHECKPOINT_INTERVAL=5
 SPLIT=0.8
 
 # --- Video Mode Settings (from Kaggle notebook patterns) ---
-USE_VIDEO_MODE=true                    # Set to true for video-level processing
-NUM_FRAMES=8                           # Frames to sample per video
+# USE_VIDEO_MODE=true: Sample frames from video directories (slower but no preprocessing)
+# USE_FAST_VIDEO_MODE=true: Use pre-extracted .npy frames (fastest loading)
+USE_VIDEO_MODE=false                    # Video-level processing with frame sampling
+USE_FAST_VIDEO_MODE=true                # Use pre-extracted .npy frames (recommended)
+NUM_FRAMES=30                           # Frames per video (30 for fast mode from Kaggle)
 TEMPORAL_MODEL="mean"                  # mean | lstm | gru | attention
+
+# --- Pre-extraction Settings (for fast video mode) ---
+EXTRACT_FRAMES=false                    # Set to true to extract frames before training
 
 # --- Optional Flags ---
 EXTRA_FLAGS=""
@@ -85,7 +91,13 @@ echo "=================================================="
 echo "FaceForensics++ Deepfake Detection Training"
 echo "=================================================="
 echo "  GPUs:          $NUM_GPUS"
-echo "  Mode:          $( [ "$USE_VIDEO_MODE" = true ] && echo "Video ($NUM_FRAMES frames, $TEMPORAL_MODEL)" || echo "Image" )"
+if [ "$USE_FAST_VIDEO_MODE" = true ]; then
+    echo "  Mode:          Fast Video ($NUM_FRAMES frames, pre-extracted)"
+elif [ "$USE_VIDEO_MODE" = true ]; then
+    echo "  Mode:          Video ($NUM_FRAMES frames, $TEMPORAL_MODEL)"
+else
+    echo "  Mode:          Image"
+fi
 echo "  Model:         $MODEL"
 echo "  Epochs:        $EPOCHS"
 echo "  Batch Size:    $BATCH_SIZE (per GPU)"
@@ -109,7 +121,9 @@ CMD="$LAUNCHER scripts/train_faceforensics.py \
     --split \"$SPLIT\""
 
 # Add video mode flags
-if [ "$USE_VIDEO_MODE" = true ]; then
+if [ "$USE_FAST_VIDEO_MODE" = true ]; then
+    CMD="$CMD --fast-video-mode --num-frames $NUM_FRAMES"
+elif [ "$USE_VIDEO_MODE" = true ]; then
     CMD="$CMD --video-mode --num-frames $NUM_FRAMES --temporal-model $TEMPORAL_MODEL"
 fi
 
