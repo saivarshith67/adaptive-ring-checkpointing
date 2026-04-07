@@ -20,19 +20,9 @@ fi
 echo "Found $GPU_COUNT GPU(s)."
 
 # --- Determine number of GPUs to use ---
-if [ "$NUM_GPUS_ARG" = "auto" ]; then
-    NUM_GPUS=$GPU_COUNT
-elif [ "$NUM_GPUS_ARG" -gt 0 ] 2>/dev/null; then
-    if [ "$NUM_GPUS_ARG" -gt "$GPU_COUNT" ]; then
-        echo "Warning: Requested $NUM_GPUS_ARG GPUs but only $GPU_COUNT available. Using $GPU_COUNT."
-        NUM_GPUS=$GPU_COUNT
-    else
-        NUM_GPUS=$NUM_GPUS_ARG
-    fi
-else
-    echo "Invalid GPU count: $NUM_GPUS_ARG. Using 1."
-    NUM_GPUS=1
-fi
+# Override: Use only 4 least-used GPUs to avoid memory contention
+NUM_GPUS=4
+echo "Using 4 least-used GPUs to avoid memory contention."
 
 echo "Using $NUM_GPUS GPU(s) for training."
 
@@ -63,7 +53,7 @@ DATASET_PATH="./data/faceforensics/FF++"   # Path to FaceForensics++ dataset
 COMPRESSION="c23"                      # c23 (visually lossless) or c40 (compressed)
 MODEL="efficientnet_b0"                # efficientnet_b0 | resnet18 | resnet50 | mobilenet
 EPOCHS=20
-BATCH_SIZE=8                           # Reduced for video mode (multiple frames)
+BATCH_SIZE=2                           # Reduced for video mode (multiple frames)
 LR=1e-4
 WEIGHT_DECAY=1e-5
 NUM_WORKERS=4
@@ -76,7 +66,7 @@ SPLIT=0.8
 # USE_FAST_VIDEO_MODE=true: Use pre-extracted .npy frames (fastest loading)
 USE_VIDEO_MODE=false                    # Video-level processing with frame sampling
 USE_FAST_VIDEO_MODE=true                # Use pre-extracted .npy frames (recommended)
-NUM_FRAMES=30                           # Frames per video (30 for fast mode from Kaggle)
+NUM_FRAMES=16                           # Frames per video (30 for fast mode from Kaggle)
 TEMPORAL_MODEL="mean"                  # mean | lstm | gru | attention
 
 # --- Pre-extraction Settings (for fast video mode) ---
