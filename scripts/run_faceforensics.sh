@@ -59,7 +59,7 @@ elif [ -f "venv/bin/activate" ]; then
 fi
 
 # --- Training Arguments ---
-DATASET_PATH="./data/faceforensics"   # Path to FaceForensics++ dataset
+DATASET_PATH="./data/faceforensics/FF++"   # Path to FaceForensics++ dataset
 COMPRESSION="c23"                      # c23 (visually lossless) or c40 (compressed)
 MODEL="efficientnet_b0"                # efficientnet_b0 | resnet18 | resnet50 | mobilenet
 EPOCHS=20
