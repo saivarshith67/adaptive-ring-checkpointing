@@ -47,16 +47,16 @@
 
 ### Fault Injection
 
-- [ ] **FLTI-01**: User can specify target rank(s) for fault injection via configuration
-- [ ] **FLTI-02**: Fault injection raises exception only on specified ranks, not all
-- [ ] **FLTI-03**: Non-injected ranks continue execution or handle exception gracefully
+- [x] **FLTI-01**: User can specify target rank(s) for fault injection via configuration
+- [x] **FLTI-02**: Fault injection raises exception only on specified ranks, not all
+- [x] **FLTI-03**: Non-injected ranks continue execution or handle exception gracefully
 
 ### Exception Handling
 
-- [ ] **EXCP-01**: Training loop wraps epoch execution in try/except block
-- [ ] **EXCP-02**: Exception triggers dist.barrier() synchronization before checkpoint save
-- [ ] **EXCP-03**: Rank 0 saves emergency checkpoint during exception handling
-- [ ] **EXCP-04**: Exception propagates to trigger torchrun auto-restart
+- [x] **EXCP-01**: Training loop wraps epoch execution in try/except block
+- [x] **EXCP-02**: Exception triggers dist.barrier() synchronization before checkpoint save
+- [x] **EXCP-03**: Rank 0 saves emergency checkpoint during exception handling
+- [x] **EXCP-04**: Exception propagates to trigger torchrun auto-restart
 
 ### Checkpoint Recovery
 
@@ -103,13 +103,13 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FLTI-01 | Phase 5 | Pending |
-| FLTI-02 | Phase 5 | Pending |
-| FLTI-03 | Phase 5 | Pending |
-| EXCP-01 | Phase 4 | Pending |
-| EXCP-02 | Phase 4 | Pending |
-| EXCP-03 | Phase 4 | Pending |
-| EXCP-04 | Phase 4 | Pending |
+| FLTI-01 | Phase 5 | Complete |
+| FLTI-02 | Phase 5 | Complete |
+| FLTI-03 | Phase 5 | Complete |
+| EXCP-01 | Phase 4 | Complete |
+| EXCP-02 | Phase 4 | Complete |
+| EXCP-03 | Phase 4 | Complete |
+| EXCP-04 | Phase 4 | Complete |
 | RCVR-01 | Phase 6 | Pending |
 | RCVR-02 | Phase 6 | Pending |
 | RCVR-03 | Phase 6 | Pending |

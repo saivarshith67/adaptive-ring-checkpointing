@@ -17,8 +17,8 @@
 
 ### v1.1 Milestone (Current)
 
-- [ ] **Phase 4: Exception Handling** - Wrap training loop with try/except for fault detection and graceful handling
-- [ ] **Phase 5: Multi-GPU Fault Injection** - Add rank-aware fault injection to simulate node/GPU failures
+- [x] **Phase 4: Exception Handling** - Wrap training loop with try/except for fault detection and graceful handling (completed 2026-04-17)
+- [x] **Phase 5: Multi-GPU Fault Injection** - Add rank-aware fault injection to simulate node/GPU failures (completed 2026-04-17)
 - [ ] **Phase 6: Checkpoint Recovery** - Resume training from checkpoint after failure detected
 - [ ] **Phase 7: Fault Tolerance Verification** - End-to-end fault injection and recovery testing
 
@@ -107,7 +107,7 @@
 4. Exception propagates to trigger torchrun auto-restart
 5. Other ranks wait at barrier during exception handling (no hang)
 
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 - [ ] 04-01-PLAN.md — Try/except wrapper, barrier sync, emergency checkpoint
 
@@ -181,8 +181,8 @@
 | 1. Distributed Infrastructure | 2/2 | Completed | 2026-03-16 |
 | 2. DDP Model & Checkpoint | 1/1 | Completed | 2026-03-16 |
 | 3. Dataset Integration | 1/1 | Completed | 2026-03-16 |
-| 4. Exception Handling | 1/1 | Complete | 2026-04-17 |
-| 5. Multi-GPU Fault Injection | 0/1 | Planned | |
+| 4. Exception Handling | 1/1 | Completed | 2026-04-17 |
+| 5. Multi-GPU Fault Injection | 1/1 | Completed | 2026-04-17 |
 | 6. Checkpoint Recovery | 0/1 | Planned | |
 | 7. Fault Tolerance Verification | 0/1 | Planned | |
 
