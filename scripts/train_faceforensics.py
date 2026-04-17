@@ -79,6 +79,7 @@ from src.coci.data_ingestor.faceforensics import (
     preextract_frames,
 )
 from src.coci.checkpointing.checkpoint_manager import CheckpointManager
+from src.coci.fault.fault_injector import FaultInjector
 from src.coci.config import (
     FACEFORENSICS_DATASET_PATH,
     MODEL_NAME,
@@ -208,7 +209,14 @@ def get_faceforensics_dataloader(
 # Training Functions
 # -------------------------------------------------
 def train_epoch(
-    model, train_loader, optimizer, device, epoch, sampler=None, video_mode=False
+    model,
+    train_loader,
+    optimizer,
+    device,
+    epoch,
+    sampler=None,
+    video_mode=False,
+    fault_injector=None,
 ):
     """
     Train for one epoch.
@@ -221,6 +229,7 @@ def train_epoch(
         epoch: Current epoch number
         sampler: DistributedSampler for epoch synchronization
         video_mode: If True, expects (frames, labels) where frames is (B, T, C, H, W)
+        fault_injector: Optional FaultInjector for simulating failures
 
     Returns:
         tuple: (avg_loss, correct, total) - local metrics
@@ -236,6 +245,10 @@ def train_epoch(
     total = 0
 
     for batch_idx, batch in enumerate(train_loader):
+        # Periodic fault injection check (every 100 batches)
+        if fault_injector is not None and batch_idx % 100 == 0:
+            fault_injector.maybe_fail()
+
         if video_mode:
             # Video mode: batch is (frames, labels) where frames is (B, T, C, H, W)
             frames, labels = batch
@@ -509,6 +522,25 @@ Examples:
         "--extract-frames",
         action="store_true",
         help="Pre-extract frames from videos to .npy files for fast loading",
+    )
+
+    # Fault injection arguments
+    parser.add_argument(
+        "--inject-fault",
+        action="store_true",
+        help="Enable fault injection to simulate GPU/node failures",
+    )
+    parser.add_argument(
+        "--inject-rank",
+        type=int,
+        default=0,
+        help="Target rank for fault injection (default: 0 = rank 0 only)",
+    )
+    parser.add_argument(
+        "--inject-rate",
+        type=float,
+        default=0.02,
+        help="Failure rate per second for fault injection (default: 0.02)",
     )
 
     # Checkpoint arguments
@@ -889,6 +921,20 @@ Examples:
         log_on_main(f"Resuming from epoch {start_epoch}")
 
     # -------------------------
+    # Fault Injector (optional)
+    # -------------------------
+    fault_injector = None
+    if args.inject_fault:
+        fault_injector = FaultInjector(
+            failure_rate_per_second=args.inject_rate,
+            target_rank=args.inject_rank,
+            rank=rank,
+        )
+        log_on_main(
+            f"Fault injection enabled: target_rank={args.inject_rank}, rate={args.inject_rate}/sec"
+        )
+
+    # -------------------------
     # Training Loop
     # -------------------------
     log_on_main("\n" + "=" * 70)
@@ -913,6 +959,7 @@ Examples:
                 epoch,
                 train_sampler,
                 video_mode=args.video_mode or args.fast_video_mode,
+                fault_injector=fault_injector,
             )
 
             # Synchronize after training
