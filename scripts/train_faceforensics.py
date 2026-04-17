@@ -898,69 +898,88 @@ Examples:
     best_val_acc = 0.0
 
     for epoch in range(start_epoch, args.epochs):
-        epoch_start = time.time()
+        try:
+            epoch_start = time.time()
 
-        # Training
-        log_on_main(f"\nEpoch {epoch + 1}/{args.epochs}")
-        log_on_main("-" * 40)
+            # Training
+            log_on_main(f"\nEpoch {epoch + 1}/{args.epochs}")
+            log_on_main("-" * 40)
 
-        train_loss, train_correct, train_total = train_epoch(
-            model,
-            train_loader,
-            optimizer,
-            device,
-            epoch,
-            train_sampler,
-            video_mode=args.video_mode or args.fast_video_mode,
-        )
+            train_loss, train_correct, train_total = train_epoch(
+                model,
+                train_loader,
+                optimizer,
+                device,
+                epoch,
+                train_sampler,
+                video_mode=args.video_mode or args.fast_video_mode,
+            )
 
-        # Synchronize after training
-        if is_distributed_initialized():
+            # Synchronize after training
+            if is_distributed_initialized():
+                barrier()
+
+            # Validation
+            val_loss, val_correct, val_total, val_acc = evaluate(
+                model,
+                val_loader_simple,
+                device,
+                video_mode=args.video_mode or args.fast_video_mode,
+            )
+
+            # Update learning rate
+            scheduler.step()
+
+            # Aggregate metrics
+            if is_distributed_initialized():
+                train_loss, train_acc = reduce_metrics(
+                    train_loss, train_correct, train_total, world_size
+                )
+                val_loss, val_acc = reduce_metrics(
+                    val_loss, val_correct, val_total, world_size
+                )
+            else:
+                train_acc = (
+                    100.0 * train_correct / train_total if train_total > 0 else 0.0
+                )
+
+            epoch_time = time.time() - epoch_start
+
+            # Log results (main process only)
+            log_on_main(f"  Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.2f}%")
+            log_on_main(
+                f"  Val Loss:   {val_loss:.4f} | Val Acc:   {val_acc:.2f}% | Time: {epoch_time:.1f}s"
+            )
+            log_on_main(f"  LR: {optimizer.param_groups[0]['lr']:.6f}")
+
+            # Save checkpoint
+            should_save = (epoch + 1) % args.checkpoint_interval == 0
+            is_best = val_acc > best_val_acc
+
+            if should_save or is_best:
+                checkpoint_manager.save(
+                    model, optimizer, epoch + 1, val_loss, metric=val_acc
+                )
+
+                if is_best:
+                    best_val_acc = val_acc
+                    log_on_main(f"  ✓ New best model! Val Acc: {val_acc:.2f}%")
+
+        except Exception as e:
+            # Barrier sync first - prevents rank 0 from saving while others are still running
             barrier()
 
-        # Validation
-        val_loss, val_correct, val_total, val_acc = evaluate(
-            model,
-            val_loader_simple,
-            device,
-            video_mode=args.video_mode or args.fast_video_mode,
-        )
-
-        # Update learning rate
-        scheduler.step()
-
-        # Aggregate metrics
-        if is_distributed_initialized():
-            train_loss, train_acc = reduce_metrics(
-                train_loss, train_correct, train_total, world_size
-            )
-            val_loss, val_acc = reduce_metrics(
-                val_loss, val_correct, val_total, world_size
-            )
-        else:
-            train_acc = 100.0 * train_correct / train_total if train_total > 0 else 0.0
-
-        epoch_time = time.time() - epoch_start
-
-        # Log results (main process only)
-        log_on_main(f"  Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.2f}%")
-        log_on_main(
-            f"  Val Loss:   {val_loss:.4f} | Val Acc:   {val_acc:.2f}% | Time: {epoch_time:.1f}s"
-        )
-        log_on_main(f"  LR: {optimizer.param_groups[0]['lr']:.6f}")
-
-        # Save checkpoint
-        should_save = (epoch + 1) % args.checkpoint_interval == 0
-        is_best = val_acc > best_val_acc
-
-        if should_save or is_best:
+            # Emergency checkpoint save with current epoch and val_loss
             checkpoint_manager.save(
-                model, optimizer, epoch + 1, val_loss, metric=val_acc
+                model, optimizer, epoch, val_loss if "val_loss" in dir() else 0.0
             )
 
-            if is_best:
-                best_val_acc = val_acc
-                log_on_main(f"  ✓ New best model! Val Acc: {val_acc:.2f}%")
+            # Log error
+            log_on_main(f"Training failed at epoch {epoch}: {e}")
+            log_on_main("Saving emergency checkpoint and exiting...")
+
+            # Re-raise to trigger torchrun restart
+            raise
 
     # -------------------------
     # Training Complete
