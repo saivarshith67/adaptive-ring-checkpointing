@@ -107,6 +107,43 @@ Prioritize in this order:
 
 ---
 
+## Fault Injection & Recovery Features (v1.1)
+
+### Table Stakes (v1.1)
+
+New features for fault injection in multi-GPU training:
+
+| Feature | Why Required | Complexity | Dependencies |
+|---------|--------------|------------|--------------|
+| **Rank-Specific Fault Injection** | Faults must be injectable across DDP ranks. Existing FaultInjector injects on all ranks identically. | Low | FaultInjector (existing) |
+| **Exception Handling in Training Loop** | Catches RuntimeError from fault injection. Without this, exception crashes all ranks inconsistently. | Low | DDP training loop |
+| **Barrier Sync on Exception** | All ranks must reach consistent state before checkpoint. Without this, ranks desync. | Low | DDP training loop |
+| **Rank-Guarded Emergency Checkpoint** | Only rank 0 saves on failure. Uses existing checkpoint I/O. | Low | Exception handling |
+| **Checkpoint Recovery on Restart** | Training resumes from saved epoch. Uses existing `load_latest()`. | Low | Exception handling |
+
+### Differentiators (v1.1)
+
+Optional features for advanced fault tolerance:
+
+| Feature | Value Proposition | Complexity | Dependencies |
+|---------|------------------|------------|--------------|
+| **NCCL Watchdog Timeout Config** | Configure `TORCH_NCCL_ASYNC_ERROR_HANDLING=1` for faster failure detection. | Low | Table stakes |
+| **Heartbeat-Based Failure Detection** | Periodic health checks across ranks (via torchft or custom). | High | Process group |
+| **Live Recovery Without Restart** | Peer-to-peer weight transfer on failure (torchft). | High | Complex |
+| **Automatic Restart via torchrun** | Elastic torchrun handles restarts automatically. | Medium | torchrun |
+
+### Anti-Features (v1.1)
+
+Explicitly NOT building for v1.1:
+
+| Anti-Feature | Why Avoid | What to Do Instead |
+|--------------|-----------|-------------------|
+| **Live Recovery (torchft)** | Complex library integration. Not needed for checkpoint-based testing. | Checkpoint-based recovery |
+| **Multi-Node Fault Tolerance** | Out of scope. Single-node multi-GPU only. | Single-node only |
+| **GPU Direct Peer Recovery** | Production feature. Not needed for testing. | Checkpoint reload |
+
+---
+
 ## Sources
 
 - **PyTorch DDP Tutorial**: https://pytorch.org/tutorials/beginner/ddp_series_intro
@@ -114,3 +151,5 @@ Prioritize in this order:
 - **DataLoader Optimization**: https://thelinuxcode.com/how-i-use-pytorch-dataloader-for-fast-reliable-training-pipelines-in-2026/
 - **Face Preprocessing**: https://medium.com/@tunamuna29/face-landmarks-detection-with-deep-learning-using-pytorch-692ae27e2fdc
 - **Checkpointing in DDP**: https://discuss.pytorch.org/t/right-ways-to-serialize-and-load-ddp-model-checkpoints/122719
+- **PyTorch Fault Tolerant Tutorial**: https://pytorch.org/tutorials/beginner/ddp_series_fault_tolerance
+- **Meta torchft**: https://github.com/meta-pytorch/torchft

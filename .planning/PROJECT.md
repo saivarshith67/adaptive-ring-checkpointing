@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A PyTorch-based training pipeline with adaptive checkpoint timing strategies for fault-tolerant deep learning training. The system optimizes checkpoint frequency based on training dynamics to minimize overhead while ensuring reliable recovery from failures.
+A PyTorch-based training pipeline with adaptive checkpoint timing strategies for fault-tolerant deep learning training. The system optimizes checkpoint frequency based on training dynamics to minimize overhead while ensuring reliable recovery from failures. Currently adding fault injection and automatic recovery capabilities for multi-GPU training.
 
 ## Core Value
 
@@ -19,15 +19,27 @@ Enable reliable long-running deep learning training with minimal checkpoint over
 
 ### Active
 
-- [ ] Integrate Deep Fake Detection dataset (DFD Entire Original) from Kaggle
-- [ ] Implement multi-GPU training support using DataParallel/DistributedDataParallel
-- [ ] Adapt training pipeline for new dataset structure (face images)
-- [ ] Verify multi-GPU training works correctly
+- [ ] Implement fault injection in multi-GPU to simulate node failures
+- [ ] Detect GPU/node failures during training
+- [ ] Automatically recover from previous checkpoint after failure
+- [ ] Verify fault tolerance end-to-end
 
 ### Out of Scope
 
 - Real-time deep fake detection inference — not part of this project
 - Model architecture changes beyond data loading
+
+## Current Milestone: v1.1 Fault Tolerance
+
+**Goal:** Enable multi-GPU training to recover from node/GPU failures by injecting faults and recovering from checkpoints.
+
+**Target features:**
+- Fault injection mechanism to simulate GPU/node failures in multi-GPU training
+- Automatic failure detection during training
+- Automatic recovery from previous checkpoint after failure detected
+- End-to-end fault tolerance verification
+
+---
 
 ## Context
 
@@ -52,9 +64,11 @@ Enable reliable long-running deep learning training with minimal checkpoint over
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Use Kaggle DFD dataset | User-specified target dataset | — Pending |
-| Multi-GPU via PyTorch DDP | Standard approach for multi-GPU training | — Pending |
-| Keep existing checkpoint strategies | Works regardless of dataset/model | — Pending |
+| Use Kaggle DFD dataset | User-specified target dataset | ✓ Complete |
+| Multi-GPU via PyTorch DDP | Standard approach for multi-GPU training | ✓ Complete |
+| Keep existing checkpoint strategies | Works regardless of dataset/model | ✓ Complete |
+| Fault injection via process kill | Simulate real-world node failures | — Pending |
+| Auto-recovery from checkpoint | Resume training after failure detected | — Pending |
 
 ---
-*Last updated: 2026-03-16 after project initialization*
+*Last updated: 2026-04-17 after v1.1 milestone started*

@@ -429,7 +429,368 @@ for i, batch in enumerate(dataloader):
 
 ---
 
-## Confidence Assessment
+---
+
+## NEW: Fault Injection & Recovery Pitfalls (v1.1)
+
+### Critical: Uncoordinated Exception Handling
+
+**What goes wrong:**  
+One rank raises RuntimeError from fault injection, other ranks continue training, causing barrier deadlock.
+
+**Why it happens:**  
+Exception raised on rank 0 but rank 1 continues. Next barrier() or all_reduce in training loop hangs indefinitely waiting for rank 0.
+
+**Consequences:**
+- Training hangs indefinitely
+- Force kill required
+- Progress lost since last checkpoint
+
+**Prevention:**
+```python
+# Wrap training loop with exception handling
+for epoch in range(start_epoch, cfg.epochs):
+    try:
+        avg_loss = train_epoch(model, train_loader, optimizer, device, epoch, train_sampler)
+        
+        # Fault injection after forward pass
+        if inject_fault and fault_injector:
+            fault_injector.maybe_fail()  # May raise RuntimeError
+            
+    except RuntimeError as e:
+        log_on_main(f"Fault detected: {e}")
+        
+        # Barrier FIRST - ensure all ranks reach consistent state
+        if is_distributed_initialized():
+            barrier()
+        
+        # Emergency checkpoint on rank 0
+        checkpoint_manager.save(model, optimizer, epoch, avg_loss)
+        
+        # Cleanup and exit cleanly
+        cleanup_distributed()
+        raise  # Re-raise for test harness
+```
+
+**Detection:**  
+Training hangs with no output after "Epoch N" logging. `dist.barrier()` never completes.
+
+**Phase Mapping:**  
+- **Phase 2: Exception Handling** — Core to fault tolerance
+
+---
+
+### Critical: Rank-Specific Fault Injection Not Reaching All Ranks
+
+**What goes wrong:**  
+Fault injected only on rank 0, but test requires all ranks to fail identically for proper recovery testing.
+
+**Why it happens:**  
+Existing `FaultInjector` injects on whichever process calls it. Without rank coordination, only one rank fails.
+
+**Consequences:**
+- Single-rank failure (not multi-GPU fault simulation)
+- Recovery behavior not properly tested
+
+**Prevention:**
+```python
+class FaultInjector:
+    def __init__(self, failure_rate_per_second=0.02, target_rank=None):
+        self.lambda_rate = failure_rate_per_second
+        self.target_rank = target_rank  # None = all ranks, or specific rank
+        
+    def maybe_fail(self, rank):
+        # If target_rank is None, inject on ALL ranks
+        # If target_rank is specified, inject only on that rank
+        if self.target_rank is not None and rank != self.target_rank:
+            return
+        
+        # Poisson failure logic
+        ...
+
+# Usage in training loop
+if inject_fault and fault_injector:
+    fault_injector.maybe_fail(rank)
+```
+
+**Detection:**  
+Only rank 0 reports "Injected failure" message, other ranks continue.
+
+**Phase Mapping:**  
+- **Phase 1: Multi-GPU Fault Injection** — Modify existing FaultInjector
+
+---
+
+### Critical: Checkpoint Save During Exception Not Synchronized
+
+**What goes wrong:**  
+Exception triggers checkpoint save but other ranks may have already exited, causing incomplete checkpoint.
+
+**Why it happens:**  
+Exception caught but no barrier before checkpoint. Some ranks may have started exiting before rank 0 saves.
+
+**Prevention:**
+```python
+except RuntimeError as e:
+    # BARRIER FIRST - sync all ranks
+    if is_distributed_initialized():
+        barrier()  # All ranks must reach here
+    
+    # Now checkpoint - all ranks synchronized
+    checkpoint_manager.save(model, optimizer, epoch, avg_loss)
+```
+
+**Detection:**  
+Checkpoint file corrupted or missing optimizer state.
+
+**Phase Mapping:**  
+- **Phase 2: Exception Handling** — Post-exception coordination
+
+---
+
+### Moderate: Missing Epoch Tracking After Recovery
+
+**What goes wrong:**  
+Training resumes from epoch 0 after recovery instead of from saved epoch.
+
+**Why it happens:**  
+`CheckpointManager.load_latest()` returns epoch + 1 to continue from next epoch, but training loop starts from config.epochs or doesn't use the returned value.
+
+**Prevention:**
+```python
+# Use the returned epoch from load_latest
+start_epoch = checkpoint_manager.load_latest(model, optimizer, device)
+# Returns: next epoch to train (epoch from checkpoint + 1)
+# If no checkpoint: returns 0 to start fresh
+
+# Continue training from start_epoch
+for epoch in range(start_epoch, cfg.epochs):
+    ...
+
+# NOTE: load_latest already returns epoch + 1 for resume
+```
+
+**Detection:**  
+Model retrained from beginning after manual restart, losing progress.
+
+**Phase Mapping:**  
+- **Phase 3: Checkpoint Recovery** — Ensure epoch tracking
+
+---
+
+### Moderate: NCCL Watchdog Hangs Without Async Error Handling
+
+**What goes wrong:**  
+NCCL timeout occurs but process hangs instead of raising exception.
+
+**Why it happens:**  
+Default NCCL watchdog blocks without `TORCH_NCCL_ASYNC_ERROR_HANDLING=1`.
+
+**Prevention:**
+```bash
+# Set before training
+export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
+export TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC=60  # 1 minute for testing
+```
+
+**Detection:**  
+Training hangs with no error message. Process must be force-killed.
+
+**Phase Mapping:**  
+- **Phase 1: Fault Injection Setup** — Environment configuration
+
+---
+
+---
+
+## NEW: Critical Fault Tolerance Pitfalls (from PyTorch GitHub Issues)
+
+### Critical: DDP Model Divergence After Recovery
+
+**What goes wrong:** When training is interrupted and resumed, models across ranks end up with different final weights even when starting from the same checkpoint.
+
+**Why it happens:** 
+- DDP gradients synchronized via `all_reduce`. When one rank fails and recovers, it may be at different training step than peers.
+- Recovering rank may skip samples while still participating in gradient averaging.
+- Issue #276 (torchft): *"final models across ranks are different when training is interrupted"*
+- `should_commit` returning false for recovery worker causes sample loss
+
+**Consequences:**
+- Model divergence between ranks
+- Silent data inconsistency (loss looks normal but model quality degrades)
+
+**Prevention:**
+- Always checkpoint dataloader state (epoch, batch_index) alongside model/optimizer
+- Implement epoch-level recovery: restart from beginning of epoch if recovery would cause data skip
+- Use barrier-based epoch validation before continuing training
+
+**Detection:**
+```python
+# Compare model weights across ranks after recovery:
+if dist.get_rank() == 0:
+    dist.send(model.module.weight.clone(), dst=1)
+else:
+    remote_weight = torch.empty_like(model.module.weight)
+    dist.recv(remote_weight, src=0)
+    if not torch.allclose(model.module.weight, remote_weight):
+        raise RuntimeError("Model divergence detected after recovery!")
+```
+
+**Phase Mapping:** Phase 3: Checkpoint Recovery — requires epoch-aware recovery design
+
+---
+
+### Critical: Process Group Reinitialization Deadlock
+
+**What goes wrong:** After destroying a process group (e.g., after failure), attempting to reinitialize causes hangs or NCCL errors.
+
+**Why it happens:** 
+- `destroy_process_group()` + re-init is *"currently unsupported/untested"* per PyTorch docs
+- Synchronization after destroy must use non-torch.distributed primitives
+- NCCL backend state persists even after process group destruction
+
+**Prevention:**
+- **Avoid reinitializing process groups mid-training**
+- Design recovery to use external restart (torchrun with `--max-restarts`) rather than in-script recovery
+- Use `torch.distributed.elastic` for fault tolerance rather than manual recovery
+
+**Phase Mapping:** Phase 1: Multi-GPU Fault Injection — prefer torchrun lifecycle management
+
+---
+
+### Critical: Optimizer State Loss During Recovery
+
+**What goes wrong:** After loading checkpoint, optimizer step count or momentum states are incorrect, causing training instability.
+
+**Why it happens:**
+- Lazy optimizer initialization: states created on first `step()`, not on model creation
+- Loading optimizer state_dict before any optimizer steps fails silently
+- Issue #3971: *"Missing key in checkpoint state_dict: optimizer.state.0.step"*
+- Issue #124546: FQN mismatch with activation checkpointing
+
+**Prevention:**
+```python
+# 1. Always prime optimizer before checkpointing
+optimizer.step()  # At least once
+save_checkpoint({'optimizer': optimizer.state_dict(), ...})
+
+# 2. Load in correct order:
+model.load_state_dict(checkpoint['model'])  # Model first
+optimizer.load_state_dict(checkpoint['optimizer'])  # Then optimizer
+
+# 3. For FSDP, use explicit planners:
+from torch.distributed.checkpoint import DefaultLoadPlanner
+planner = DefaultLoadPlanner()  # Don't omit this!
+dcp.load(state_dict, planner=planner)
+```
+
+**Phase Mapping:** Phase 3: Checkpoint Recovery — verify optimizer state integrity
+
+---
+
+### Critical: Async Checkpoint Race Conditions
+
+**What goes wrong:** Multiple concurrent async checkpoint saves cause hangs or data corruption.
+
+**Why it happens:**
+- `torch.distributed.checkpoint.async_save()` reuses a dedicated Gloo process group
+- Issue #159700: *"hangs when 2 handles are created"*
+
+**Prevention:**
+```python
+# WRONG - causes race condition:
+handle1 = async_save({'model': model.state_dict()})
+handle2 = async_save({'optimizer': optimizer.state_dict()})
+
+# CORRECT - serialize with result():
+handle = async_save({
+    'model': model.state_dict(), 
+    'optimizer': optimizer.state_dict()
+})
+handle.result()  # Wait before next save or optimizer step
+```
+
+**Phase Mapping:** Phase 2: Exception Handling — must serialize async operations
+
+---
+
+### Critical: NCCL Error Masking Root Cause
+
+**What goes wrong:** Checkpoint loading fails with NCCL timeout, hiding the actual storage/network error.
+
+**Why it happens:**
+- PyTorch checkpointing uses `all_gather_object()` internally
+- Issue #122529: NCCL timeout obscures real exception
+
+**Prevention:**
+```python
+# Add explicit error handling in custom storage reader:
+class DebugStorageWriter(FileSystemWriter):
+    def write_data(self, plan):
+        try:
+            return super().write_data(plan)
+        except Exception as e:
+            print(f"Rank {dist.get_rank()} write failed: {e}")
+            dist.all_reduce(torch.zeros(1))  # Force sync to propagate
+            raise
+```
+
+**Phase Mapping:** Phase 2: Exception Handling — critical for debugging production failures
+
+---
+
+### Critical: CPU Tensor Async Checkpoint Corruption
+
+**What goes wrong:** Checkpoint saved with CPU tensors contains wrong values after optimizer update.
+
+**Why it happens:**
+- Async save uses staging buffer
+- Issue #144657: new value written instead of original
+
+**Prevention:**
+```python
+# Move to GPU before async save:
+model_gpu = model.cuda()
+handle = dcp.async_save({'model': model_gpu.state_dict()}, ...)
+model.cpu()
+handle.result()  # Wait before optimizer step
+```
+
+**Phase Mapping:** Phase 2: Checkpoint Coordination — timing matters for async saves
+
+---
+
+## Phase-Specific Warnings (Updated)
+
+| Phase Topic | Likely Pitfall | Mitigation |
+|-------------|----------------|------------|
+| Multi-GPU fault injection | Process group reinit deadlock | Use torchrun lifecycle, not in-script recovery |
+| Checkpoint save coordination | Async race conditions | Serialize async_save with handle.result() |
+| Recovery state loading | Optimizer state mismatches | Prime optimizer, use DefaultLoadPlanner |
+| Dataloader recovery | Sample skipping | Checkpoint sampler epoch/index state |
+| torchrun integration | Worker failure handling issues | Test on target PyTorch version |
+| Graceful degradation | NCCL error masking | Add explicit error propagation |
+
+---
+
+## Quick Reference for Requirement Definition
+
+**Must have for fault tolerance:**
+- [ ] Epoch-aware recovery (prevent data skipping)
+- [ ] Sampler state checkpointing
+- [ ] Optimizer priming before first checkpoint
+- [ ] Explicit barrier synchronization around saves
+- [ ] Error propagation in custom storage readers
+- [ ] Serialized async_save (no concurrent calls)
+
+**Avoid or deprioritize:**
+- [ ] In-script process group reinitialization (use torchrun instead)
+- [ ] Concurrent async_save calls (serialize with handle.result())
+- [ ] Cross-version torchrun fault tolerance testing (test on target version)
+
+---
+
+## Confidence Assessment (Updated)
 
 | Pitfall | Confidence | Reason |
 |---------|------------|--------|
@@ -443,3 +804,28 @@ for i, batch in enumerate(dataloader):
 | Model.eval() deadlock | MEDIUM | Known issue with workarounds |
 | Ring coordination | HIGH | Core to ring checkpoint design |
 | Checkpoint loading | HIGH | Well-documented patterns |
+| Uncoordinated exception | HIGH | Barrier synchronization required |
+| Rank-specific injection | MEDIUM | Requires modification to existing code |
+| Checkpoint sync | HIGH | Barrier before save after exception |
+| DDP model divergence | HIGH | Issue #276 documented in torchft |
+| Process group reinit | HIGH | PyTorch docs explicitly unsupported |
+| Optimizer state loss | HIGH | Issues #3971, #124546 |
+| Async checkpoint races | HIGH | Issue #159700 |
+| NCCL error masking | HIGH | Issue #122529 |
+| CPU tensor corruption | HIGH | Issue #144657 |
+
+---
+
+## Sources
+
+- PyTorch GitHub #276 (DDP model divergence)
+- PyTorch GitHub #146371, #150916, #147064 (torchrun failures)
+- PyTorch GitHub #159700 (async save hang)
+- PyTorch GitHub #122529 (NCCL masking)
+- PyTorch GitHub #3971, #124546 (optimizer state)
+- PyTorch GitHub #144657 (CPU tensor corruption)
+- PyTorch GitHub #811 (world size mismatch)
+- PyTorch Official Docs - Distributed Checkpointing
+- PyTorch Tutorials - Fault-tolerant Distributed Training
+- Meta torchft GitHub
+- Medium - Multi-Node DDP Troubleshooting (Feb 2026)

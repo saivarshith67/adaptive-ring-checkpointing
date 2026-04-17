@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: completed
-stopped_at: Completed 03-dataset-integration plan 01
-last_updated: "2026-03-29T11:06:02.121Z"
-last_activity: 2026-03-16 — Phase 2 plan 1 completed
+milestone: v1.1
+milestone_name: Fault Tolerance
+status: not_started
+stopped_at: 
+last_updated: "2026-04-17"
+last_activity: 2026-04-17 — Milestone v1.1 started
 progress:
-  total_phases: 3
-  completed_phases: 3
+  total_phases: 4
+  completed_phases: 0
   total_plans: 4
-  completed_plans: 4
-  percent: 100
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -21,37 +21,26 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-16)
 
 **Core value:** Enable reliable long-running deep learning training with minimal checkpoint overhead through adaptive ring-based checkpoint strategies.
-**Current focus:** Phase 2 - DDP Model & Checkpoint Integration
+**Current focus:** v1.1 - Fault Tolerance (fault injection + recovery)
 
 ## Current Position
 
-Phase: 2 of 3 (DDP Model & Checkpoint Integration)
-Plan: 1 of 1 in current phase
-Status: Completed
-Last activity: 2026-03-16 — Phase 2 plan 1 completed
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-04-17 — Milestone v1.1 started
 
-Progress: [████████████████] 100%
+Progress: [░░░░░░░░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
+- Total plans completed: 0 (v1.1)
+- Total from v1.0: 4
 - Average duration: 5 min
-- Total execution time: 0.2 hours
-
-**By Phase:**
-
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| 1 - Distributed Infrastructure | 2/2 | 2 | 5min |
-| 2 - DDP Model & Checkpoint | 1/1 | 1 | 5min |
-| 3 - Dataset Integration | 0/1 | 0 | - |
 
 **Recent Trend:**
-- Phase 2 completed (DDP model & checkpoint integration)
-
-*Updated after each plan completion*
-| Phase 03-dataset-integration P01 | 6 | 4 tasks | 4 files |
+- v1.1 milestone started (Fault Tolerance)
 
 ## Accumulated Context
 
