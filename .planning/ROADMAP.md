@@ -19,7 +19,7 @@
 
 - [x] **Phase 4: Exception Handling** - Wrap training loop with try/except for fault detection and graceful handling (completed 2026-04-17)
 - [x] **Phase 5: Multi-GPU Fault Injection** - Add rank-aware fault injection to simulate node/GPU failures (completed 2026-04-17)
-- [ ] **Phase 6: Checkpoint Recovery** - Resume training from checkpoint after failure detected
+- [x] **Phase 6: Checkpoint Recovery** - Resume training from checkpoint after failure detected (completed 2026-04-17)
 - [ ] **Phase 7: Fault Tolerance Verification** - End-to-end fault injection and recovery testing
 
 ---
@@ -92,7 +92,7 @@
 
 ---
 
-### Phase 4: Exception Handling
+### Phase 4: Exception Handling (v1.1 - COMPLETED)
 
 **Goal:** Wrap training loop with try/except for fault detection and graceful handling
 
@@ -109,11 +109,11 @@
 
 **Plans:** 1/1 plans complete
 
-- [ ] 04-01-PLAN.md — Try/except wrapper, barrier sync, emergency checkpoint
+- [x] 04-01-PLAN.md — Try/except wrapper, barrier sync, emergency checkpoint
 
 ---
 
-### Phase 5: Multi-GPU Fault Injection
+### Phase 5: Multi-GPU Fault Injection (v1.1 - COMPLETED)
 
 **Goal:** Add rank-aware fault injection to simulate node/GPU failures
 
@@ -127,13 +127,13 @@
 3. Non-injected ranks continue execution or handle exception gracefully
 4. Configurable failure timing (every N steps, random, etc.)
 
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
-- [ ] 05-fault-injection-01-PLAN.md — Rank-aware fault injection, configuration integration
+- [x] 05-01-PLAN.md — Rank-aware fault injection, configuration integration
 
 ---
 
-### Phase 6: Checkpoint Recovery
+### Phase 6: Checkpoint Recovery (v1.1 - IN PROGRESS)
 
 **Goal:** Resume training from checkpoint after failure detected
 
@@ -148,9 +148,9 @@
 4. DistributedSampler state resumes with correct epoch offset
 5. Rank-specific state is preserved (model, optimizer, scheduler)
 
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
-- [ ] 06-checkpoint-recovery-01-PLAN.md — Checkpoint loading, epoch recovery, optimizer state
+- [x] 06-01-PLAN.md — Checkpoint loading, epoch recovery, optimizer state
 
 ---
 
@@ -183,7 +183,7 @@
 | 3. Dataset Integration | 1/1 | Completed | 2026-03-16 |
 | 4. Exception Handling | 1/1 | Completed | 2026-04-17 |
 | 5. Multi-GPU Fault Injection | 1/1 | Completed | 2026-04-17 |
-| 6. Checkpoint Recovery | 0/1 | Planned | |
+| 6. Checkpoint Recovery | 1/1 | In Progress | 2026-04-17 |
 | 7. Fault Tolerance Verification | 0/1 | Planned | |
 
 ---
