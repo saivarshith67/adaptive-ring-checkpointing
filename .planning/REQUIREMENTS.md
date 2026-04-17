@@ -60,16 +60,16 @@
 
 ### Checkpoint Recovery
 
-- [ ] **RCVR-01**: User can resume training from latest checkpoint after failure
-- [ ] **RCVR-02**: Epoch counter correctly resumes from saved state
-- [ ] **RCVR-03**: Optimizer state correctly loads from checkpoint
-- [ ] **RCVR-04**: DistributedSampler state resumes with correct epoch offset
+- [x] **RCVR-01**: User can resume training from latest checkpoint after failure
+- [x] **RCVR-02**: Epoch counter correctly resumes from saved state
+- [x] **RCVR-03**: Optimizer state correctly loads from checkpoint
+- [x] **RCVR-04**: DistributedSampler state resumes with correct epoch offset
 
 ### Verification
 
-- [ ] **VFY-01**: System recovers from checkpoint after injected fault on single GPU
-- [ ] **VFY-02**: System recovers from checkpoint after injected fault on multiple GPUs
-- [ ] **VFY-03**: Training metrics (loss, accuracy) resume correctly after recovery
+- [x] **VFY-01**: System recovers from checkpoint after injected fault on single GPU
+- [x] **VFY-02**: System recovers from checkpoint after injected fault on multiple GPUs
+- [x] **VFY-03**: Training metrics (loss, accuracy) resume correctly after recovery
 
 ---
 
@@ -110,13 +110,13 @@
 | EXCP-02 | Phase 4 | Complete |
 | EXCP-03 | Phase 4 | Complete |
 | EXCP-04 | Phase 4 | Complete |
-| RCVR-01 | Phase 6 | Pending |
-| RCVR-02 | Phase 6 | Pending |
-| RCVR-03 | Phase 6 | Pending |
-| RCVR-04 | Phase 6 | Pending |
-| VFY-01 | Phase 7 | Pending |
-| VFY-02 | Phase 7 | Pending |
-| VFY-03 | Phase 7 | Pending |
+| RCVR-01 | Phase 6 | Complete |
+| RCVR-02 | Phase 6 | Complete |
+| RCVR-03 | Phase 6 | Complete |
+| RCVR-04 | Phase 6 | Complete |
+| VFY-01 | Phase 7 | Complete |
+| VFY-02 | Phase 7 | Complete |
+| VFY-03 | Phase 7 | Complete | |
 
 **Coverage:**
 - v1.1 requirements: 12 total
