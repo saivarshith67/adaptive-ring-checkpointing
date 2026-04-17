@@ -916,9 +916,14 @@ Examples:
 
     # Resume from checkpoint
     start_epoch = 0
+    best_val_acc = 0.0
     if args.resume:
-        start_epoch = checkpoint_manager.load_latest(model, optimizer, device)
-        log_on_main(f"Resuming from epoch {start_epoch}")
+        start_epoch, best_val_acc = checkpoint_manager.load_latest(
+            model, optimizer, device
+        )
+        log_on_main(
+            f"Resuming from epoch {start_epoch} (best_val_acc: {best_val_acc:.2f}%)"
+        )
 
     # -------------------------
     # Fault Injector (optional)
@@ -941,7 +946,7 @@ Examples:
     log_on_main("Starting Training")
     log_on_main("=" * 70)
 
-    best_val_acc = 0.0
+    # best_val_acc already initialized above (0.0 for fresh start, or loaded from checkpoint on resume)
 
     for epoch in range(start_epoch, args.epochs):
         try:
