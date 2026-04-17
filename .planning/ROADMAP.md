@@ -109,7 +109,7 @@
 
 **Plans:** 1 plan
 
-- [ ] 04-exception-handling-01-PLAN.md — Try/except wrapper, barrier sync, emergency checkpoint
+- [ ] 04-01-PLAN.md — Try/except wrapper, barrier sync, emergency checkpoint
 
 ---
 
