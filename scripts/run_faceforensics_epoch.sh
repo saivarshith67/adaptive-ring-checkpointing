@@ -61,8 +61,11 @@ TEMPORAL_MODEL="mean"
 
 # Checkpoint fault injection settings (latest module in train_faceforensics.py)
 # Note: injection is applied during checkpoint load, so resume must be enabled.
-ENABLE_FAULT_INJECTION=true
+ENABLE_FAULT_INJECTION=false
 AUTO_RESUME=true
+ENABLE_RUNTIME_FAULT_INJECTION=true
+RUNTIME_FAULT_AFTER_CHECKPOINTS=1
+RUNTIME_FAULT_CRASH_AFTER_INJECTION=true
 # Fault type selection (uncomment exactly one)
 FAULT_TYPE="RANDOM_BIT"
 # FAULT_TYPE="SPECIFIC_BIT"   # Requires FAULT_SPECIFIC_BIT to be set
@@ -93,7 +96,8 @@ echo "  Dataset:       $DATASET_PATH"
 echo "  Compression:   $COMPRESSION"
 echo "  CheckpointDir: $CHECKPOINT_DIR"
 echo "  Fault Inject:  $ENABLE_FAULT_INJECTION"
-if [ "$ENABLE_FAULT_INJECTION" = true ]; then
+echo "  Runtime Fault: $ENABLE_RUNTIME_FAULT_INJECTION"
+if [ "$ENABLE_FAULT_INJECTION" = true ] || [ "$ENABLE_RUNTIME_FAULT_INJECTION" = true ]; then
     echo "  Fault Type:    $FAULT_TYPE"
     echo "  Fault Loc:     $FAULT_LOCATION"
     echo "  Fault Prob:    $FAULT_PROBABILITY"
@@ -126,7 +130,14 @@ if [ "$AUTO_RESUME" = true ]; then
     CMD="$CMD --resume"
 fi
 
-if [ "$ENABLE_FAULT_INJECTION" = true ]; then
+if [ "$ENABLE_RUNTIME_FAULT_INJECTION" = true ]; then
+    CMD="$CMD --runtime-fault-injection --runtime-fault-after-checkpoints $RUNTIME_FAULT_AFTER_CHECKPOINTS"
+    if [ "$RUNTIME_FAULT_CRASH_AFTER_INJECTION" = false ]; then
+        CMD="$CMD --no-runtime-fault-crash-after-injection"
+    fi
+fi
+
+if [ "$ENABLE_FAULT_INJECTION" = true ] || [ "$ENABLE_RUNTIME_FAULT_INJECTION" = true ]; then
     CMD="$CMD --fault-type $FAULT_TYPE --fault-location $FAULT_LOCATION --fault-probability $FAULT_PROBABILITY --fault-bit-flips $FAULT_BIT_FLIPS --fault-num-processes $FAULT_NUM_PROCESSES --fault-log-path \"$FAULT_LOG_PATH\" --fault-seed $FAULT_SEED"
     if [ -n "$FAULT_BIT_RANGE" ]; then
         CMD="$CMD --fault-bit-range $FAULT_BIT_RANGE"

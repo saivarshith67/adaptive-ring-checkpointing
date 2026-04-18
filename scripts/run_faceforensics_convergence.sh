@@ -59,6 +59,9 @@ CHECKPOINT_COST_SEC=0.60
 FIT_INTERVAL_STEPS=100
 MIN_CONVERGENCE_INTERVAL_SEC=5.0
 MAX_CONVERGENCE_INTERVAL_SEC=1800.0
+AUTO_CALIBRATE_CHECKPOINT_COST=true
+CHECKPOINT_COST_WARMUP_SAVES=3
+CHECKPOINT_COST_EMA_ALPHA=0.5
 
 USE_VIDEO_MODE=false
 USE_FAST_VIDEO_MODE=true
@@ -67,8 +70,11 @@ TEMPORAL_MODEL="mean"
 
 # Checkpoint fault injection settings (latest module in train_faceforensics.py)
 # Note: injection is applied during checkpoint load, so resume must be enabled.
-ENABLE_FAULT_INJECTION=true
+ENABLE_FAULT_INJECTION=false
 AUTO_RESUME=true
+ENABLE_RUNTIME_FAULT_INJECTION=true
+RUNTIME_FAULT_AFTER_CHECKPOINTS=1
+RUNTIME_FAULT_CRASH_AFTER_INJECTION=true
 # Fault type selection (uncomment exactly one)
 FAULT_TYPE="RANDOM_BIT"
 # FAULT_TYPE="SPECIFIC_BIT"   # Requires FAULT_SPECIFIC_BIT to be set
@@ -99,9 +105,11 @@ echo "  Dataset:       $DATASET_PATH"
 echo "  Compression:   $COMPRESSION"
 echo "  Lambda:        $FAILURE_RATE_LAMBDA"
 echo "  CkptCost(sec): $CHECKPOINT_COST_SEC"
+echo "  CkptCost Auto: $AUTO_CALIBRATE_CHECKPOINT_COST"
 echo "  CheckpointDir: $CHECKPOINT_DIR"
 echo "  Fault Inject:  $ENABLE_FAULT_INJECTION"
-if [ "$ENABLE_FAULT_INJECTION" = true ]; then
+echo "  Runtime Fault: $ENABLE_RUNTIME_FAULT_INJECTION"
+if [ "$ENABLE_FAULT_INJECTION" = true ] || [ "$ENABLE_RUNTIME_FAULT_INJECTION" = true ]; then
     echo "  Fault Type:    $FAULT_TYPE"
     echo "  Fault Loc:     $FAULT_LOCATION"
     echo "  Fault Prob:    $FAULT_PROBABILITY"
@@ -125,9 +133,15 @@ CMD="$LAUNCHER scripts/train_convergence_normal.py \
     --split \"$SPLIT\" \
     --failure-rate-lambda \"$FAILURE_RATE_LAMBDA\" \
     --checkpoint-cost-sec \"$CHECKPOINT_COST_SEC\" \
+    --checkpoint-cost-warmup-saves \"$CHECKPOINT_COST_WARMUP_SAVES\" \
+    --checkpoint-cost-ema-alpha \"$CHECKPOINT_COST_EMA_ALPHA\" \
     --fit-interval-steps \"$FIT_INTERVAL_STEPS\" \
     --min-convergence-interval-sec \"$MIN_CONVERGENCE_INTERVAL_SEC\" \
     --max-convergence-interval-sec \"$MAX_CONVERGENCE_INTERVAL_SEC\""
+
+if [ "$AUTO_CALIBRATE_CHECKPOINT_COST" = false ]; then
+    CMD="$CMD --no-auto-calibrate-checkpoint-cost"
+fi
 
 if [ "$USE_FAST_VIDEO_MODE" = true ]; then
     CMD="$CMD --fast-video-mode --num-frames $NUM_FRAMES"
@@ -139,7 +153,14 @@ if [ "$AUTO_RESUME" = true ]; then
     CMD="$CMD --resume"
 fi
 
-if [ "$ENABLE_FAULT_INJECTION" = true ]; then
+if [ "$ENABLE_RUNTIME_FAULT_INJECTION" = true ]; then
+    CMD="$CMD --runtime-fault-injection --runtime-fault-after-checkpoints $RUNTIME_FAULT_AFTER_CHECKPOINTS"
+    if [ "$RUNTIME_FAULT_CRASH_AFTER_INJECTION" = false ]; then
+        CMD="$CMD --no-runtime-fault-crash-after-injection"
+    fi
+fi
+
+if [ "$ENABLE_FAULT_INJECTION" = true ] || [ "$ENABLE_RUNTIME_FAULT_INJECTION" = true ]; then
     CMD="$CMD --fault-type $FAULT_TYPE --fault-location $FAULT_LOCATION --fault-probability $FAULT_PROBABILITY --fault-bit-flips $FAULT_BIT_FLIPS --fault-num-processes $FAULT_NUM_PROCESSES --fault-log-path \"$FAULT_LOG_PATH\" --fault-seed $FAULT_SEED"
     if [ -n "$FAULT_BIT_RANGE" ]; then
         CMD="$CMD --fault-bit-range $FAULT_BIT_RANGE"

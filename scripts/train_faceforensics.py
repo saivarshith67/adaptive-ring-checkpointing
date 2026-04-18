@@ -38,6 +38,7 @@ Usage:
 """
 
 import argparse
+import copy
 from datetime import datetime
 import os
 import sys
@@ -45,6 +46,7 @@ import time
 import json
 import random
 from pathlib import Path
+from dataclasses import replace
 from typing import Callable, List, Optional, Tuple
 
 import torch
@@ -698,6 +700,31 @@ Examples:
         help="Estimated checkpoint save cost in seconds for convergence-aware checkpointing",
     )
     parser.add_argument(
+        "--auto-calibrate-checkpoint-cost",
+        dest="auto_calibrate_checkpoint_cost",
+        action="store_true",
+        default=True,
+        help="Enable runtime checkpoint-cost auto-calibration from measured save times (default: enabled)",
+    )
+    parser.add_argument(
+        "--no-auto-calibrate-checkpoint-cost",
+        dest="auto_calibrate_checkpoint_cost",
+        action="store_false",
+        help="Disable runtime checkpoint-cost auto-calibration",
+    )
+    parser.add_argument(
+        "--checkpoint-cost-warmup-saves",
+        type=int,
+        default=3,
+        help="Number of early convergence checkpoints used to calibrate checkpoint cost (default: 3)",
+    )
+    parser.add_argument(
+        "--checkpoint-cost-ema-alpha",
+        type=float,
+        default=0.5,
+        help="EMA smoothing factor for checkpoint-cost calibration in (0, 1] (default: 0.5)",
+    )
+    parser.add_argument(
         "--fit-interval-steps",
         type=int,
         default=100,
@@ -715,8 +742,39 @@ Examples:
         default=1800.0,
         help="Maximum interval between convergence checkpoints in seconds",
     )
+    parser.add_argument(
+        "--runtime-fault-injection",
+        action="store_true",
+        help="Inject a live fault during training after checkpoints are created",
+    )
+    parser.add_argument(
+        "--runtime-fault-after-checkpoints",
+        type=int,
+        default=1,
+        help="Inject the live fault after this many successful checkpoint saves (default: 1)",
+    )
+    parser.add_argument(
+        "--runtime-fault-crash-after-injection",
+        dest="runtime_fault_crash_after_injection",
+        action="store_true",
+        default=True,
+        help="Crash the job after applying the live fault so resume/recovery is exercised (default: True)",
+    )
+    parser.add_argument(
+        "--no-runtime-fault-crash-after-injection",
+        dest="runtime_fault_crash_after_injection",
+        action="store_false",
+        help="Keep training running after the live fault is injected",
+    )
 
     args = parser.parse_args(cli_args)
+
+    if args.checkpoint_cost_warmup_saves < 1:
+        parser.error("--checkpoint-cost-warmup-saves must be >= 1")
+    if not (0.0 < args.checkpoint_cost_ema_alpha <= 1.0):
+        parser.error("--checkpoint-cost-ema-alpha must be in (0, 1]")
+    if args.runtime_fault_after_checkpoints < 1:
+        parser.error("--runtime-fault-after-checkpoints must be >= 1")
 
     if args.training_mode is None:
         if args.checkpoint_mode == "hash-ring":
@@ -1105,6 +1163,8 @@ Examples:
         )
 
     convergence_scheduler = None
+    calibrated_checkpoint_cost_sec = float(args.checkpoint_cost_sec)
+    checkpoint_cost_calibration_count = 0
     if use_convergence:
         convergence_scheduler = ConvergenceAwareScheduler(
             failure_rate_lambda=args.failure_rate_lambda,
@@ -1117,6 +1177,12 @@ Examples:
             "Convergence-aware checkpointing enabled "
             f"(lambda={args.failure_rate_lambda}, cost={args.checkpoint_cost_sec}s)"
         )
+        if args.auto_calibrate_checkpoint_cost:
+            log_on_main(
+                "Checkpoint-cost auto-calibration enabled "
+                f"(warmup_saves={args.checkpoint_cost_warmup_saves}, "
+                f"ema_alpha={args.checkpoint_cost_ema_alpha})"
+            )
 
     # -------------------------
     # Metrics Collector
@@ -1172,6 +1238,67 @@ Examples:
         world_size=world_size,
         dt_mechanism="DDP",
     )
+
+    runtime_fault_saves_seen = 0
+    runtime_fault_triggered = False
+
+    def maybe_inject_runtime_fault(checkpoint_label: str) -> None:
+        nonlocal runtime_fault_saves_seen, runtime_fault_triggered
+
+        if not args.runtime_fault_injection or runtime_fault_triggered:
+            return
+
+        if not is_main_process():
+            return
+
+        runtime_fault_saves_seen += 1
+        if runtime_fault_saves_seen < args.runtime_fault_after_checkpoints:
+            return
+
+        runtime_fault_cfg = replace(
+            fault_cfg,
+            enabled=True,
+            num_processes=world_size,
+        )
+        runtime_injector = CheckpointBitFlipInjector(
+            config=runtime_fault_cfg,
+            rank=rank,
+            world_size=world_size,
+            dt_mechanism="runtime",
+        )
+
+        model_state = copy.deepcopy(
+            model.module.state_dict() if isinstance(model, DDP) else model.state_dict()
+        )
+        optimizer_state = copy.deepcopy(optimizer.state_dict())
+        runtime_checkpoint = {
+            "epoch": epoch + 1,
+            "model_state_dict": model_state,
+            "optimizer_state_dict": optimizer_state,
+            "loss": 0.0,
+            "checkpoint_id": f"runtime_{checkpoint_label}",
+        }
+        runtime_path = os.path.join(
+            args.checkpoint_dir, f"runtime_fault_{checkpoint_label}.pt"
+        )
+        runtime_injector.inject(runtime_checkpoint, runtime_path)
+
+        load_target = model.module if isinstance(model, DDP) else model
+        load_target.load_state_dict(runtime_checkpoint["model_state_dict"])
+        optimizer.load_state_dict(runtime_checkpoint["optimizer_state_dict"])
+
+        runtime_fault_triggered = True
+        metrics.increment_injected_fault()
+        log_on_main(
+            "  [Runtime Fault] Injected live checkpoint fault "
+            f"after {runtime_fault_saves_seen} saved checkpoint(s) "
+            f"at {checkpoint_label} | crash_after_injection={args.runtime_fault_crash_after_injection}"
+        )
+
+        if args.runtime_fault_crash_after_injection:
+            raise RuntimeError(
+                "Injected runtime fault for fault-tolerance recovery test"
+            )
 
     # Resume from checkpoint
     start_epoch = 0
@@ -1252,6 +1379,36 @@ Examples:
                     
                     metrics.record_batch_checkpoint(batch_id=global_step, checkpoint_size_mb=ckpt_size_mb, save_time_sec=ckpt_time)
                     metrics.increment_convergence_checkpoint()
+
+                    if args.auto_calibrate_checkpoint_cost:
+                        if checkpoint_cost_calibration_count == 0:
+                            calibrated_checkpoint_cost_sec = ckpt_time
+                        else:
+                            alpha = args.checkpoint_cost_ema_alpha
+                            calibrated_checkpoint_cost_sec = (
+                                alpha * ckpt_time
+                                + (1.0 - alpha) * calibrated_checkpoint_cost_sec
+                            )
+
+                        checkpoint_cost_calibration_count += 1
+                        if checkpoint_cost_calibration_count <= args.checkpoint_cost_warmup_saves:
+                            convergence_scheduler.update_checkpoint_cost_seconds(
+                                calibrated_checkpoint_cost_sec
+                            )
+                            log_on_main(
+                                "  [Convergence CkptCost Calib] "
+                                f"sample={checkpoint_cost_calibration_count}/{args.checkpoint_cost_warmup_saves} "
+                                f"measured={ckpt_time:.3f}s "
+                                f"calibrated={calibrated_checkpoint_cost_sec:.3f}s"
+                            )
+
+                        if checkpoint_cost_calibration_count == args.checkpoint_cost_warmup_saves:
+                            log_on_main(
+                                "  [Convergence CkptCost Calib] "
+                                f"final checkpoint_cost_sec={calibrated_checkpoint_cost_sec:.3f}s"
+                            )
+
+                    maybe_inject_runtime_fault(checkpoint_id)
                     
                     convergence_scheduler.mark_checkpoint(now=now)
                     log_on_main(
@@ -1340,6 +1497,8 @@ Examples:
                     except:
                         ckpt_size_mb = 0.0
                     metrics.record_checkpoint(checkpoint_size_mb=ckpt_size_mb, save_time_sec=ckpt_time, checkpoint_id=best_checkpoint_id)
+
+                    maybe_inject_runtime_fault(best_checkpoint_id)
                     
                     best_val_acc = val_acc
                     log_on_main(
@@ -1361,6 +1520,8 @@ Examples:
                     except:
                         ckpt_size_mb = 0.0
                     metrics.record_checkpoint(checkpoint_size_mb=ckpt_size_mb, save_time_sec=ckpt_time)
+
+                    maybe_inject_runtime_fault(f"epoch_{epoch + 1:04d}")
 
                     if is_best:
                         best_val_acc = val_acc

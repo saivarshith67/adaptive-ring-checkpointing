@@ -55,6 +55,11 @@ class ConvergenceAwareScheduler:
     def current_interval_seconds(self) -> float:
         return self._current_interval_seconds
 
+    def update_checkpoint_cost_seconds(self, checkpoint_cost_seconds: float) -> None:
+        if checkpoint_cost_seconds <= 0:
+            raise ValueError("checkpoint_cost_seconds must be > 0")
+        self.checkpoint_cost_seconds = float(checkpoint_cost_seconds)
+
     def mark_checkpoint(self, now: Optional[float] = None) -> None:
         self._last_checkpoint_time = now if now is not None else time.time()
 
