@@ -67,6 +67,18 @@ class CheckpointManager:
             dist.barrier()
 
     def load_latest(self, model, optimizer, device):
+        """
+        Load the latest checkpoint and restore model/optimizer state.
+
+        Args:
+            model: The model to load state into (or DDP-wrapped model).
+            optimizer: The optimizer to load state into.
+            device: Device for mapping checkpoint location.
+
+        Returns:
+            Tuple of (start_epoch, best_metric) where start_epoch is the next epoch
+            to train and best_metric is the best validation metric from checkpoint.
+        """
         files = [
             f
             for f in os.listdir(self.checkpoint_dir)
@@ -75,7 +87,7 @@ class CheckpointManager:
 
         if not files:
             print("[Checkpoint] No checkpoint found. Starting fresh.")
-            return 0
+            return 0, 0.0
 
         latest = max(files, key=lambda x: int(x.split("_")[-1].split(".")[0]))
         path = os.path.join(self.checkpoint_dir, latest)
@@ -89,6 +101,10 @@ class CheckpointManager:
         optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
 
         epoch = checkpoint["epoch"]
-        print(f"[Checkpoint] Resumed from {latest}")
+        best_metric = checkpoint.get("metric", 0.0)
+        print(
+            f"[Checkpoint] Resumed from {latest} (epoch {epoch}, best_metric {best_metric:.4f})"
+        )
 
-        return epoch + 1
+        # Return next epoch to train and best metric for proper checkpoint tracking
+        return epoch + 1, best_metric

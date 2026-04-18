@@ -297,7 +297,7 @@ def main():
     checkpoint_manager = CheckpointManager(is_ddp_wrapped=True)
 
     # Try to resume from checkpoint
-    start_epoch = checkpoint_manager.load_latest(model, optimizer, device)
+    start_epoch, best_val_acc = checkpoint_manager.load_latest(model, optimizer, device)
     log_on_main(f"Resuming from epoch {start_epoch}")
 
     # -------------------------

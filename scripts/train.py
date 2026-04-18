@@ -29,17 +29,15 @@ def train(
     strategy,
     fault_injector=None,
     inject_fault=False,
-    start_epoch=0
+    start_epoch=0,
 ):
 
     for epoch in range(start_epoch, cfg.epochs):
-
         model.train()
         total_loss = 0.0
         epoch_start = time.time()
 
         for batch_idx, (images, labels) in enumerate(train_loader):
-
             images = images.to(device)
             labels = labels.to(device)
 
@@ -69,7 +67,7 @@ def train(
         epoch_time = time.time() - epoch_start
 
         print(
-            f"Epoch {epoch+1}/{cfg.epochs} | "
+            f"Epoch {epoch + 1}/{cfg.epochs} | "
             f"Loss: {total_loss:.4f} | "
             f"Time: {epoch_time:.2f}s"
         )
@@ -119,11 +117,7 @@ def main():
 
     args = parser.parse_args()
 
-    config_path = (
-        "configs/dev.yaml"
-        if args.mode == "dev"
-        else "configs/server.yaml"
-    )
+    config_path = "configs/dev.yaml" if args.mode == "dev" else "configs/server.yaml"
 
     cfg = load_config(config_path)
 
@@ -165,7 +159,7 @@ def main():
     # Checkpoint Manager
     # -------------------------
     checkpoint_manager = CheckpointManager()
-    start_epoch = checkpoint_manager.load_latest(model, optimizer)
+    start_epoch, best_val_acc = checkpoint_manager.load_latest(model, optimizer)
 
     if start_epoch >= cfg.epochs:
         print("Training already completed.")
@@ -186,15 +180,11 @@ def main():
     checkpoint_cost = cfg.checkpoint_cost_estimate
 
     mtbf_estimate = (
-        1.0 / cfg.failure_rate_per_second
-        if cfg.failure_rate_per_second > 0
-        else 1e9
+        1.0 / cfg.failure_rate_per_second if cfg.failure_rate_per_second > 0 else 1e9
     )
 
     strategy = CheckpointStrategyFactory.create(
-        cfg,
-        checkpoint_cost=checkpoint_cost,
-        mtbf=mtbf_estimate
+        cfg, checkpoint_cost=checkpoint_cost, mtbf=mtbf_estimate
     )
 
     # 🔥 Reset timer after resume
@@ -220,7 +210,7 @@ def main():
             strategy,
             fault_injector=fault_injector,
             inject_fault=args.inject_fault,
-            start_epoch=start_epoch
+            start_epoch=start_epoch,
         )
 
         total_runtime = time.time() - overall_start_time
@@ -248,16 +238,13 @@ def main():
             print(f"{k}: {v}")
         print("========================================\n")
 
-        with open(
-            f"final_experiment_log_{cfg.strategy}.jsonl", "a"
-        ) as f:
+        with open(f"final_experiment_log_{cfg.strategy}.jsonl", "a") as f:
             f.write(json.dumps(summary) + "\n")
 
         print("Training finished successfully.")
         sys.exit(0)
 
     except RuntimeError as e:
-
         print(f"\n💥 Training interrupted: {e}")
 
         if args.inject_fault and fault_injector is not None:
@@ -283,9 +270,7 @@ def main():
                 print(f"{k}: {v}")
             print("===================================\n")
 
-            with open(
-                f"crash_experiment_log_{cfg.strategy}.jsonl", "a"
-            ) as f:
+            with open(f"crash_experiment_log_{cfg.strategy}.jsonl", "a") as f:
                 f.write(json.dumps(crash_summary) + "\n")
 
         sys.exit(1)

@@ -3,11 +3,14 @@ FaceForensics++ dataset loader with MTCNN face detection.
 
 Provides:
 - FaceForensicsDataset: PyTorch Dataset for FaceForensics++ images
+- VideoDatasetFast: Fast video-level dataset for pre-extracted .npy frames
 - download_faceforensics_dataset: Download dataset via kagglehub
 - get_faceforensics_transforms: Standard transforms for face images
 - precompute_face_crops: Pre-compute face crops for faster training
+- preextract_frames: Pre-extract frames from videos to .npy files
 
 Performance optimizations:
+- Pre-extract frames once and cache as .npy files (fastest loading)
 - Pre-compute face crops once and cache them (avoids MTCNN in __getitem__)
 - Memory-mapped storage for face crops
 - Batch processing for MTCNN
@@ -23,7 +26,11 @@ import kagglehub
 import numpy as np
 from typing import Optional
 
-# Try to import MTCNN from facenet-pytorch
+try:
+    import cv2
+except ImportError:
+    cv2 = None
+
 try:
     from facenet_pytorch import MTCNN
 except ImportError:
@@ -459,3 +466,406 @@ class FaceForensicsDataset(Dataset):
                 return image.resize((224, 224), Image.BILINEAR)
 
         return image.resize((224, 224), Image.BILINEAR)
+
+
+class VideoFaceForensicsDataset(Dataset):
+    """
+    Video-level PyTorch Dataset for FaceForensics++ deepfake detection.
+
+    This dataset samples multiple frames from each video to capture temporal information.
+    Used for video-level deepfake detection with temporal modeling.
+
+    Supports two modes:
+    1. Pre-computed crops (recommended): Loads from cached .npy files
+    2. Live detection: Extracts frames from original images (slower)
+
+    Binary classification:
+    - Real = 0
+    - Fake = 1
+
+    Args:
+        root (str): Root directory of the FaceForensics++ dataset.
+        compression (str): Compression level ('c23' or 'c40').
+        limit (int, optional): Maximum number of videos.
+        use_precropped (bool): Use pre-computed crops if available.
+        cache_dir (str): Directory with pre-computed crops.
+        num_frames (int): Number of frames to sample per video.
+        transform (transforms.Compose, optional): Transform to apply.
+
+    Returns:
+        tuple: (frames_tensor, label) where frames_tensor is (num_frames, C, H, W).
+    """
+
+    def __init__(
+        self,
+        root: str,
+        compression: str = "c23",
+        limit: Optional[int] = None,
+        use_precropped: bool = True,
+        cache_dir: Optional[str] = None,
+        num_frames: int = 8,
+        transform=None,
+    ):
+        self.root = root
+        self.compression = compression
+        self.limit = limit
+        self.use_precropped = use_precropped
+        self.num_frames = num_frames
+
+        if cache_dir is None:
+            cache_dir = os.path.join(root, "crops")
+        self.cache_dir = cache_dir
+
+        self.manifest_path = os.path.join(cache_dir, "manifest.json")
+
+        # Get standard transforms
+        self.transform = transform or get_faceforensics_transforms(include_resize=False)
+
+        # Build video index from pre-computed crops
+        self.videos = self._build_video_index()
+
+        if self.limit:
+            self.videos = self.videos[: self.limit]
+
+    def _build_video_index(self):
+        """
+        Build an index of videos from the pre-computed crops manifest.
+
+        Each video entry contains:
+        - video_id: Unique identifier
+        - label: 0 (real) or 1 (fake)
+        - frame_paths: List of paths to cached crop files
+        """
+        if self.use_precropped and os.path.exists(self.manifest_path):
+            return self._build_from_manifest()
+        else:
+            return self._build_from_directories()
+
+    def _build_from_manifest(self):
+        """Build video index from pre-computed crop manifest."""
+        with open(self.manifest_path, "r") as f:
+            manifest = json.load(f)
+
+        # Group crops by video_id
+        video_frames = {}
+
+        for crop_info in manifest["crops"]:
+            path = crop_info["path"]
+            label = crop_info["label"]
+
+            # Extract video_id from original path
+            # Format: original_path contains video folder
+            original = crop_info.get("original", "")
+
+            # Parse video_id from the path structure
+            # Original: .../youtube/c23/images/{video_id}/{frame}.png
+            # Deepfakes: .../Deepfakes/c23/images/{video_id}/{frame}.png
+            parts = original.replace("\\", "/").split("/")
+
+            # Find the video_id (folder containing frames)
+            video_id = None
+            for i, part in enumerate(parts):
+                if part in ["images", "crops"]:
+                    if i + 1 < len(parts):
+                        video_id = parts[i + 1]
+                        break
+
+            if video_id is None:
+                # Fallback: use parent directory
+                video_id = os.path.basename(os.path.dirname(path))
+
+            if video_id not in video_frames:
+                video_frames[video_id] = {
+                    "video_id": video_id,
+                    "label": label,
+                    "frame_paths": [],
+                }
+
+            video_frames[video_id]["frame_paths"].append(path)
+
+        # Sort frame paths for consistency
+        videos = []
+        for video_id, info in video_frames.items():
+            info["frame_paths"].sort()
+            videos.append(info)
+
+        # Sort videos by ID for reproducibility
+        videos.sort(key=lambda x: x["video_id"])
+
+        return videos
+
+    def _build_from_directories(self):
+        """Build video index from dataset directory structure."""
+        videos = []
+
+        # Real videos
+        real_dir = os.path.join(
+            self.root, "original_sequences", "youtube", self.compression, "images"
+        )
+        if os.path.exists(real_dir):
+            for video_id in os.listdir(real_dir):
+                video_dir = os.path.join(real_dir, video_id)
+                if os.path.isdir(video_dir):
+                    frame_paths = []
+                    for filename in os.listdir(video_dir):
+                        if filename.endswith((".png", ".jpg", ".jpeg")):
+                            frame_paths.append(os.path.join(video_dir, filename))
+
+                    if frame_paths:
+                        frame_paths.sort()
+                        videos.append(
+                            {
+                                "video_id": f"real_{video_id}",
+                                "label": 0,
+                                "frame_paths": frame_paths,
+                            }
+                        )
+
+        # Fake videos (Deepfakes)
+        fake_dir = os.path.join(
+            self.root, "manipulated_sequences", "Deepfakes", self.compression, "images"
+        )
+        if os.path.exists(fake_dir):
+            for video_id in os.listdir(fake_dir):
+                video_dir = os.path.join(fake_dir, video_id)
+                if os.path.isdir(video_dir):
+                    frame_paths = []
+                    for filename in os.listdir(video_dir):
+                        if filename.endswith((".png", ".jpg", ".jpeg")):
+                            frame_paths.append(os.path.join(video_dir, filename))
+
+                    if frame_paths:
+                        frame_paths.sort()
+                        videos.append(
+                            {
+                                "video_id": f"fake_{video_id}",
+                                "label": 1,
+                                "frame_paths": frame_paths,
+                            }
+                        )
+
+        return videos
+
+    def __len__(self):
+        """Return the number of videos in the dataset."""
+        return len(self.videos)
+
+    def __getitem__(self, idx):
+        """
+        Get frames from a single video.
+
+        Args:
+            idx: Index of the video.
+
+        Returns:
+            tuple: (frames_tensor, label) where:
+                - frames_tensor: Tensor of shape (num_frames, C, H, W)
+                - label: Integer label (0 for real, 1 for fake)
+        """
+        video_info = self.videos[idx]
+        frame_paths = video_info["frame_paths"]
+        label = video_info["label"]
+
+        # Sample frames uniformly from the video
+        num_available = len(frame_paths)
+
+        if num_available == 0:
+            # No frames available, return black frames
+            frames = torch.zeros(self.num_frames, 3, 224, 224)
+            return frames, label
+
+        if num_available <= self.num_frames:
+            # Use all frames, repeat if necessary
+            selected_indices = list(range(num_available))
+            while len(selected_indices) < self.num_frames:
+                selected_indices.append(
+                    selected_indices[len(selected_indices) % num_available]
+                )
+        else:
+            # Sample uniformly
+            indices = np.linspace(0, num_available - 1, self.num_frames, dtype=int)
+            selected_indices = indices.tolist()
+
+        # Load and transform frames
+        frames = []
+        for frame_idx in selected_indices:
+            frame_path = frame_paths[frame_idx]
+            frame = self._load_frame(frame_path)
+            frames.append(frame)
+
+        # Stack frames: (num_frames, H, W, C) -> (num_frames, C, H, W)
+        frames_tensor = torch.stack(frames)
+
+        return frames_tensor, label
+
+    def _load_frame(self, frame_path: str) -> torch.Tensor:
+        """Load a single frame and apply transforms."""
+        try:
+            if self.use_precropped and frame_path.endswith(".npy"):
+                # Load pre-computed crop
+                crop_array = np.load(frame_path)
+                frame = Image.fromarray(crop_array)
+            else:
+                # Load from image file
+                frame = Image.open(frame_path).convert("RGB")
+
+            if self.transform:
+                frame_tensor = self.transform(frame)
+            else:
+                frame_tensor = transforms.ToTensor()(frame)
+
+            return frame_tensor
+        except Exception as e:
+            # Return a blank frame on error
+            return torch.zeros(3, 224, 224)
+
+
+class VideoDatasetFast(Dataset):
+    """
+    Fast video-level dataset that loads pre-extracted frames from .npy files.
+
+    This is the fastest loading mode - frames are pre-extracted from videos
+    and stored as numpy arrays (shape: [num_frames, height, width, channels]).
+
+    This matches the pattern from the Kaggle FaceForensics++ notebook where:
+    - Videos are pre-processed to extract N frames
+    - Frames are saved as .npy files (one file per video)
+    - Dataset loads .npy files directly (no video decoding)
+
+    Binary classification:
+    - Real = 0
+    - Fake = 1
+
+    Args:
+        root_dir (str): Root directory containing 'real' and 'fake' subdirectories.
+        transform (transforms.Compose, optional): Transform to apply to each frame.
+        num_frames (int): Number of frames per video. Defaults to 30.
+
+    Returns:
+        tuple: (frames_tensor, label) where frames_tensor is (num_frames, C, H, W).
+    """
+
+    def __init__(
+        self,
+        root_dir: str,
+        transform=None,
+        num_frames: int = 30,
+    ):
+        self.root_dir = root_dir
+        self.num_frames = num_frames
+        self.transform = transform or get_faceforensics_transforms(include_resize=False)
+        self.samples = []
+
+        self._load_samples()
+
+    def _load_samples(self):
+        """Load all .npy file paths from real/fake directories."""
+        for label_name, label in [("real", 0), ("fake", 1)]:
+            label_dir = os.path.join(self.root_dir, label_name)
+            if os.path.exists(label_dir):
+                for filename in os.listdir(label_dir):
+                    if filename.endswith(".npy"):
+                        npy_path = os.path.join(label_dir, filename)
+                        self.samples.append((npy_path, label))
+
+    def __len__(self):
+        return len(self.samples)
+
+    def __getitem__(self, idx):
+        """
+        Get frames from a single video.
+
+        Returns:
+            tuple: (frames_tensor, label) where:
+                - frames_tensor: Tensor of shape (num_frames, C, H, W)
+                - label: Integer label (0 for real, 1 for fake)
+        """
+        npy_path, label = self.samples[idx]
+        frames = np.load(npy_path)  # Shape: (num_frames, H, W, C)
+
+        if self.transform:
+            frames = [
+                self.transform(transforms.functional.to_pil_image(f)) for f in frames
+            ]
+            frames_tensor = torch.stack(frames)
+        else:
+            frames_tensor = torch.stack(
+                [
+                    transforms.ToTensor()(transforms.functional.to_pil_image(f))
+                    for f in frames
+                ]
+            )
+
+        return frames_tensor, label
+
+
+def preextract_frames(
+    root_dir: str,
+    output_dir: str,
+    num_frames: int = 30,
+    frame_size: int = 224,
+):
+    """
+    Pre-extract frames from videos and save as .npy files.
+
+    This function processes videos from the FaceForensics++ dataset and
+    extracts uniformly sampled frames, saving them as numpy arrays for
+    fast loading during training.
+
+    Args:
+        root_dir: Root directory containing 'real' and 'fake' subdirectories with .mp4 files.
+        output_dir: Output directory for .npy files (will create real/fake subdirs).
+        num_frames: Number of frames to extract per video.
+        frame_size: Size to resize frames to (default 224x224).
+
+    Example:
+        >>> preextract_frames(
+        ...     "/path/to/faceforensics/FF++",
+        ...     "/path/to/working/frames",
+        ...     num_frames=30
+        ... )
+    """
+    os.makedirs(output_dir, exist_ok=True)
+
+    for label in ["real", "fake"]:
+        src_folder = os.path.join(root_dir, label)
+        dst_folder = os.path.join(output_dir, label)
+        os.makedirs(dst_folder, exist_ok=True)
+
+        if not os.path.exists(src_folder):
+            print(f"[WARN] Source folder not found: {src_folder}")
+            continue
+
+        videos = [v for v in os.listdir(src_folder) if v.endswith(".mp4")]
+
+        for vid in videos:
+            vid_path = os.path.join(src_folder, vid)
+            out_path = os.path.join(dst_folder, vid.replace(".mp4", ".npy"))
+
+            if os.path.exists(out_path):
+                continue
+
+            cap = cv2.VideoCapture(vid_path)
+            total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            indices = np.linspace(0, total - 1, num_frames, dtype=int)
+
+            frames = []
+            for idx in indices:
+                cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
+                ret, frame = cap.read()
+                if ret:
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    frame = cv2.resize(frame, (frame_size, frame_size))
+                    frames.append(frame)
+            cap.release()
+
+            while len(frames) < num_frames:
+                frames.append(
+                    frames[-1]
+                    if frames
+                    else np.zeros((frame_size, frame_size, 3), dtype=np.uint8)
+                )
+
+            np.save(out_path, np.array(frames[:num_frames]))
+
+    print(f"[INFO] Frame pre-extraction complete. Output: {output_dir}")

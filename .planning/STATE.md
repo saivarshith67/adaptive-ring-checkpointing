@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.0
-milestone_name: milestone
+milestone_name: Milestone
 status: completed
-stopped_at: Completed 03-dataset-integration plan 01
-last_updated: "2026-03-29T11:06:02.121Z"
-last_activity: 2026-03-16 — Phase 2 plan 1 completed
+stopped_at: Completed 07-fault-tolerance-verification-01 plan
+last_updated: "2026-04-17T10:26:37.164Z"
+last_activity: 2026-04-17 — Completed fault tolerance verification plan
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 4
-  completed_plans: 4
+  total_phases: 8
+  completed_phases: 7
+  total_plans: 8
+  completed_plans: 8
   percent: 100
 ---
 
@@ -21,37 +21,30 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-16)
 
 **Core value:** Enable reliable long-running deep learning training with minimal checkpoint overhead through adaptive ring-based checkpoint strategies.
-**Current focus:** Phase 2 - DDP Model & Checkpoint Integration
+**Current focus:** v1.1 - Fault Tolerance (fault injection + recovery)
 
 ## Current Position
 
-Phase: 2 of 3 (DDP Model & Checkpoint Integration)
-Plan: 1 of 1 in current phase
-Status: Completed
-Last activity: 2026-03-16 — Phase 2 plan 1 completed
+Phase: 07-fault-tolerance-verification
+Plan: 01
+Status: Complete
+Last activity: 2026-04-17 — Completed fault tolerance verification plan
 
-Progress: [████████████████] 100%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 5 min
-- Total execution time: 0.2 hours
-
-**By Phase:**
-
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| 1 - Distributed Infrastructure | 2/2 | 2 | 5min |
-| 2 - DDP Model & Checkpoint | 1/1 | 1 | 5min |
-| 3 - Dataset Integration | 0/1 | 0 | - |
+- Total plans completed: 3 (v1.1)
+- Total from v1.0: 5
+- Average duration: 4.3 min
 
 **Recent Trend:**
-- Phase 2 completed (DDP model & checkpoint integration)
-
-*Updated after each plan completion*
-| Phase 03-dataset-integration P01 | 6 | 4 tasks | 4 files |
+- v1.1 milestone complete (Fault Tolerance)
+- Phase 4: Exception Handling - completed
+- Phase 5: Multi-GPU Fault Injection - completed
+- Phase 6: Checkpoint Recovery - completed
+- Phase 7: Fault Tolerance Verification - completed (just now)
 
 ## Accumulated Context
 
@@ -66,6 +59,8 @@ Progress: [████████████████] 100%
 - Checkpoint saves only on rank 0 with barrier() sync
 - [Phase 03-dataset-integration]: MTCNN fallback strategy: If MTCNN fails to detect a face, resize the original image to 224x224 instead of raising an error
 - [Phase 03-dataset-integration]: EfficientNet-B0 with ImageNet pretrained weights for better feature extraction on face images
+- [Phase 05-multi-gpu-fault-injection]: Rank-aware FaultInjector with target_rank parameter for targeted fault injection
+- [Phase 07-fault-tolerance-verification]: E2E verification via bash script for portable, manual testing
 
 ### Pending Todos
 
@@ -77,6 +72,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-29T11:03:46.654Z
-Stopped at: Completed 03-dataset-integration plan 01
+Last session: 2026-04-17T15:49:00Z
+Stopped at: Completed 07-fault-tolerance-verification-01 plan
 Resume file: None

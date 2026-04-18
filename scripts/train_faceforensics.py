@@ -5,12 +5,21 @@ FaceForensics++ Deepfake Detection Training Script
 A unified training script for deepfake detection on the FaceForensics++ dataset.
 Supports both single-GPU and multi-GPU (via torchrun) training.
 
+Key Features (integrated from Kaggle notebook patterns):
+    - Video-level processing with multi-frame sampling
+    - CNN backbone with temporal aggregation (LSTM/GRU or mean pooling)
+    - Efficient video loading with pre-extracted frame caching
+    - Multi-GPU support via DistributedDataParallel (DDP)
+
 Usage:
     # Single GPU
     python scripts/train_faceforensics.py
 
     # Multi-GPU (recommended)
     torchrun --nproc_per_node=2 scripts/train_faceforensics.py
+
+    # Multi-GPU with 4 GPUs
+    torchrun --nproc_per_node=4 scripts/train_faceforensics.py
 
     # With custom settings
     python scripts/train_faceforensics.py --epochs 50 --batch_size 32 --lr 1e-4
@@ -20,19 +29,27 @@ Usage:
 
     # Resume from checkpoint
     python scripts/train_faceforensics.py --resume
+
+    # Use temporal model (LSTM aggregation)
+    python scripts/train_faceforensics.py --temporal-model lstm --num-frames 16
+
+    # Use mean pooling (faster, single-frame equivalent)
+    python scripts/train_faceforensics.py --temporal-model mean
 """
 
 import argparse
 import os
 import sys
 import time
+import json
 from pathlib import Path
+from typing import List, Optional, Tuple
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 from torch.utils.data.distributed import DistributedSampler
 from torch.nn.parallel import DistributedDataParallel as DDP
 
@@ -51,14 +68,18 @@ from src.coci.distributed import (
     log_on_main,
     reduce_metrics,
 )
-from src.coci.models.model import get_model
+from src.coci.models.model import get_model, get_multiframe_model
 from src.coci.data_ingestor.faceforensics import (
     FaceForensicsDataset,
+    VideoFaceForensicsDataset,
+    VideoDatasetFast,
     download_faceforensics_dataset,
     get_faceforensics_transforms,
     precompute_face_crops,
+    preextract_frames,
 )
 from src.coci.checkpointing.checkpoint_manager import CheckpointManager
+from src.coci.fault.fault_injector import FaultInjector
 from src.coci.config import (
     FACEFORENSICS_DATASET_PATH,
     MODEL_NAME,
@@ -76,13 +97,16 @@ DEFAULT_CONFIG = {
     "model": MODEL_NAME,
     "num_classes": NUM_CLASSES,
     "epochs": 20,
-    "batch_size": 32,
+    "batch_size": 8,  # Reduced for video processing (multiple frames)
     "lr": 1e-4,
     "weight_decay": 1e-5,
     "num_workers": 4,
     "checkpoint_dir": "./checkpoints",
     "checkpoint_interval": 5,  # Save every N epochs
     "device": "cuda" if torch.cuda.is_available() else "cpu",
+    # Video processing settings
+    "num_frames": 8,  # Frames to sample per video
+    "temporal_model": "mean",  # Aggregation: "mean", "lstm", "gru", "attention"
 }
 
 
@@ -113,6 +137,8 @@ def get_faceforensics_dataloader(
     limit: int = None,
     train: bool = True,
     use_precropped: bool = True,
+    video_mode: bool = False,
+    num_frames: int = 8,
 ):
     """
     Create DataLoader with DistributedSampler for FaceForensics++ dataset.
@@ -127,21 +153,35 @@ def get_faceforensics_dataloader(
         limit: Limit number of samples (for development)
         train: Whether this is training (enables shuffling)
         use_precropped: Use pre-computed face crops (recommended)
+        video_mode: If True, use video-level dataset (multiple frames per video)
+        num_frames: Number of frames to sample per video (for video_mode)
 
     Returns:
         DataLoader with DistributedSampler
     """
     cache_dir = os.path.join(dataset_path, "crops")
-    transform = get_faceforensics_transforms(include_resize=not use_precropped)
 
-    dataset = FaceForensicsDataset(
-        root=dataset_path,
-        transform=transform,
-        compression=compression,
-        limit=limit,
-        use_precropped=use_precropped,
-        cache_dir=cache_dir,
-    )
+    if video_mode:
+        # Video-level dataset: groups frames by video
+        dataset = VideoFaceForensicsDataset(
+            root=dataset_path,
+            compression=compression,
+            limit=limit,
+            use_precropped=use_precropped,
+            cache_dir=cache_dir,
+            num_frames=num_frames,
+        )
+    else:
+        # Image-level dataset: individual frames
+        transform = get_faceforensics_transforms(include_resize=not use_precropped)
+        dataset = FaceForensicsDataset(
+            root=dataset_path,
+            transform=transform,
+            compression=compression,
+            limit=limit,
+            use_precropped=use_precropped,
+            cache_dir=cache_dir,
+        )
 
     sampler = DistributedSampler(
         dataset,
@@ -168,7 +208,16 @@ def get_faceforensics_dataloader(
 # -------------------------------------------------
 # Training Functions
 # -------------------------------------------------
-def train_epoch(model, train_loader, optimizer, device, epoch, sampler=None):
+def train_epoch(
+    model,
+    train_loader,
+    optimizer,
+    device,
+    epoch,
+    sampler=None,
+    video_mode=False,
+    fault_injector=None,
+):
     """
     Train for one epoch.
 
@@ -179,6 +228,8 @@ def train_epoch(model, train_loader, optimizer, device, epoch, sampler=None):
         device: Device to train on
         epoch: Current epoch number
         sampler: DistributedSampler for epoch synchronization
+        video_mode: If True, expects (frames, labels) where frames is (B, T, C, H, W)
+        fault_injector: Optional FaultInjector for simulating failures
 
     Returns:
         tuple: (avg_loss, correct, total) - local metrics
@@ -193,12 +244,41 @@ def train_epoch(model, train_loader, optimizer, device, epoch, sampler=None):
     correct = 0
     total = 0
 
-    for batch_idx, (images, labels) in enumerate(train_loader):
-        images = images.to(device)
-        labels = labels.to(device)
+    for batch_idx, batch in enumerate(train_loader):
+        # Periodic fault injection check (every 100 batches)
+        if fault_injector is not None and batch_idx % 100 == 0:
+            fault_injector.maybe_fail()
 
-        optimizer.zero_grad()
-        outputs = model(images)
+        if video_mode:
+            # Video mode: batch is (frames, labels) where frames is (B, T, C, H, W)
+            frames, labels = batch
+            frames = frames.to(device)
+            labels = labels.to(device)
+
+            # frames shape: (batch_size, num_frames, channels, height, width)
+            batch_size = frames.shape[0]
+            num_frames = frames.shape[1]
+
+            # Reshape for model: (batch_size * num_frames, channels, height, width)
+            frames = frames.view(-1, *frames.shape[2:])
+
+            optimizer.zero_grad()
+            outputs = model(frames)  # Shape: (batch_size * num_frames, num_classes)
+
+            # Reshape outputs: (batch_size, num_frames, num_classes)
+            outputs = outputs.view(batch_size, num_frames, -1)
+
+            # Aggregate frame predictions (mean across frames)
+            outputs = outputs.mean(dim=1)  # Shape: (batch_size, num_classes)
+        else:
+            # Image mode: batch is (images, labels)
+            images, labels = batch
+            images = images.to(device)
+            labels = labels.to(device)
+
+            optimizer.zero_grad()
+            outputs = model(images)
+
         loss = F.cross_entropy(outputs, labels)
         loss.backward()
         optimizer.step()
@@ -220,9 +300,15 @@ def train_epoch(model, train_loader, optimizer, device, epoch, sampler=None):
     return avg_loss, correct, total
 
 
-def evaluate(model, test_loader, device):
+def evaluate(model, test_loader, device, video_mode=False):
     """
     Evaluate the model on test/validation data.
+
+    Args:
+        model: The neural network model
+        test_loader: Test/validation data loader
+        device: Device to evaluate on
+        video_mode: If True, expects (frames, labels) where frames is (B, T, C, H, W)
 
     Returns:
         tuple: (avg_loss, correct, total, accuracy) - local metrics
@@ -233,11 +319,25 @@ def evaluate(model, test_loader, device):
     total = 0
 
     with torch.no_grad():
-        for images, labels in test_loader:
-            images = images.to(device)
-            labels = labels.to(device)
+        for batch in test_loader:
+            if video_mode:
+                frames, labels = batch
+                frames = frames.to(device)
+                labels = labels.to(device)
 
-            outputs = model(images)
+                batch_size = frames.shape[0]
+                num_frames = frames.shape[1]
+
+                frames = frames.view(-1, *frames.shape[2:])
+                outputs = model(frames)
+                outputs = outputs.view(batch_size, num_frames, -1).mean(dim=1)
+            else:
+                images, labels = batch
+                images = images.to(device)
+                labels = labels.to(device)
+
+                outputs = model(images)
+
             loss = F.cross_entropy(outputs, labels)
 
             total_loss += loss.item()
@@ -394,6 +494,55 @@ Examples:
         help=f"DataLoader workers (default: {DEFAULT_CONFIG['num_workers']})",
     )
 
+    # Video processing arguments (integrated from Kaggle notebook patterns)
+    parser.add_argument(
+        "--video-mode",
+        action="store_true",
+        help="Process videos at video-level (sample multiple frames per video)",
+    )
+    parser.add_argument(
+        "--num-frames",
+        type=int,
+        default=DEFAULT_CONFIG["num_frames"],
+        help=f"Number of frames to sample per video in video mode (default: {DEFAULT_CONFIG['num_frames']})",
+    )
+    parser.add_argument(
+        "--temporal-model",
+        type=str,
+        default=DEFAULT_CONFIG["temporal_model"],
+        choices=["mean", "lstm", "gru", "attention"],
+        help=f"Temporal aggregation method (default: {DEFAULT_CONFIG['temporal_model']})",
+    )
+    parser.add_argument(
+        "--fast-video-mode",
+        action="store_true",
+        help="Use pre-extracted .npy frames for fastest loading (run --extract-frames first)",
+    )
+    parser.add_argument(
+        "--extract-frames",
+        action="store_true",
+        help="Pre-extract frames from videos to .npy files for fast loading",
+    )
+
+    # Fault injection arguments
+    parser.add_argument(
+        "--inject-fault",
+        action="store_true",
+        help="Enable fault injection to simulate GPU/node failures",
+    )
+    parser.add_argument(
+        "--inject-rank",
+        type=int,
+        default=0,
+        help="Target rank for fault injection (default: 0 = rank 0 only)",
+    )
+    parser.add_argument(
+        "--inject-rate",
+        type=float,
+        default=0.02,
+        help="Failure rate per second for fault injection (default: 0.02)",
+    )
+
     # Checkpoint arguments
     parser.add_argument(
         "--checkpoint-dir",
@@ -418,6 +567,24 @@ Examples:
     # Handle dataset download
     if args.download_dataset:
         download_and_prepare_dataset()
+        return 0
+
+    # Handle frame extraction
+    if args.extract_frames:
+        log_on_main("\n" + "=" * 60)
+        log_on_main("Pre-extracting frames from videos")
+        log_on_main("=" * 60)
+        frames_output_dir = os.path.join(args.dataset_path, "frames")
+        preextract_frames(
+            root_dir=args.dataset_path,
+            output_dir=frames_output_dir,
+            num_frames=args.num_frames,
+        )
+        log_on_main(f"\n✓ Frames extracted to: {frames_output_dir}")
+        log_on_main("\nYou can now run training with:")
+        log_on_main(
+            f"  python scripts/train_faceforensics.py --fast-video-mode --dataset-path {args.dataset_path}"
+        )
         return 0
 
     # -------------------------
@@ -459,6 +626,14 @@ Examples:
     log_on_main(f"Learning Rate: {args.lr}")
     log_on_main(f"Checkpoint:    {args.checkpoint_dir}")
     log_on_main("-" * 70)
+    log_on_main(f"Video Mode:    {args.video_mode or args.fast_video_mode}")
+    if args.video_mode or args.fast_video_mode:
+        log_on_main(f"Frames/Video:  {args.num_frames}")
+        if args.fast_video_mode:
+            log_on_main(f"Fast Mode:     Pre-extracted .npy frames")
+        else:
+            log_on_main(f"Temporal Agg:  {args.temporal_model}")
+    log_on_main("-" * 70)
     log_on_main(f"Rank:          {rank} / {world_size}")
     log_on_main(f"Device:        {device}")
     log_on_main(f"Pretrained:    {not args.no_pretrained}")
@@ -486,74 +661,195 @@ Examples:
     # -------------------------
     log_on_main("Loading FaceForensics++ dataset...")
 
-    transform = get_faceforensics_transforms(include_resize=not use_precropped)
+    if args.fast_video_mode:
+        # Fastest loading mode: use pre-extracted .npy frames
+        frames_dir = os.path.join(args.dataset_path, "frames")
 
-    full_dataset = FaceForensicsDataset(
-        root=args.dataset_path,
-        transform=transform,
-        compression=args.compression,
-        limit=args.limit,
-        use_precropped=use_precropped,
-        cache_dir=cache_dir,
-    )
+        if not os.path.exists(frames_dir):
+            log_on_main(f"\n✗ Extracted frames not found at: {frames_dir}")
+            log_on_main("\nRun frame extraction first:")
+            log_on_main(
+                f"  python scripts/train_faceforensics.py --extract-frames --dataset-path {args.dataset_path}"
+            )
+            if is_distributed_initialized():
+                cleanup_distributed()
+            return 1
 
-    dataset_size = len(full_dataset)
-    train_size = int(args.split * dataset_size)
-    val_size = dataset_size - train_size
+        full_dataset = VideoDatasetFast(
+            root_dir=frames_dir,
+            num_frames=args.num_frames,
+        )
 
-    # Split dataset
-    torch.manual_seed(42)
-    train_dataset, val_dataset = torch.utils.data.random_split(
-        full_dataset, [train_size, val_size]
-    )
+        dataset_size = len(full_dataset)
+        train_size = int(args.split * dataset_size)
+        val_size = dataset_size - train_size
 
-    log_on_main(f"Dataset loaded: {dataset_size} samples")
-    log_on_main(f"  Train: {train_size} | Val: {val_size}")
+        torch.manual_seed(42)
+        train_dataset, val_dataset = torch.utils.data.random_split(
+            full_dataset, [train_size, val_size]
+        )
 
-    # Create distributed dataloaders
-    train_loader, train_sampler = get_faceforensics_dataloader(
-        args.dataset_path,
-        args.batch_size,
-        args.num_workers,
-        rank,
-        world_size,
-        compression=args.compression,
-        limit=args.limit,
-        train=True,
-    )
+        log_on_main(f"Fast video dataset loaded: {dataset_size} videos")
+        log_on_main(f"  Frames per video: {args.num_frames}")
+        log_on_main(f"  Train: {train_size} | Val: {val_size}")
 
-    val_loader, val_sampler = get_faceforensics_dataloader(
-        args.dataset_path,
-        args.batch_size,
-        args.num_workers,
-        rank,
-        world_size,
-        compression=args.compression,
-        limit=args.limit,
-        train=False,
-    )
+        train_sampler = DistributedSampler(
+            train_dataset,
+            num_replicas=world_size,
+            rank=rank,
+            shuffle=True,
+            seed=42,
+        )
+        val_sampler = DistributedSampler(
+            val_dataset,
+            num_replicas=world_size,
+            rank=rank,
+            shuffle=False,
+            seed=42,
+        )
 
-    # Create val_sampler for non-distributed use
-    val_sampler_simple = DistributedSampler(
-        val_dataset,
-        num_replicas=world_size,
-        rank=rank,
-        shuffle=False,
-        seed=42,
-    )
+        train_loader = DataLoader(
+            train_dataset,
+            batch_size=args.batch_size,
+            sampler=train_sampler,
+            num_workers=args.num_workers,
+            pin_memory=True,
+            persistent_workers=args.num_workers > 0,
+            worker_init_fn=seed_worker,
+        )
+        val_loader = DataLoader(
+            val_dataset,
+            batch_size=args.batch_size,
+            sampler=val_sampler,
+            num_workers=args.num_workers,
+            pin_memory=True,
+            persistent_workers=args.num_workers > 0,
+            worker_init_fn=seed_worker,
+        )
+        val_loader_simple = val_loader
 
-    val_loader_simple = DataLoader(
-        val_dataset,
-        batch_size=args.batch_size,
-        sampler=val_sampler_simple,
-        num_workers=args.num_workers,
-        pin_memory=True,
-        persistent_workers=args.num_workers > 0,
-    )
+        log_on_main(
+            f"Train batches: {len(train_loader)} | Val batches: {len(val_loader)}"
+        )
 
-    log_on_main(
-        f"Train batches: {len(train_loader)} | Val batches: {len(val_loader_simple)}"
-    )
+    elif args.video_mode:
+        # Video-level dataset: groups frames by video
+        full_dataset = VideoFaceForensicsDataset(
+            root=args.dataset_path,
+            compression=args.compression,
+            limit=args.limit,
+            use_precropped=use_precropped,
+            cache_dir=cache_dir,
+            num_frames=args.num_frames,
+        )
+
+        # Video dataset handles its own train/val split internally
+        log_on_main(f"Video dataset loaded: {len(full_dataset)} videos")
+        log_on_main(f"  Frames per video: {args.num_frames}")
+
+        # Create distributed dataloaders for video mode
+        train_loader, train_sampler = get_faceforensics_dataloader(
+            args.dataset_path,
+            args.batch_size,
+            args.num_workers,
+            rank,
+            world_size,
+            compression=args.compression,
+            limit=args.limit,
+            train=True,
+            video_mode=True,
+            num_frames=args.num_frames,
+        )
+
+        val_loader, val_sampler = get_faceforensics_dataloader(
+            args.dataset_path,
+            args.batch_size,
+            args.num_workers,
+            rank,
+            world_size,
+            compression=args.compression,
+            limit=args.limit,
+            train=False,
+            video_mode=True,
+            num_frames=args.num_frames,
+        )
+
+        # For validation, use the same sampler for simple loader
+        val_loader_simple = val_loader
+
+        log_on_main(f"Train videos: {len(train_loader)} batches")
+        log_on_main(f"Val videos:   {len(val_loader)} batches")
+
+    else:
+        # Image-level dataset: individual frames
+        transform = get_faceforensics_transforms(include_resize=not use_precropped)
+
+        full_dataset = FaceForensicsDataset(
+            root=args.dataset_path,
+            transform=transform,
+            compression=args.compression,
+            limit=args.limit,
+            use_precropped=use_precropped,
+            cache_dir=cache_dir,
+        )
+
+        dataset_size = len(full_dataset)
+        train_size = int(args.split * dataset_size)
+        val_size = dataset_size - train_size
+
+        # Split dataset
+        torch.manual_seed(42)
+        train_dataset, val_dataset = torch.utils.data.random_split(
+            full_dataset, [train_size, val_size]
+        )
+
+        log_on_main(f"Dataset loaded: {dataset_size} samples")
+        log_on_main(f"  Train: {train_size} | Val: {val_size}")
+
+        # Create distributed dataloaders
+        train_loader, train_sampler = get_faceforensics_dataloader(
+            args.dataset_path,
+            args.batch_size,
+            args.num_workers,
+            rank,
+            world_size,
+            compression=args.compression,
+            limit=args.limit,
+            train=True,
+        )
+
+        val_loader, val_sampler = get_faceforensics_dataloader(
+            args.dataset_path,
+            args.batch_size,
+            args.num_workers,
+            rank,
+            world_size,
+            compression=args.compression,
+            limit=args.limit,
+            train=False,
+        )
+
+        # Create val_sampler for non-distributed use
+        val_sampler_simple = DistributedSampler(
+            val_dataset,
+            num_replicas=world_size,
+            rank=rank,
+            shuffle=False,
+            seed=42,
+        )
+
+        val_loader_simple = DataLoader(
+            val_dataset,
+            batch_size=args.batch_size,
+            sampler=val_sampler_simple,
+            num_workers=args.num_workers,
+            pin_memory=True,
+            persistent_workers=args.num_workers > 0,
+        )
+
+        log_on_main(
+            f"Train batches: {len(train_loader)} | Val batches: {len(val_loader_simple)}"
+        )
 
     # -------------------------
     # Model
@@ -561,12 +857,28 @@ Examples:
     log_on_main("\nInitializing model...")
 
     num_classes = 2  # Binary classification: real=0, fake=1
-    model = get_model(args.model, num_classes=num_classes)
 
-    # For pretrained, we already have pretrained weights via get_efficientnet_binary
-    # For non-pretrained models, we need to handle separately
-    if args.no_pretrained and args.model == "efficientnet_b0":
-        model = get_model(args.model, num_classes=num_classes)  # Will be random init
+    if args.video_mode:
+        # Multi-frame video model with temporal aggregation
+        model = get_multiframe_model(
+            backbone=args.model,
+            temporal_mode=args.temporal_model,
+            num_classes=num_classes,
+            pretrained=not args.no_pretrained,
+            hidden_size=256,
+            num_layers=1,
+        )
+        log_on_main(
+            f"Video model initialized: {args.model} + {args.temporal_model} aggregation"
+        )
+    else:
+        # Standard single-frame model
+        model = get_model(
+            args.model,
+            num_classes=num_classes,
+            pretrained=not args.no_pretrained,
+        )
+        log_on_main(f"Model initialized: {args.model} with {num_classes} classes")
 
     model.to(device)
 
@@ -576,7 +888,9 @@ Examples:
     # DDP wrapper
     model = DDP(model, device_ids=[local_rank] if torch.cuda.is_available() else None)
 
-    log_on_main(f"Model initialized: {args.model} with {num_classes} classes")
+    # Count parameters
+    num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    log_on_main(f"Trainable parameters: {num_params:,}")
 
     # -------------------------
     # Optimizer & Scheduler
@@ -602,9 +916,28 @@ Examples:
 
     # Resume from checkpoint
     start_epoch = 0
+    best_val_acc = 0.0
     if args.resume:
-        start_epoch = checkpoint_manager.load_latest(model, optimizer, device)
-        log_on_main(f"Resuming from epoch {start_epoch}")
+        start_epoch, best_val_acc = checkpoint_manager.load_latest(
+            model, optimizer, device
+        )
+        log_on_main(
+            f"Resuming from epoch {start_epoch} (best_val_acc: {best_val_acc:.2f}%)"
+        )
+
+    # -------------------------
+    # Fault Injector (optional)
+    # -------------------------
+    fault_injector = None
+    if args.inject_fault:
+        fault_injector = FaultInjector(
+            failure_rate_per_second=args.inject_rate,
+            target_rank=args.inject_rank,
+            rank=rank,
+        )
+        log_on_main(
+            f"Fault injection enabled: target_rank={args.inject_rank}, rate={args.inject_rate}/sec"
+        )
 
     # -------------------------
     # Training Loop
@@ -613,63 +946,92 @@ Examples:
     log_on_main("Starting Training")
     log_on_main("=" * 70)
 
-    best_val_acc = 0.0
+    # best_val_acc already initialized above (0.0 for fresh start, or loaded from checkpoint on resume)
 
     for epoch in range(start_epoch, args.epochs):
-        epoch_start = time.time()
+        try:
+            epoch_start = time.time()
 
-        # Training
-        log_on_main(f"\nEpoch {epoch + 1}/{args.epochs}")
-        log_on_main("-" * 40)
+            # Training
+            log_on_main(f"\nEpoch {epoch + 1}/{args.epochs}")
+            log_on_main("-" * 40)
 
-        train_loss, train_correct, train_total = train_epoch(
-            model, train_loader, optimizer, device, epoch, train_sampler
-        )
+            train_loss, train_correct, train_total = train_epoch(
+                model,
+                train_loader,
+                optimizer,
+                device,
+                epoch,
+                train_sampler,
+                video_mode=args.video_mode or args.fast_video_mode,
+                fault_injector=fault_injector,
+            )
 
-        # Synchronize after training
-        if is_distributed_initialized():
+            # Synchronize after training
+            if is_distributed_initialized():
+                barrier()
+
+            # Validation
+            val_loss, val_correct, val_total, val_acc = evaluate(
+                model,
+                val_loader_simple,
+                device,
+                video_mode=args.video_mode or args.fast_video_mode,
+            )
+
+            # Update learning rate
+            scheduler.step()
+
+            # Aggregate metrics
+            if is_distributed_initialized():
+                train_loss, train_acc = reduce_metrics(
+                    train_loss, train_correct, train_total, world_size
+                )
+                val_loss, val_acc = reduce_metrics(
+                    val_loss, val_correct, val_total, world_size
+                )
+            else:
+                train_acc = (
+                    100.0 * train_correct / train_total if train_total > 0 else 0.0
+                )
+
+            epoch_time = time.time() - epoch_start
+
+            # Log results (main process only)
+            log_on_main(f"  Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.2f}%")
+            log_on_main(
+                f"  Val Loss:   {val_loss:.4f} | Val Acc:   {val_acc:.2f}% | Time: {epoch_time:.1f}s"
+            )
+            log_on_main(f"  LR: {optimizer.param_groups[0]['lr']:.6f}")
+
+            # Save checkpoint
+            should_save = (epoch + 1) % args.checkpoint_interval == 0
+            is_best = val_acc > best_val_acc
+
+            if should_save or is_best:
+                checkpoint_manager.save(
+                    model, optimizer, epoch + 1, val_loss, metric=val_acc
+                )
+
+                if is_best:
+                    best_val_acc = val_acc
+                    log_on_main(f"  ✓ New best model! Val Acc: {val_acc:.2f}%")
+
+        except Exception as e:
+            # Barrier sync first - prevents rank 0 from saving while others are still running
             barrier()
 
-        # Validation
-        val_loss, val_correct, val_total, val_acc = evaluate(
-            model, val_loader_simple, device
-        )
-
-        # Update learning rate
-        scheduler.step()
-
-        # Aggregate metrics
-        if is_distributed_initialized():
-            train_loss, train_acc = reduce_metrics(
-                train_loss, train_correct, train_total, world_size
-            )
-            val_loss, val_acc = reduce_metrics(
-                val_loss, val_correct, val_total, world_size
-            )
-        else:
-            train_acc = 100.0 * train_correct / train_total if train_total > 0 else 0.0
-
-        epoch_time = time.time() - epoch_start
-
-        # Log results (main process only)
-        log_on_main(f"  Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.2f}%")
-        log_on_main(
-            f"  Val Loss:   {val_loss:.4f} | Val Acc:   {val_acc:.2f}% | Time: {epoch_time:.1f}s"
-        )
-        log_on_main(f"  LR: {optimizer.param_groups[0]['lr']:.6f}")
-
-        # Save checkpoint
-        should_save = (epoch + 1) % args.checkpoint_interval == 0
-        is_best = val_acc > best_val_acc
-
-        if should_save or is_best:
+            # Emergency checkpoint save with current epoch and val_loss
             checkpoint_manager.save(
-                model, optimizer, epoch + 1, val_loss, metric=val_acc
+                model, optimizer, epoch, val_loss if "val_loss" in dir() else 0.0
             )
 
-            if is_best:
-                best_val_acc = val_acc
-                log_on_main(f"  ✓ New best model! Val Acc: {val_acc:.2f}%")
+            # Log error
+            log_on_main(f"Training failed at epoch {epoch}: {e}")
+            log_on_main("Saving emergency checkpoint and exiting...")
+
+            # Re-raise to trigger torchrun restart
+            raise
 
     # -------------------------
     # Training Complete
