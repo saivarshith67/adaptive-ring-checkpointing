@@ -218,7 +218,7 @@
 3. Shard assignment via hash ring is consistent
 4. Local NVMe cache management for shards
 
-**Plans:** 1/1 plans
+**Plans:** 1/1 plans complete
 
 - [x] 09-01-PLAN.md — Shard lifecycle and cache
 
@@ -296,7 +296,7 @@
 | 6. Checkpoint Recovery | 1/1 | Completed | 2026-04-17 |
 | 7. Fault Tolerance Verification | 1/1 | Completed | 2026-04-17 |
 | 8. Hash Ring | 1/1 | Complete    | 2026-04-18 |
-| 9. Shard Manager | 1/1 | Complete | 2026-04-18 |
+| 9. Shard Manager | 1/1 | Complete    | 2026-04-18 |
 | 10. Fault Detector | 0/1 | Pending | — |
 | 11. Elastic Recaching | 0/1 | Pending | — |
 | 12. Recovery Scheduling | 0/1 | Pending | — |
