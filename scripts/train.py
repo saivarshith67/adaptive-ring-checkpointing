@@ -14,6 +14,7 @@ from src.coci.data_ingestor.cifar import get_cifar100_dataset
 from src.coci.config import load_config
 from src.coci.checkpointing.checkpoint_manager import CheckpointManager
 from src.coci.checkpointing.strategy import CheckpointStrategyFactory
+from src.coci.metrics import MetricsCollector, MetricsExporter
 from src.coci.fault.checkpoint_fault_injector import (
     CheckpointBitFlipInjector,
     CheckpointFaultConfig,
@@ -34,14 +35,20 @@ def train(
     cfg,
     checkpoint_manager,
     strategy,
+    metrics=None,
     fault_injector=None,
     inject_fault=False,
     start_epoch=0,
 ):
 
     for epoch in range(start_epoch, cfg.epochs):
+        if metrics:
+            metrics.start_epoch(epoch)
+            
         model.train()
         total_loss = 0.0
+        correct = 0
+        total = 0
         epoch_start = time.time()
 
         for batch_idx, (images, labels) in enumerate(train_loader):
@@ -56,13 +63,24 @@ def train(
             optimizer.step()
 
             total_loss += loss.item()
+            
+            # Track training accuracy
+            _, predicted = torch.max(outputs, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
 
             # -------------------------
             # Time-based checkpointing
             # -------------------------
             if cfg.strategy != "epoch":
                 if strategy.should_checkpoint():
+                    ckpt_start = time.time()
                     checkpoint_manager.save(model, optimizer, epoch, total_loss)
+                    ckpt_time = time.time() - ckpt_start
+                    
+                    if metrics:
+                        metrics.record_batch_checkpoint(batch_id=batch_idx, checkpoint_size_mb=0.0, save_time_sec=ckpt_time)
+                    
                     strategy.update_checkpoint_time()
 
             # -------------------------
@@ -72,21 +90,38 @@ def train(
                 fault_injector.maybe_fail()
 
         epoch_time = time.time() - epoch_start
+        train_loss = total_loss / max(1, len(train_loader))
+        train_acc = 100.0 * correct / total if total > 0 else 0.0
 
         print(
             f"Epoch {epoch + 1}/{cfg.epochs} | "
-            f"Loss: {total_loss:.4f} | "
+            f"Loss: {train_loss:.4f} | Train Acc: {train_acc:.2f}% | "
             f"Time: {epoch_time:.2f}s"
         )
 
         accuracy = evaluate(model, test_loader, device)
         print(f"Test Accuracy: {accuracy:.2f}%")
 
+        # Record epoch metrics
+        if metrics:
+            metrics.end_epoch(
+                epoch=epoch,
+                train_loss=train_loss,
+                train_acc=train_acc,
+                val_loss=0.0,  # Not computed separately in this script
+                val_acc=accuracy
+            )
+
         # -------------------------
         # Epoch-based checkpointing
         # -------------------------
         if cfg.strategy == "epoch":
-            checkpoint_manager.save(model, optimizer, epoch, total_loss)
+            ckpt_start = time.time()
+            checkpoint_manager.save(model, optimizer, epoch, train_loss)
+            ckpt_time = time.time() - ckpt_start
+            
+            if metrics:
+                metrics.record_checkpoint(checkpoint_size_mb=0.0, save_time_sec=ckpt_time)
 
     return True
 
@@ -255,6 +290,24 @@ def main():
     strategy.update_checkpoint_time()
 
     # -------------------------
+    # Metrics Collector
+    # -------------------------
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    experiment_name = f"cifar100_{cfg.strategy}_{timestamp}"
+    
+    metrics = MetricsCollector(
+        experiment_name=experiment_name,
+        training_mode=cfg.strategy,
+        dataset="cifar100",
+        model=cfg.model,
+        epochs=cfg.epochs,
+        batch_size=cfg.batch_size,
+    )
+    
+    metrics.set_distributed_config(world_size=1)
+    print(f"Metrics collection enabled | experiment: {experiment_name}")
+
+    # -------------------------
     # Global Runtime Start
     # -------------------------
     overall_start_time = time.time()
@@ -272,6 +325,7 @@ def main():
             cfg,
             checkpoint_manager,
             strategy,
+            metrics=metrics,
             start_epoch=start_epoch,
         )
 
@@ -297,6 +351,30 @@ def main():
 
         with open(f"final_experiment_log_{cfg.strategy}.jsonl", "a") as f:
             f.write(json.dumps(summary) + "\n")
+
+        # Export metrics
+        print("\nExporting metrics...")
+        exporter = MetricsExporter(base_export_dir="./experiment_results")
+        
+        try:
+            json_path = exporter.export_summary_json(metrics)
+            print(f"  ✓ JSON summary: {json_path}")
+        except Exception as e:
+            print(f"  ✗ JSON export failed: {e}")
+        
+        try:
+            jsonl_path = exporter.export_summary_jsonl(metrics)
+            print(f"  ✓ JSONL aggregated: {jsonl_path}")
+        except Exception as e:
+            print(f"  ✗ JSONL export failed: {e}")
+        
+        try:
+            csv_path = exporter.export_epoch_metrics_csv(metrics)
+            print(f"  ✓ Epoch CSV: {csv_path}")
+        except Exception as e:
+            print(f"  ✗ CSV export failed: {e}")
+        
+        print(f"\nMetrics saved to: ./experiment_results/{metrics.experiment_name}/")
 
         print("Training finished successfully.")
         sys.exit(0)

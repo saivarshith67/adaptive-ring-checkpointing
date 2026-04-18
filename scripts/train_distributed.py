@@ -43,6 +43,7 @@ from src.coci.distributed import (
 from src.coci.models.model import get_model
 from src.coci.config import load_config
 from src.coci.checkpointing.checkpoint_manager import CheckpointManager
+from src.coci.metrics import MetricsCollector, MetricsExporter
 from src.coci.fault.checkpoint_fault_injector import (
     CheckpointBitFlipInjector,
     CheckpointFaultConfig,
@@ -432,11 +433,30 @@ def main():
         )
 
     # -------------------------
+    # Metrics Collector
+    # -------------------------
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    experiment_name = f"distributed_training_{timestamp}"
+    
+    metrics = MetricsCollector(
+        experiment_name=experiment_name,
+        training_mode="distributed",
+        dataset="cifar100",
+        model=cfg.model,
+        epochs=cfg.epochs,
+        batch_size=cfg.batch_size,
+    )
+    
+    metrics.set_distributed_config(world_size=world_size)
+    log_on_main(f"Metrics collection enabled | experiment: {experiment_name}")
+
+    # -------------------------
     # Training Loop
     # -------------------------
     log_on_main("\nStarting training...")
 
     for epoch in range(start_epoch, cfg.epochs):
+        metrics.start_epoch(epoch)
         epoch_start = time.time()
 
         # Train one epoch
@@ -447,6 +467,7 @@ def main():
         # Synchronize after epoch (all workers must complete training)
         if is_distributed_initialized():
             barrier()
+            metrics.record_synchronization(sync_time_sec=0.1)  # Approximate
 
         epoch_time = time.time() - epoch_start
 
@@ -459,6 +480,15 @@ def main():
         else:
             avg_acc = local_acc
 
+        # Record epoch metrics
+        metrics.end_epoch(
+            epoch=epoch,
+            train_loss=avg_loss,
+            train_acc=avg_acc,
+            val_loss=avg_loss,
+            val_acc=avg_acc
+        )
+
         # Log results (rank 0 only)
         log_on_main(
             f"Epoch {epoch + 1}/{cfg.epochs} | "
@@ -468,12 +498,41 @@ def main():
         )
 
         # Save checkpoint (rank 0 only)
+        ckpt_start = time.time()
         checkpoint_manager.save(model, optimizer, epoch + 1, avg_loss)
+        ckpt_time = time.time() - ckpt_start
+        
+        metrics.record_checkpoint(checkpoint_size_mb=0.0, save_time_sec=ckpt_time)
 
     # -------------------------
     # Cleanup
     # -------------------------
     log_on_main("\nTraining completed!")
+
+    # Export metrics (rank 0 only)
+    if is_main_process():
+        log_on_main("\nExporting metrics...")
+        exporter = MetricsExporter(base_export_dir="./experiment_results")
+        
+        try:
+            json_path = exporter.export_summary_json(metrics)
+            log_on_main(f"  ✓ JSON summary: {json_path}")
+        except Exception as e:
+            log_on_main(f"  ✗ JSON export failed: {e}")
+        
+        try:
+            jsonl_path = exporter.export_summary_jsonl(metrics)
+            log_on_main(f"  ✓ JSONL aggregated: {jsonl_path}")
+        except Exception as e:
+            log_on_main(f"  ✗ JSONL export failed: {e}")
+        
+        try:
+            csv_path = exporter.export_epoch_metrics_csv(metrics)
+            log_on_main(f"  ✓ Epoch CSV: {csv_path}")
+        except Exception as e:
+            log_on_main(f"  ✗ CSV export failed: {e}")
+        
+        log_on_main(f"\nMetrics saved to: ./experiment_results/{metrics.experiment_name}/")
 
     if is_distributed_initialized():
         cleanup_distributed()

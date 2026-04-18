@@ -82,6 +82,7 @@ from src.coci.data_ingestor.faceforensics import (
 from src.coci.checkpointing.checkpoint_manager import CheckpointManager
 from src.coci.checkpointing.hash_ring_checkpoint_manager import HashRingCheckpointManager
 from src.coci.checkpointing.convergence_scheduler import ConvergenceAwareScheduler
+from src.coci.metrics import MetricsCollector, MetricsExporter
 from src.coci.fault.checkpoint_fault_injector import (
     CheckpointBitFlipInjector,
     CheckpointFaultConfig,
@@ -1116,6 +1117,24 @@ Examples:
             f"(lambda={args.failure_rate_lambda}, cost={args.checkpoint_cost_sec}s)"
         )
 
+    # -------------------------
+    # Metrics Collector
+    # -------------------------
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    experiment_name = f"faceforensics_{active_training_mode.replace('-', '_')}_{timestamp}"
+    
+    metrics = MetricsCollector(
+        experiment_name=experiment_name,
+        training_mode=active_training_mode,
+        dataset="faceforensics",
+        model=args.model,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+    )
+    
+    metrics.set_distributed_config(world_size=world_size)
+    log_on_main(f"Metrics collection enabled | experiment: {experiment_name}")
+
     bit_range = None
     if args.fault_bit_range:
         low_str, high_str = args.fault_bit_range.split(",", maxsplit=1)
@@ -1186,6 +1205,8 @@ Examples:
 
     for epoch in range(start_epoch, args.epochs):
         try:
+            # Record epoch start for metrics
+            metrics.start_epoch(epoch)
             epoch_start = time.time()
 
             # Training
@@ -1201,8 +1222,17 @@ Examples:
 
                 now = time.time()
                 convergence_scheduler.observe(batch_loss, now=now)
+                
+                # Update convergence metrics
+                metrics.update_convergence_metrics(
+                    current_interval_sec=convergence_scheduler.current_interval_seconds,
+                    theta1=convergence_scheduler._last_fit.theta1 if convergence_scheduler._last_fit else None,
+                    theta2=convergence_scheduler._last_fit.theta2 if convergence_scheduler._last_fit else None,
+                )
+                
                 if convergence_scheduler.should_checkpoint(now=now):
                     checkpoint_id = f"step_{global_step:012d}"
+                    ckpt_start = time.time()
                     checkpoint_manager.save(
                         model,
                         optimizer,
@@ -1210,6 +1240,18 @@ Examples:
                         batch_loss,
                         checkpoint_id=checkpoint_id,
                     )
+                    ckpt_time = time.time() - ckpt_start
+                    
+                    # Record checkpoint metrics
+                    try:
+                        ckpt_path = os.path.join(args.checkpoint_dir, f"checkpoint_{checkpoint_id}.pt")
+                        ckpt_size_mb = os.path.getsize(ckpt_path) / (1024 * 1024) if os.path.exists(ckpt_path) else 0.0
+                    except:
+                        ckpt_size_mb = 0.0
+                    
+                    metrics.record_batch_checkpoint(batch_id=global_step, checkpoint_size_mb=ckpt_size_mb, save_time_sec=ckpt_time)
+                    metrics.increment_convergence_checkpoint()
+                    
                     convergence_scheduler.mark_checkpoint(now=now)
                     log_on_main(
                         "  [Convergence Ckpt] "
@@ -1257,6 +1299,15 @@ Examples:
 
             epoch_time = time.time() - epoch_start
 
+            # Record epoch metrics
+            metrics.end_epoch(
+                epoch=epoch,
+                train_loss=train_loss,
+                train_acc=train_acc,
+                val_loss=val_loss,
+                val_acc=val_acc
+            )
+
             # Log results (main process only)
             log_on_main(f"  Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.2f}%")
             log_on_main(
@@ -1270,6 +1321,7 @@ Examples:
             if use_convergence:
                 if is_best:
                     best_checkpoint_id = f"best_epoch_{epoch + 1:04d}"
+                    ckpt_start = time.time()
                     checkpoint_manager.save(
                         model,
                         optimizer,
@@ -1278,6 +1330,16 @@ Examples:
                         metric=val_acc,
                         checkpoint_id=best_checkpoint_id,
                     )
+                    ckpt_time = time.time() - ckpt_start
+                    
+                    # Record checkpoint metrics
+                    try:
+                        ckpt_path = os.path.join(args.checkpoint_dir, f"checkpoint_{best_checkpoint_id}.pt")
+                        ckpt_size_mb = os.path.getsize(ckpt_path) / (1024 * 1024) if os.path.exists(ckpt_path) else 0.0
+                    except:
+                        ckpt_size_mb = 0.0
+                    metrics.record_checkpoint(checkpoint_size_mb=ckpt_size_mb, save_time_sec=ckpt_time, checkpoint_id=best_checkpoint_id)
+                    
                     best_val_acc = val_acc
                     log_on_main(
                         f"  ✓ New best model! Val Acc: {val_acc:.2f}% ({best_checkpoint_id})"
@@ -1285,9 +1347,19 @@ Examples:
             else:
                 should_save = (epoch + 1) % args.checkpoint_interval == 0
                 if should_save or is_best:
+                    ckpt_start = time.time()
                     checkpoint_manager.save(
                         model, optimizer, epoch + 1, val_loss, metric=val_acc
                     )
+                    ckpt_time = time.time() - ckpt_start
+                    
+                    # Record checkpoint metrics
+                    try:
+                        ckpt_path = os.path.join(args.checkpoint_dir, f"checkpoint_epoch_{epoch + 1}.pt")
+                        ckpt_size_mb = os.path.getsize(ckpt_path) / (1024 * 1024) if os.path.exists(ckpt_path) else 0.0
+                    except:
+                        ckpt_size_mb = 0.0
+                    metrics.record_checkpoint(checkpoint_size_mb=ckpt_size_mb, save_time_sec=ckpt_time)
 
                     if is_best:
                         best_val_acc = val_acc
@@ -1317,6 +1389,43 @@ Examples:
     log_on_main("=" * 70)
     log_on_main(f"Best validation accuracy: {best_val_acc:.2f}%")
     log_on_main(f"Checkpoints saved to: {args.checkpoint_dir}")
+
+    # Export metrics (rank 0 only)
+    if is_main_process():
+        log_on_main("\nExporting metrics...")
+        exporter = MetricsExporter(base_export_dir="./experiment_results")
+        
+        try:
+            json_path = exporter.export_summary_json(metrics)
+            log_on_main(f"  ✓ JSON summary: {json_path}")
+        except Exception as e:
+            log_on_main(f"  ✗ JSON export failed: {e}")
+        
+        try:
+            jsonl_path = exporter.export_summary_jsonl(metrics)
+            log_on_main(f"  ✓ JSONL aggregated: {jsonl_path}")
+        except Exception as e:
+            log_on_main(f"  ✗ JSONL export failed: {e}")
+        
+        try:
+            csv_path = exporter.export_epoch_metrics_csv(metrics)
+            log_on_main(f"  ✓ Epoch CSV: {csv_path}")
+        except Exception as e:
+            log_on_main(f"  ✗ CSV export failed: {e}")
+        
+        try:
+            html_path = exporter.export_html_report(metrics)
+            log_on_main(f"  ✓ HTML report: {html_path}")
+        except Exception as e:
+            log_on_main(f"  ✗ HTML export failed: {e}")
+        
+        try:
+            md_path = exporter.export_markdown_report(metrics)
+            log_on_main(f"  ✓ Markdown report: {md_path}")
+        except Exception as e:
+            log_on_main(f"  ✗ Markdown export failed: {e}")
+        
+        log_on_main(f"\nMetrics saved to: ./experiment_results/{metrics.experiment_name}/")
 
     if is_distributed_initialized():
         cleanup_distributed()
