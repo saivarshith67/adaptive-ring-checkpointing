@@ -1257,54 +1257,71 @@ Examples:
         if not args.runtime_fault_injection or runtime_fault_triggered:
             return
 
+        should_crash = False
+
         if not is_main_process():
-            return
+            # Rank 0 decides whether to inject; all ranks receive crash decision below.
+            pass
+        else:
+            runtime_fault_saves_seen += 1
+            if runtime_fault_saves_seen < args.runtime_fault_after_checkpoints:
+                pass
+            else:
+                runtime_fault_cfg = replace(
+                    fault_cfg,
+                    enabled=True,
+                    num_processes=world_size,
+                )
+                runtime_injector = CheckpointBitFlipInjector(
+                    config=runtime_fault_cfg,
+                    rank=rank,
+                    world_size=world_size,
+                    dt_mechanism="runtime",
+                )
 
-        runtime_fault_saves_seen += 1
-        if runtime_fault_saves_seen < args.runtime_fault_after_checkpoints:
-            return
+                model_state = copy.deepcopy(
+                    model.module.state_dict()
+                    if isinstance(model, DDP)
+                    else model.state_dict()
+                )
+                optimizer_state = copy.deepcopy(optimizer.state_dict())
+                runtime_checkpoint = {
+                    "epoch": epoch + 1,
+                    "model_state_dict": model_state,
+                    "optimizer_state_dict": optimizer_state,
+                    "loss": 0.0,
+                    "checkpoint_id": f"runtime_{checkpoint_label}",
+                }
+                runtime_path = os.path.join(
+                    args.checkpoint_dir, f"runtime_fault_{checkpoint_label}.pt"
+                )
+                runtime_injector.inject(runtime_checkpoint, runtime_path)
 
-        runtime_fault_cfg = replace(
-            fault_cfg,
-            enabled=True,
-            num_processes=world_size,
-        )
-        runtime_injector = CheckpointBitFlipInjector(
-            config=runtime_fault_cfg,
-            rank=rank,
-            world_size=world_size,
-            dt_mechanism="runtime",
-        )
+                load_target = model.module if isinstance(model, DDP) else model
+                load_target.load_state_dict(runtime_checkpoint["model_state_dict"])
+                optimizer.load_state_dict(runtime_checkpoint["optimizer_state_dict"])
 
-        model_state = copy.deepcopy(
-            model.module.state_dict() if isinstance(model, DDP) else model.state_dict()
-        )
-        optimizer_state = copy.deepcopy(optimizer.state_dict())
-        runtime_checkpoint = {
-            "epoch": epoch + 1,
-            "model_state_dict": model_state,
-            "optimizer_state_dict": optimizer_state,
-            "loss": 0.0,
-            "checkpoint_id": f"runtime_{checkpoint_label}",
-        }
-        runtime_path = os.path.join(
-            args.checkpoint_dir, f"runtime_fault_{checkpoint_label}.pt"
-        )
-        runtime_injector.inject(runtime_checkpoint, runtime_path)
+                runtime_fault_triggered = True
+                metrics.increment_injected_fault()
+                log_on_main(
+                    "  [Runtime Fault] Injected live checkpoint fault "
+                    f"after {runtime_fault_saves_seen} saved checkpoint(s) "
+                    f"at {checkpoint_label} | crash_after_injection={args.runtime_fault_crash_after_injection}"
+                )
 
-        load_target = model.module if isinstance(model, DDP) else model
-        load_target.load_state_dict(runtime_checkpoint["model_state_dict"])
-        optimizer.load_state_dict(runtime_checkpoint["optimizer_state_dict"])
+                should_crash = bool(args.runtime_fault_crash_after_injection)
 
-        runtime_fault_triggered = True
-        metrics.increment_injected_fault()
-        log_on_main(
-            "  [Runtime Fault] Injected live checkpoint fault "
-            f"after {runtime_fault_saves_seen} saved checkpoint(s) "
-            f"at {checkpoint_label} | crash_after_injection={args.runtime_fault_crash_after_injection}"
-        )
+        # Ensure all ranks make the same crash decision to avoid deadlocks.
+        if is_distributed_initialized():
+            crash_flag = torch.tensor(
+                int(should_crash),
+                device=device,
+                dtype=torch.int,
+            )
+            torch.distributed.broadcast(crash_flag, src=0)
+            should_crash = bool(int(crash_flag.item()))
 
-        if args.runtime_fault_crash_after_injection:
+        if should_crash:
             raise RuntimeError(
                 "Injected runtime fault for fault-tolerance recovery test"
             )
@@ -1537,13 +1554,12 @@ Examples:
                         log_on_main(f"  ✓ New best model! Val Acc: {val_acc:.2f}%")
 
         except Exception as e:
-            # Barrier sync first - prevents rank 0 from saving while others are still running
-            barrier()
-
-            # Emergency checkpoint save with current epoch and val_loss
-            checkpoint_manager.save(
-                model, optimizer, epoch, val_loss if "val_loss" in dir() else 0.0
-            )
+            # Avoid checkpoint_manager.save() here during DDP failures, because its
+            # internal barrier can deadlock if only some ranks hit this exception path.
+            if not is_distributed_initialized():
+                checkpoint_manager.save(
+                    model, optimizer, epoch, val_loss if "val_loss" in dir() else 0.0
+                )
 
             if use_hash_ring:
                 checkpoint_manager.stop_heartbeat_thread()

@@ -1,7 +1,7 @@
 # Graph Report - D:\Sai\HPC\project\adaptive-ring-checkpointing  (2026-04-18)
 
 ## Corpus Check
-- 28 files · ~36,477 words
+- 28 files · ~70,100 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary

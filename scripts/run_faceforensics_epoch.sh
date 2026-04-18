@@ -154,8 +154,10 @@ fi
 
 CMD="$CMD $EXTRA_FLAGS"
 
+ATTEMPT=1
+
 while true; do
-    echo "Starting training..."
+    echo "Starting training (attempt $ATTEMPT)..."
     echo "Command: $CMD"
     echo ""
 
@@ -164,11 +166,14 @@ while true; do
 
     if [ $EXIT_CODE -eq 0 ]; then
         echo ""
-        echo "Training completed successfully."
+        echo "Training completed successfully on attempt $ATTEMPT."
         break
     fi
 
     echo ""
-    echo "Training exited with code $EXIT_CODE. Restarting in 5 seconds..."
+    NOW_TS=$(date "+%Y-%m-%d %H:%M:%S")
+    NEXT_ATTEMPT=$((ATTEMPT + 1))
+    echo "[$NOW_TS] Training exited with code $EXIT_CODE. Restarting in 5 seconds (next attempt: $NEXT_ATTEMPT)..."
+    ATTEMPT=$NEXT_ATTEMPT
     sleep 5
 done

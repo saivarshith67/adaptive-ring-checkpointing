@@ -908,18 +908,18 @@
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
       "source_location": "L179",
-      "id": "hash_ring_checkpoint_manager_rationale_179",
       "community": 1,
-      "norm_label": "start the heartbeat fault-detection thread for liveness monitoring.          a"
+      "norm_label": "start the heartbeat fault-detection thread for liveness monitoring.          a",
+      "id": "hash_ring_checkpoint_manager_rationale_179"
     },
     {
       "label": "Stop the heartbeat fault-detection thread gracefully.          Args:",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
       "source_location": "L189",
-      "id": "hash_ring_checkpoint_manager_rationale_189",
       "community": 1,
-      "norm_label": "stop the heartbeat fault-detection thread gracefully.          args:"
+      "norm_label": "stop the heartbeat fault-detection thread gracefully.          args:",
+      "id": "hash_ring_checkpoint_manager_rationale_189"
     },
     {
       "label": "strategy.py",
@@ -5380,7 +5380,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L1428",
+      "source_location": "L1445",
       "weight": 1.0,
       "_src": "train_faceforensics_main",
       "_tgt": "train_faceforensics_train_epoch",
@@ -5428,7 +5428,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L1444",
+      "source_location": "L1461",
       "weight": 1.0,
       "_src": "train_faceforensics_main",
       "_tgt": "train_faceforensics_evaluate",
@@ -7026,11 +7026,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
       "source_location": "L6",
       "weight": 0.8,
-      "_src": "hash_ring_checkpoint_manager_rationale_179",
-      "_tgt": "checkpoint_manager_checkpointmanager",
+      "_src": "checkpoint_manager_checkpointmanager",
+      "_tgt": "hash_ring_checkpoint_manager_rationale_179",
+      "confidence_score": 0.5,
       "source": "checkpoint_manager_checkpointmanager",
-      "target": "hash_ring_checkpoint_manager_rationale_179",
-      "confidence_score": 0.5
+      "target": "hash_ring_checkpoint_manager_rationale_179"
     },
     {
       "relation": "uses",
@@ -7038,11 +7038,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
       "source_location": "L6",
       "weight": 0.8,
-      "_src": "hash_ring_checkpoint_manager_rationale_189",
-      "_tgt": "checkpoint_manager_checkpointmanager",
+      "_src": "checkpoint_manager_checkpointmanager",
+      "_tgt": "hash_ring_checkpoint_manager_rationale_189",
+      "confidence_score": 0.5,
       "source": "checkpoint_manager_checkpointmanager",
-      "target": "hash_ring_checkpoint_manager_rationale_189",
-      "confidence_score": 0.5
+      "target": "hash_ring_checkpoint_manager_rationale_189"
     },
     {
       "relation": "calls",
