@@ -14,7 +14,22 @@ class CheckpointManager:
         self.num_checkpoints = 0
         self.total_checkpoint_time = 0.0
 
-    def save(self, model, optimizer, epoch, loss, metric=None):
+    def _resolve_checkpoint_path(self, epoch, checkpoint_id=None):
+        if checkpoint_id is None:
+            filename = f"checkpoint_epoch_{epoch}.pt"
+        else:
+            filename = f"checkpoint_{checkpoint_id}.pt"
+        return os.path.join(self.checkpoint_dir, filename)
+
+    def save(
+        self,
+        model,
+        optimizer,
+        epoch,
+        loss,
+        metric=None,
+        checkpoint_id=None,
+    ):
         """
         Save a checkpoint.
 
@@ -33,7 +48,7 @@ class CheckpointManager:
                 dist.barrier()
             return
 
-        path = os.path.join(self.checkpoint_dir, f"checkpoint_epoch_{epoch}.pt")
+        path = self._resolve_checkpoint_path(epoch, checkpoint_id=checkpoint_id)
 
         start = time.time()
 
@@ -48,6 +63,8 @@ class CheckpointManager:
             "model_state_dict": state_dict,
             "optimizer_state_dict": optimizer.state_dict(),
             "loss": loss,
+            "checkpoint_id": checkpoint_id,
+            "save_time": time.time(),
         }
 
         if metric is not None:
@@ -60,13 +77,14 @@ class CheckpointManager:
         self.num_checkpoints += 1
         self.total_checkpoint_time += duration
 
-        print(f"[Checkpoint] Saved epoch {epoch} | Time: {duration:.4f}s")
+        label = checkpoint_id if checkpoint_id is not None else f"epoch_{epoch}"
+        print(f"[Checkpoint] Saved {label} | Time: {duration:.4f}s")
 
         # Barrier to ensure all ranks wait for save to complete
         if dist.is_available() and dist.is_initialized():
             dist.barrier()
 
-    def load_latest(self, model, optimizer, device):
+    def load_latest(self, model, optimizer, device, checkpoint_injector=None):
         """
         Load the latest checkpoint and restore model/optimizer state.
 
@@ -82,25 +100,31 @@ class CheckpointManager:
         files = [
             f
             for f in os.listdir(self.checkpoint_dir)
-            if f.startswith("checkpoint_epoch_")
+            if f.startswith("checkpoint_") and f.endswith(".pt")
         ]
 
         if not files:
             print("[Checkpoint] No checkpoint found. Starting fresh.")
             return 0, 0.0
 
-        latest = max(files, key=lambda x: int(x.split("_")[-1].split(".")[0]))
+        latest = max(
+            files,
+            key=lambda x: os.path.getmtime(os.path.join(self.checkpoint_dir, x)),
+        )
         path = os.path.join(self.checkpoint_dir, latest)
 
         # Use map_location for device migration (GPU -> CPU or different GPU)
         checkpoint = torch.load(path, map_location=device)
+
+        if checkpoint_injector is not None:
+            checkpoint = checkpoint_injector.inject(checkpoint, path)
 
         # Use model.module.load_state_dict() if DDP wrapped
         load_target = model.module if self.is_ddp_wrapped else model
         load_target.load_state_dict(checkpoint["model_state_dict"])
         optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
 
-        epoch = checkpoint["epoch"]
+        epoch = int(checkpoint.get("epoch", 0))
         best_metric = checkpoint.get("metric", 0.0)
         print(
             f"[Checkpoint] Resumed from {latest} (epoch {epoch}, best_metric {best_metric:.4f})"

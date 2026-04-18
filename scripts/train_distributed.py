@@ -12,6 +12,7 @@ multi-GPU training structure with:
 """
 
 import argparse
+import random
 import sys
 import time
 import numpy as np
@@ -42,6 +43,12 @@ from src.coci.distributed import (
 from src.coci.models.model import get_model
 from src.coci.config import load_config
 from src.coci.checkpointing.checkpoint_manager import CheckpointManager
+from src.coci.fault.checkpoint_fault_injector import (
+    CheckpointBitFlipInjector,
+    CheckpointFaultConfig,
+    FaultType,
+    enforce_determinism,
+)
 
 
 # -------------------------------------------------
@@ -207,12 +214,88 @@ def main():
     parser = argparse.ArgumentParser(description="Distributed Training")
     parser.add_argument("--mode", choices=["dev", "server"], default="dev")
     parser.add_argument("--epochs", type=int, default=None)
+    parser.add_argument(
+        "--no-fault-injection",
+        action="store_true",
+        help="Disable checkpoint bit-flip injection (enabled by default)",
+    )
+    parser.add_argument(
+        "--fault-type",
+        type=str,
+        default=FaultType.RANDOM_BIT.value,
+        choices=[ft.value for ft in FaultType],
+        help="Fault type for checkpoint bit-flip injection",
+    )
+    parser.add_argument(
+        "--fault-location",
+        type=str,
+        default="model",
+        help="Fault location: model, optimizer, all, or layer index",
+    )
+    parser.add_argument(
+        "--fault-bit-range",
+        type=str,
+        default=None,
+        help="Inclusive bit range low,high (example: 0,31)",
+    )
+    parser.add_argument(
+        "--fault-probability",
+        type=float,
+        default=1.0,
+        help="Fault probability per attempted injection",
+    )
+    parser.add_argument(
+        "--fault-bit-flips",
+        type=int,
+        default=1,
+        help="Number of bit flips to inject per resumed checkpoint",
+    )
+    parser.add_argument(
+        "--fault-num-processes",
+        type=int,
+        default=1,
+        help="How many ranks load a corrupted checkpoint",
+    )
+    parser.add_argument(
+        "--fault-target-layers",
+        type=str,
+        default="",
+        help="Comma-separated layer indices to target (model only)",
+    )
+    parser.add_argument(
+        "--fault-specific-bit",
+        type=int,
+        default=None,
+        help="Bit position for SPECIFIC_BIT fault type",
+    )
+    parser.add_argument(
+        "--fault-log-path",
+        type=str,
+        default=None,
+        help="Path to write injection logs",
+    )
+    parser.add_argument(
+        "--fault-load-log",
+        type=str,
+        default=None,
+        help="Path to an existing injection log to replay",
+    )
+    parser.add_argument(
+        "--fault-seed",
+        type=int,
+        default=42,
+        help="Deterministic seed for equivalent multi-rank injection",
+    )
     args = parser.parse_args()
 
     # -------------------------
     # Distributed Setup
     # -------------------------
     rank, world_size, local_rank = setup_distributed(backend="nccl")
+
+    enforce_determinism(args.fault_seed)
+    random.seed(args.fault_seed + rank)
+    np.random.seed(args.fault_seed + rank)
 
     # Set CUDA device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -296,9 +379,57 @@ def main():
     # -------------------------
     checkpoint_manager = CheckpointManager(is_ddp_wrapped=True)
 
+    bit_range = None
+    if args.fault_bit_range:
+        low_str, high_str = args.fault_bit_range.split(",", maxsplit=1)
+        bit_range = (int(low_str.strip()), int(high_str.strip()))
+
+    target_layers = []
+    if args.fault_target_layers.strip():
+        target_layers = [
+            int(idx.strip())
+            for idx in args.fault_target_layers.split(",")
+            if idx.strip()
+        ]
+
+    fault_cfg = CheckpointFaultConfig(
+        enabled=not args.no_fault_injection,
+        fault_type=FaultType(args.fault_type),
+        fault_location=args.fault_location,
+        bit_range=bit_range,
+        fault_probability=args.fault_probability,
+        num_bit_flips=args.fault_bit_flips,
+        num_processes=args.fault_num_processes,
+        total_processes=world_size,
+        auto_precision=True,
+        target_layers=target_layers,
+        specific_bit_position=args.fault_specific_bit,
+        log_injection=True,
+        injection_log_path=args.fault_log_path,
+        load_log=args.fault_load_log,
+        seed=args.fault_seed,
+    )
+    checkpoint_injector = CheckpointBitFlipInjector(
+        config=fault_cfg,
+        rank=rank,
+        world_size=world_size,
+        dt_mechanism="DDP",
+    )
+
     # Try to resume from checkpoint
-    start_epoch, best_val_acc = checkpoint_manager.load_latest(model, optimizer, device)
+    start_epoch, best_val_acc = checkpoint_manager.load_latest(
+        model,
+        optimizer,
+        device,
+        checkpoint_injector=checkpoint_injector,
+    )
     log_on_main(f"Resuming from epoch {start_epoch}")
+    if fault_cfg.enabled:
+        log_on_main(
+            "Checkpoint fault injection enabled by default | "
+            f"type={fault_cfg.fault_type.value}, location={fault_cfg.fault_location}, "
+            f"bit_flips={fault_cfg.num_bit_flips}, target_processes={fault_cfg.num_processes}/{world_size}"
+        )
 
     # -------------------------
     # Training Loop

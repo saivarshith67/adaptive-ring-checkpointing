@@ -42,8 +42,9 @@ import os
 import sys
 import time
 import json
+import random
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Callable, List, Optional, Tuple
 
 import torch
 import torch.nn as nn
@@ -80,7 +81,13 @@ from src.coci.data_ingestor.faceforensics import (
 )
 from src.coci.checkpointing.checkpoint_manager import CheckpointManager
 from src.coci.checkpointing.hash_ring_checkpoint_manager import HashRingCheckpointManager
-from src.coci.fault.fault_injector import FaultInjector
+from src.coci.checkpointing.convergence_scheduler import ConvergenceAwareScheduler
+from src.coci.fault.checkpoint_fault_injector import (
+    CheckpointBitFlipInjector,
+    CheckpointFaultConfig,
+    FaultType,
+    enforce_determinism,
+)
 from src.coci.config import (
     FACEFORENSICS_DATASET_PATH,
     MODEL_NAME,
@@ -109,6 +116,12 @@ DEFAULT_CONFIG = {
     "num_frames": 8,  # Frames to sample per video
     "temporal_model": "mean",  # Aggregation: "mean", "lstm", "gru", "attention"
 }
+
+
+TRAINING_MODE_EPOCH = "epoch"
+TRAINING_MODE_CONVERGENCE = "convergence"
+TRAINING_MODE_HASH_RING_EPOCH = "hash-ring-epoch"
+TRAINING_MODE_CONVERGENCE_HASH_RING = "convergence-hash-ring"
 
 
 # -------------------------------------------------
@@ -217,7 +230,7 @@ def train_epoch(
     epoch,
     sampler=None,
     video_mode=False,
-    fault_injector=None,
+    checkpoint_callback: Optional[Callable[[int, float], None]] = None,
 ):
     """
     Train for one epoch.
@@ -230,8 +243,6 @@ def train_epoch(
         epoch: Current epoch number
         sampler: DistributedSampler for epoch synchronization
         video_mode: If True, expects (frames, labels) where frames is (B, T, C, H, W)
-        fault_injector: Optional FaultInjector for simulating failures
-
     Returns:
         tuple: (avg_loss, correct, total) - local metrics
     """
@@ -246,10 +257,6 @@ def train_epoch(
     total = 0
 
     for batch_idx, batch in enumerate(train_loader):
-        # Periodic fault injection check (every 100 batches)
-        if fault_injector is not None and batch_idx % 100 == 0:
-            fault_injector.maybe_fail()
-
         if video_mode:
             # Video mode: batch is (frames, labels) where frames is (B, T, C, H, W)
             frames, labels = batch
@@ -290,6 +297,9 @@ def train_epoch(
         _, predicted = torch.max(outputs, 1)
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
+
+        if checkpoint_callback is not None:
+            checkpoint_callback(batch_idx, loss.item())
 
         # Log progress every 50 batches
         if batch_idx % 50 == 0 and is_main_process():
@@ -380,7 +390,7 @@ def download_and_prepare_dataset():
 # -------------------------------------------------
 # Main Training
 # -------------------------------------------------
-def main():
+def main(cli_args=None):
     parser = argparse.ArgumentParser(
         description="FaceForensics++ Deepfake Detection Training",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -525,23 +535,97 @@ Examples:
         help="Pre-extract frames from videos to .npy files for fast loading",
     )
 
-    # Fault injection arguments
+    # Legacy runtime fault arguments (kept for CLI compatibility)
     parser.add_argument(
         "--inject-fault",
         action="store_true",
-        help="Enable fault injection to simulate GPU/node failures",
+        help="Deprecated: use checkpoint fault injection options (enabled by default)",
     )
     parser.add_argument(
         "--inject-rank",
         type=int,
         default=0,
-        help="Target rank for fault injection (default: 0 = rank 0 only)",
+        help="Deprecated: retained for backward compatibility",
     )
     parser.add_argument(
         "--inject-rate",
         type=float,
         default=0.02,
-        help="Failure rate per second for fault injection (default: 0.02)",
+        help="Deprecated: retained for backward compatibility",
+    )
+
+    # Checkpoint bit-flip fault injection arguments
+    parser.add_argument(
+        "--no-fault-injection",
+        action="store_true",
+        help="Disable checkpoint bit-flip injection (enabled by default)",
+    )
+    parser.add_argument(
+        "--fault-type",
+        type=str,
+        default=FaultType.RANDOM_BIT.value,
+        choices=[ft.value for ft in FaultType],
+        help="Fault type for checkpoint bit-flip injection",
+    )
+    parser.add_argument(
+        "--fault-location",
+        type=str,
+        default="model",
+        help="Fault location: model, optimizer, all, or layer index",
+    )
+    parser.add_argument(
+        "--fault-bit-range",
+        type=str,
+        default=None,
+        help="Inclusive bit range low,high (example: 0,31)",
+    )
+    parser.add_argument(
+        "--fault-probability",
+        type=float,
+        default=1.0,
+        help="Fault probability per attempted injection",
+    )
+    parser.add_argument(
+        "--fault-bit-flips",
+        type=int,
+        default=1,
+        help="Number of bit flips to inject per resumed checkpoint",
+    )
+    parser.add_argument(
+        "--fault-num-processes",
+        type=int,
+        default=1,
+        help="How many ranks load a corrupted checkpoint",
+    )
+    parser.add_argument(
+        "--fault-target-layers",
+        type=str,
+        default="",
+        help="Comma-separated layer indices to target (model only)",
+    )
+    parser.add_argument(
+        "--fault-specific-bit",
+        type=int,
+        default=None,
+        help="Bit position for SPECIFIC_BIT fault type",
+    )
+    parser.add_argument(
+        "--fault-log-path",
+        type=str,
+        default=None,
+        help="Path to write injection logs",
+    )
+    parser.add_argument(
+        "--fault-load-log",
+        type=str,
+        default=None,
+        help="Path to an existing injection log to replay",
+    )
+    parser.add_argument(
+        "--fault-seed",
+        type=int,
+        default=42,
+        help="Deterministic seed for equivalent multi-rank injection",
     )
 
     # Checkpoint arguments
@@ -563,11 +647,29 @@ Examples:
         help="Resume from latest checkpoint",
     )
     parser.add_argument(
+        "--training-mode",
+        type=str,
+        default=None,
+        choices=[
+            TRAINING_MODE_EPOCH,
+            TRAINING_MODE_CONVERGENCE,
+            TRAINING_MODE_HASH_RING_EPOCH,
+            TRAINING_MODE_CONVERGENCE_HASH_RING,
+        ],
+        help=(
+            "Checkpoint behavior mode. "
+            "epoch=epoch checkpoints only, "
+            "convergence=COCI timing + normal storage, "
+            "hash-ring-epoch=epoch timing + hash ring storage, "
+            "convergence-hash-ring=COCI timing + hash ring storage"
+        ),
+    )
+    parser.add_argument(
         "--checkpoint-mode",
         type=str,
         default="normal",
         choices=["normal", "hash-ring"],
-        help="Checkpoint backend to use (default: normal)",
+        help="Legacy backend selector (default: normal)",
     )
     parser.add_argument(
         "--hash-ring-virtual-nodes",
@@ -581,8 +683,55 @@ Examples:
         default="./checkpoints/hash_cache",
         help="Local cache root for hash ring checkpoint shards",
     )
+    parser.add_argument(
+        "--failure-rate-lambda",
+        type=float,
+        default=0.00208,
+        help="Failure rate lambda (1/MTBF) for convergence-aware checkpointing",
+    )
+    parser.add_argument(
+        "--checkpoint-cost-sec",
+        type=float,
+        default=0.60,
+        help="Estimated checkpoint save cost in seconds for convergence-aware checkpointing",
+    )
+    parser.add_argument(
+        "--fit-interval-steps",
+        type=int,
+        default=100,
+        help="Batch interval for online loss fitting in convergence mode",
+    )
+    parser.add_argument(
+        "--min-convergence-interval-sec",
+        type=float,
+        default=5.0,
+        help="Minimum interval between convergence checkpoints in seconds",
+    )
+    parser.add_argument(
+        "--max-convergence-interval-sec",
+        type=float,
+        default=1800.0,
+        help="Maximum interval between convergence checkpoints in seconds",
+    )
 
-    args = parser.parse_args()
+    args = parser.parse_args(cli_args)
+
+    if args.training_mode is None:
+        if args.checkpoint_mode == "hash-ring":
+            active_training_mode = TRAINING_MODE_HASH_RING_EPOCH
+        else:
+            active_training_mode = TRAINING_MODE_EPOCH
+    else:
+        active_training_mode = args.training_mode
+
+    use_hash_ring = active_training_mode in {
+        TRAINING_MODE_HASH_RING_EPOCH,
+        TRAINING_MODE_CONVERGENCE_HASH_RING,
+    }
+    use_convergence = active_training_mode in {
+        TRAINING_MODE_CONVERGENCE,
+        TRAINING_MODE_CONVERGENCE_HASH_RING,
+    }
 
     # Handle dataset download
     if args.download_dataset:
@@ -611,6 +760,9 @@ Examples:
     # Distributed Setup
     # -------------------------
     rank, world_size, local_rank = setup_distributed(backend="nccl")
+    enforce_determinism(args.fault_seed)
+    random.seed(args.fault_seed + rank)
+    torch.manual_seed(args.fault_seed + rank)
 
     # Set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -645,7 +797,8 @@ Examples:
     log_on_main(f"Batch Size:    {args.batch_size} (per GPU)")
     log_on_main(f"Learning Rate: {args.lr}")
     log_on_main(f"Checkpoint:    {args.checkpoint_dir}")
-    log_on_main(f"CheckpointMode:{args.checkpoint_mode}")
+    log_on_main(f"Training Mode: {active_training_mode}")
+    log_on_main(f"CheckpointMode:{'hash-ring' if use_hash_ring else 'normal'}")
     log_on_main("-" * 70)
     log_on_main(f"Video Mode:    {args.video_mode or args.fast_video_mode}")
     if args.video_mode or args.fast_video_mode:
@@ -930,7 +1083,7 @@ Examples:
     # Checkpoint Manager
     # -------------------------
     os.makedirs(args.checkpoint_dir, exist_ok=True)
-    if args.checkpoint_mode == "hash-ring":
+    if use_hash_ring:
         node_ids = [f"rank-{i}" for i in range(world_size)]
         checkpoint_manager = HashRingCheckpointManager(
             checkpoint_dir=args.checkpoint_dir,
@@ -949,30 +1102,76 @@ Examples:
             is_ddp_wrapped=True,
         )
 
+    convergence_scheduler = None
+    if use_convergence:
+        convergence_scheduler = ConvergenceAwareScheduler(
+            failure_rate_lambda=args.failure_rate_lambda,
+            checkpoint_cost_seconds=args.checkpoint_cost_sec,
+            fit_interval_steps=args.fit_interval_steps,
+            min_interval_seconds=args.min_convergence_interval_sec,
+            max_interval_seconds=args.max_convergence_interval_sec,
+        )
+        log_on_main(
+            "Convergence-aware checkpointing enabled "
+            f"(lambda={args.failure_rate_lambda}, cost={args.checkpoint_cost_sec}s)"
+        )
+
+    bit_range = None
+    if args.fault_bit_range:
+        low_str, high_str = args.fault_bit_range.split(",", maxsplit=1)
+        bit_range = (int(low_str.strip()), int(high_str.strip()))
+
+    target_layers = []
+    if args.fault_target_layers.strip():
+        target_layers = [
+            int(idx.strip())
+            for idx in args.fault_target_layers.split(",")
+            if idx.strip()
+        ]
+
+    fault_cfg = CheckpointFaultConfig(
+        enabled=not args.no_fault_injection,
+        fault_type=FaultType(args.fault_type),
+        fault_location=args.fault_location,
+        bit_range=bit_range,
+        fault_probability=args.fault_probability,
+        num_bit_flips=args.fault_bit_flips,
+        num_processes=args.fault_num_processes,
+        total_processes=world_size,
+        auto_precision=True,
+        target_layers=target_layers,
+        specific_bit_position=args.fault_specific_bit,
+        log_injection=True,
+        injection_log_path=args.fault_log_path,
+        load_log=args.fault_load_log,
+        seed=args.fault_seed,
+    )
+    checkpoint_injector = CheckpointBitFlipInjector(
+        config=fault_cfg,
+        rank=rank,
+        world_size=world_size,
+        dt_mechanism="DDP",
+    )
+
     # Resume from checkpoint
     start_epoch = 0
     best_val_acc = 0.0
     if args.resume:
         start_epoch, best_val_acc = checkpoint_manager.load_latest(
-            model, optimizer, device
+            model,
+            optimizer,
+            device,
+            checkpoint_injector=checkpoint_injector,
         )
         log_on_main(
             f"Resuming from epoch {start_epoch} (best_val_acc: {best_val_acc:.2f}%)"
         )
-
-    # -------------------------
-    # Fault Injector (optional)
-    # -------------------------
-    fault_injector = None
-    if args.inject_fault:
-        fault_injector = FaultInjector(
-            failure_rate_per_second=args.inject_rate,
-            target_rank=args.inject_rank,
-            rank=rank,
-        )
-        log_on_main(
-            f"Fault injection enabled: target_rank={args.inject_rank}, rate={args.inject_rate}/sec"
-        )
+        if fault_cfg.enabled:
+            log_on_main(
+                "Checkpoint fault injection enabled by default | "
+                f"type={fault_cfg.fault_type.value}, location={fault_cfg.fault_location}, "
+                f"bit_flips={fault_cfg.num_bit_flips}, target_processes={fault_cfg.num_processes}/{world_size}"
+            )
 
     # -------------------------
     # Training Loop
@@ -983,6 +1182,8 @@ Examples:
 
     # best_val_acc already initialized above (0.0 for fresh start, or loaded from checkpoint on resume)
 
+    global_step = start_epoch * max(1, len(train_loader))
+
     for epoch in range(start_epoch, args.epochs):
         try:
             epoch_start = time.time()
@@ -990,6 +1191,30 @@ Examples:
             # Training
             log_on_main(f"\nEpoch {epoch + 1}/{args.epochs}")
             log_on_main("-" * 40)
+
+            def checkpoint_callback(_batch_idx: int, batch_loss: float):
+                nonlocal global_step
+                global_step += 1
+
+                if convergence_scheduler is None:
+                    return
+
+                now = time.time()
+                convergence_scheduler.observe(batch_loss, now=now)
+                if convergence_scheduler.should_checkpoint(now=now):
+                    checkpoint_id = f"step_{global_step:012d}"
+                    checkpoint_manager.save(
+                        model,
+                        optimizer,
+                        epoch + 1,
+                        batch_loss,
+                        checkpoint_id=checkpoint_id,
+                    )
+                    convergence_scheduler.mark_checkpoint(now=now)
+                    log_on_main(
+                        "  [Convergence Ckpt] "
+                        f"{checkpoint_id} | next_interval~{convergence_scheduler.current_interval_seconds:.1f}s"
+                    )
 
             train_loss, train_correct, train_total = train_epoch(
                 model,
@@ -999,7 +1224,7 @@ Examples:
                 epoch,
                 train_sampler,
                 video_mode=args.video_mode or args.fast_video_mode,
-                fault_injector=fault_injector,
+                checkpoint_callback=checkpoint_callback,
             )
 
             # Synchronize after training
@@ -1040,17 +1265,33 @@ Examples:
             log_on_main(f"  LR: {optimizer.param_groups[0]['lr']:.6f}")
 
             # Save checkpoint
-            should_save = (epoch + 1) % args.checkpoint_interval == 0
             is_best = val_acc > best_val_acc
 
-            if should_save or is_best:
-                checkpoint_manager.save(
-                    model, optimizer, epoch + 1, val_loss, metric=val_acc
-                )
-
+            if use_convergence:
                 if is_best:
+                    best_checkpoint_id = f"best_epoch_{epoch + 1:04d}"
+                    checkpoint_manager.save(
+                        model,
+                        optimizer,
+                        epoch + 1,
+                        val_loss,
+                        metric=val_acc,
+                        checkpoint_id=best_checkpoint_id,
+                    )
                     best_val_acc = val_acc
-                    log_on_main(f"  ✓ New best model! Val Acc: {val_acc:.2f}%")
+                    log_on_main(
+                        f"  ✓ New best model! Val Acc: {val_acc:.2f}% ({best_checkpoint_id})"
+                    )
+            else:
+                should_save = (epoch + 1) % args.checkpoint_interval == 0
+                if should_save or is_best:
+                    checkpoint_manager.save(
+                        model, optimizer, epoch + 1, val_loss, metric=val_acc
+                    )
+
+                    if is_best:
+                        best_val_acc = val_acc
+                        log_on_main(f"  ✓ New best model! Val Acc: {val_acc:.2f}%")
 
         except Exception as e:
             # Barrier sync first - prevents rank 0 from saving while others are still running

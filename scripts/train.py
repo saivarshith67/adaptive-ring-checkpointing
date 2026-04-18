@@ -4,15 +4,22 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 import json
 import time
+import random
 from datetime import datetime
 import sys
+import numpy as np
 
 from src.coci.models.model import get_model
 from src.coci.data_ingestor.cifar import get_cifar100_dataset
 from src.coci.config import load_config
 from src.coci.checkpointing.checkpoint_manager import CheckpointManager
 from src.coci.checkpointing.strategy import CheckpointStrategyFactory
-from src.coci.fault.fault_injector import FaultInjector
+from src.coci.fault.checkpoint_fault_injector import (
+    CheckpointBitFlipInjector,
+    CheckpointFaultConfig,
+    FaultType,
+    enforce_determinism,
+)
 
 
 # -------------------------------------------------
@@ -113,7 +120,27 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=["dev", "server"], default="dev")
-    parser.add_argument("--inject_fault", action="store_true")
+    parser.add_argument(
+        "--no-fault-injection",
+        action="store_true",
+        help="Disable checkpoint bit-flip injection (enabled by default)",
+    )
+    parser.add_argument(
+        "--fault-type",
+        type=str,
+        default=FaultType.RANDOM_BIT.value,
+        choices=[ft.value for ft in FaultType],
+    )
+    parser.add_argument("--fault-location", type=str, default="model")
+    parser.add_argument("--fault-bit-range", type=str, default=None)
+    parser.add_argument("--fault-probability", type=float, default=1.0)
+    parser.add_argument("--fault-bit-flips", type=int, default=1)
+    parser.add_argument("--fault-num-processes", type=int, default=1)
+    parser.add_argument("--fault-target-layers", type=str, default="")
+    parser.add_argument("--fault-specific-bit", type=int, default=None)
+    parser.add_argument("--fault-log-path", type=str, default=None)
+    parser.add_argument("--fault-load-log", type=str, default=None)
+    parser.add_argument("--fault-seed", type=int, default=42)
 
     args = parser.parse_args()
 
@@ -123,6 +150,10 @@ def main():
 
     print(f"\nRunning in {args.mode.upper()} mode")
     print(f"Using strategy: {cfg.strategy}")
+
+    enforce_determinism(args.fault_seed)
+    random.seed(args.fault_seed)
+    np.random.seed(args.fault_seed)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}")
@@ -159,20 +190,53 @@ def main():
     # Checkpoint Manager
     # -------------------------
     checkpoint_manager = CheckpointManager()
-    start_epoch, best_val_acc = checkpoint_manager.load_latest(model, optimizer)
+
+    bit_range = None
+    if args.fault_bit_range:
+        low_str, high_str = args.fault_bit_range.split(",", maxsplit=1)
+        bit_range = (int(low_str.strip()), int(high_str.strip()))
+
+    target_layers = []
+    if args.fault_target_layers.strip():
+        target_layers = [
+            int(idx.strip())
+            for idx in args.fault_target_layers.split(",")
+            if idx.strip()
+        ]
+
+    fault_cfg = CheckpointFaultConfig(
+        enabled=not args.no_fault_injection,
+        fault_type=FaultType(args.fault_type),
+        fault_location=args.fault_location,
+        bit_range=bit_range,
+        fault_probability=args.fault_probability,
+        num_bit_flips=args.fault_bit_flips,
+        num_processes=args.fault_num_processes,
+        total_processes=1,
+        auto_precision=True,
+        target_layers=target_layers,
+        specific_bit_position=args.fault_specific_bit,
+        log_injection=True,
+        injection_log_path=args.fault_log_path,
+        load_log=args.fault_load_log,
+        seed=args.fault_seed,
+    )
+    checkpoint_injector = CheckpointBitFlipInjector(
+        config=fault_cfg,
+        rank=0,
+        world_size=1,
+        dt_mechanism="DDP",
+    )
+    start_epoch, best_val_acc = checkpoint_manager.load_latest(
+        model,
+        optimizer,
+        device,
+        checkpoint_injector=checkpoint_injector,
+    )
 
     if start_epoch >= cfg.epochs:
         print("Training already completed.")
         sys.exit(0)
-
-    # -------------------------
-    # Fault Injection
-    # -------------------------
-    fault_injector = None
-    if args.inject_fault:
-        fault_injector = FaultInjector(
-            failure_rate_per_second=cfg.failure_rate_per_second
-        )
 
     # -------------------------
     # Strategy Setup
@@ -208,8 +272,6 @@ def main():
             cfg,
             checkpoint_manager,
             strategy,
-            fault_injector=fault_injector,
-            inject_fault=args.inject_fault,
             start_epoch=start_epoch,
         )
 
@@ -217,11 +279,6 @@ def main():
 
         failures = 0
         measured_mtbf = None
-
-        if args.inject_fault and fault_injector is not None:
-            total_time, failures = fault_injector.get_stats()
-            if failures > 0:
-                measured_mtbf = total_time / failures
 
         summary = {
             "timestamp": datetime.now().isoformat(),
@@ -246,32 +303,6 @@ def main():
 
     except RuntimeError as e:
         print(f"\n💥 Training interrupted: {e}")
-
-        if args.inject_fault and fault_injector is not None:
-            total_time, failures = fault_injector.get_stats()
-
-            measured_mtbf = None
-            if failures > 0:
-                measured_mtbf = total_time / failures
-
-            crash_summary = {
-                "timestamp": datetime.now().isoformat(),
-                "strategy": cfg.strategy,
-                "crashed": True,
-                "runtime_until_crash_sec": total_time,
-                "num_checkpoints": checkpoint_manager.num_checkpoints,
-                "total_checkpoint_time_sec": checkpoint_manager.total_checkpoint_time,
-                "failures": failures,
-                "measured_mtbf": measured_mtbf,
-            }
-
-            print("\n========== CRASH SUMMARY ==========")
-            for k, v in crash_summary.items():
-                print(f"{k}: {v}")
-            print("===================================\n")
-
-            with open(f"crash_experiment_log_{cfg.strategy}.jsonl", "a") as f:
-                f.write(json.dumps(crash_summary) + "\n")
 
         sys.exit(1)
 
