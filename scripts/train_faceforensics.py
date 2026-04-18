@@ -79,6 +79,7 @@ from src.coci.data_ingestor.faceforensics import (
     preextract_frames,
 )
 from src.coci.checkpointing.checkpoint_manager import CheckpointManager
+from src.coci.checkpointing.hash_ring_checkpoint_manager import HashRingCheckpointManager
 from src.coci.fault.fault_injector import FaultInjector
 from src.coci.config import (
     FACEFORENSICS_DATASET_PATH,
@@ -561,6 +562,25 @@ Examples:
         action="store_true",
         help="Resume from latest checkpoint",
     )
+    parser.add_argument(
+        "--checkpoint-mode",
+        type=str,
+        default="normal",
+        choices=["normal", "hash-ring"],
+        help="Checkpoint backend to use (default: normal)",
+    )
+    parser.add_argument(
+        "--hash-ring-virtual-nodes",
+        type=int,
+        default=100,
+        help="Virtual nodes per physical node for hash ring mode (default: 100)",
+    )
+    parser.add_argument(
+        "--hash-ring-cache-dir",
+        type=str,
+        default="./checkpoints/hash_cache",
+        help="Local cache root for hash ring checkpoint shards",
+    )
 
     args = parser.parse_args()
 
@@ -625,6 +645,7 @@ Examples:
     log_on_main(f"Batch Size:    {args.batch_size} (per GPU)")
     log_on_main(f"Learning Rate: {args.lr}")
     log_on_main(f"Checkpoint:    {args.checkpoint_dir}")
+    log_on_main(f"CheckpointMode:{args.checkpoint_mode}")
     log_on_main("-" * 70)
     log_on_main(f"Video Mode:    {args.video_mode or args.fast_video_mode}")
     if args.video_mode or args.fast_video_mode:
@@ -909,10 +930,24 @@ Examples:
     # Checkpoint Manager
     # -------------------------
     os.makedirs(args.checkpoint_dir, exist_ok=True)
-    checkpoint_manager = CheckpointManager(
-        checkpoint_dir=args.checkpoint_dir,
-        is_ddp_wrapped=True,
-    )
+    if args.checkpoint_mode == "hash-ring":
+        node_ids = [f"rank-{i}" for i in range(world_size)]
+        checkpoint_manager = HashRingCheckpointManager(
+            checkpoint_dir=args.checkpoint_dir,
+            is_ddp_wrapped=True,
+            node_id=f"rank-{rank}",
+            all_node_ids=node_ids,
+            cache_root=args.hash_ring_cache_dir,
+            virtual_nodes=args.hash_ring_virtual_nodes,
+        )
+        log_on_main(
+            f"Hash ring checkpointing enabled | cache_root={args.hash_ring_cache_dir} | vnodes={args.hash_ring_virtual_nodes}"
+        )
+    else:
+        checkpoint_manager = CheckpointManager(
+            checkpoint_dir=args.checkpoint_dir,
+            is_ddp_wrapped=True,
+        )
 
     # Resume from checkpoint
     start_epoch = 0
