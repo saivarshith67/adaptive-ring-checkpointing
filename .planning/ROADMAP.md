@@ -1,7 +1,7 @@
 # Roadmap: Adaptive Ring Checkpointing
 
 **Created:** 2026-03-16
-**Updated:** 2026-04-17 (v1.1 milestone)
+**Updated:** 2026-04-18 (v1.2 milestone)
 **Core Value:** Enable reliable long-running deep learning training with minimal checkpoint overhead through adaptive ring-based checkpoint strategies.
 **Granularity:** Coarse (3-5 phases)
 
@@ -15,12 +15,22 @@
 - [x] **Phase 2: DDP Model & Checkpoint Integration** - Wrap model with DDP, implement rank-aware checkpointing and metrics aggregation
 - [x] **Phase 3: Dataset Integration** - Integrate DFD dataset with face detection preprocessing
 
-### v1.1 Milestone (Current)
+### v1.1 Milestone (CURRENT - COMPLETED)
 
 - [x] **Phase 4: Exception Handling** - Wrap training loop with try/except for fault detection and graceful handling (completed 2026-04-17)
 - [x] **Phase 5: Multi-GPU Fault Injection** - Add rank-aware fault injection to simulate node/GPU failures (completed 2026-04-17)
 - [x] **Phase 6: Checkpoint Recovery** - Resume training from checkpoint after failure detected (completed 2026-04-17)
 - [x] **Phase 7: Fault Tolerance Verification** - End-to-end fault injection and recovery testing (completed 2026-04-17)
+
+### v1.2 Milestone (CURRENT)
+
+- [x] **Phase 8: Hash Ring** - Implement consistent hashing with virtual nodes for shard management
+ (completed 2026-04-18)
+- [x] **Phase 9: Shard Manager** - Implement checkpoint shard lifecycle and NVMe caching
+ (completed 2026-04-18)
+- [ ] **Phase 10: Fault Detector** - Implement timeout-based failure detection with gossip quorum
+- [ ] **Phase 11: Elastic Recaching** - Implement one-time central storage recaching after failures
+- [ ] **Phase 12: Recovery Scheduling** - Implement epoch rollback and work rebalancing
 
 ---
 
@@ -174,6 +184,106 @@
 
 ---
 
+### Phase 8: Hash Ring (v1.2 - IN PROGRESS)
+
+**Goal:** Implement consistent hashing with virtual nodes for shard management
+
+**Depends on:** Phase 7 (v1.1 complete)
+
+**Requirements:** HR-01, HR-02, HR-03, HR-04
+
+**Success Criteria** (what must be TRUE):
+1. Hash ring data structure maps shard positions to GPU nodes correctly
+2. 100 virtual nodes per physical GPU for load balancing
+3. SHA256 hash function normalized to [0.0, 1.0) range
+4. Shard owner lookup returns nearest clockwise node
+
+**Plans:** 1/1 plans complete
+
+- [ ] 08-01-PLAN.md — Hash ring with virtual nodes
+
+---
+
+### Phase 9: Shard Manager (v1.2 - COMPLETED)
+
+**Goal:** Implement checkpoint shard lifecycle and NVMe caching
+
+**Depends on:** Phase 8
+
+**Requirements:** SHrd-01, SHrd-02, SHrd-03, SHrd-04
+
+**Success Criteria** (what must be TRUE):
+1. Shard lifecycle state machine works (UNCACHED → CACHING → CACHED → ORPHANED → RE-CACHED)
+2. Shard metadata tracking includes owner, status, paths, last_verified
+3. Shard assignment via hash ring is consistent
+4. Local NVMe cache management for shards
+
+**Plans:** 1/1 plans
+
+- [x] 09-01-PLAN.md — Shard lifecycle and cache
+
+---
+
+### Phase 10: Fault Detector (v1.2 - PLANNED)
+
+**Goal:** Implement timeout-based failure detection with gossip quorum
+
+**Depends on:** Phase 9
+
+**Requirements:** FLTD-01, FLTD-02, FLTD-03, FLTD-04
+
+**Success Criteria** (what must be TRUE):
+1. Timeout-based detection with configurable TTL
+2. Node status (ALIVE | SUSPECTED | DEAD) tracking
+3. Gossip-based failure broadcast to peers
+4. Quorum-based confirmation (51% required)
+
+**Plans:** 1/1 plans
+
+- [ ] 10-01-PLAN.md — Fault detection with quorum
+
+---
+
+### Phase 11: Elastic Recaching (v1.2 - PLANNED)
+
+**Goal:** Implement one-time central storage recaching after failures
+
+**Depends on:** Phase 10
+
+**Requirements:** ELRC-01, ELRC-02, ELRC-03, ELRC-04
+
+**Success Criteria** (what must be TRUE):
+1. Orphaned shards detected after node failure
+2. One central storage access per lost shard (key optimization)
+3. Local NVMe serve after first fetch
+4. Shard re-assignment to new owners via hash ring
+
+**Plans:** 1/1 plans
+
+- [ ] 11-01-PLAN.md — Elastic recaching
+
+---
+
+### Phase 12: Recovery Scheduling (v1.2 - PLANNED)
+
+**Goal:** Implement epoch rollback and work rebalancing
+
+**Depends on:** Phase 11
+
+**Requirements:** RCV-01, RCV-02, RCV-03, RCV-04
+
+**Success Criteria** (what must be TRUE):
+1. Epoch rollback to last clean epoch
+2. Resume mode selection (HOT/COLD/CRITICAL)
+3. Work slice rebalancing across surviving nodes
+4. Coordinated checkpoint protocol with manifest
+
+**Plans:** 1/1 plans
+
+- [ ] 12-01-PLAN.md — Recovery scheduling
+
+---
+
 ## Progress Table
 
 | Phase | Plans Complete | Status | Completed |
@@ -185,6 +295,11 @@
 | 5. Multi-GPU Fault Injection | 1/1 | Completed | 2026-04-17 |
 | 6. Checkpoint Recovery | 1/1 | Completed | 2026-04-17 |
 | 7. Fault Tolerance Verification | 1/1 | Completed | 2026-04-17 |
+| 8. Hash Ring | 1/1 | Complete    | 2026-04-18 |
+| 9. Shard Manager | 1/1 | Complete | 2026-04-18 |
+| 10. Fault Detector | 0/1 | Pending | — |
+| 11. Elastic Recaching | 0/1 | Pending | — |
+| 12. Recovery Scheduling | 0/1 | Pending | — |
 
 ---
 
@@ -196,7 +311,7 @@
 **Mapped to Phases:** 19 ✓
 **Orphaned:** 0 ✓
 
-### v1.1 (Current Milestone)
+### v1.1 (Completed)
 
 **Total v1.1 Requirements:** 12
 **Mapped to Phases:** 12 ✓
@@ -209,14 +324,29 @@
 | 6 - Checkpoint Recovery | RCVR-01, RCVR-02, RCVR-03, RCVR-04 | 4 |
 | 7 - Fault Tolerance Verification | VFY-01, VFY-02, VFY-03 | 3 |
 
+### v1.2 (Current Milestone)
+
+**Total v1.2 Requirements:** 20
+**Mapped to Phases:** 20 (5 phases)
+**Orphaned:** 0 ✓
+
+| Phase | Requirements | Count |
+|-------|--------------|-------|
+| 8 - Hash Ring | HR-01, HR-02, HR-03, HR-04 | 4 |
+| 9 - Shard Manager | SHrd-01, SHrd-02, SHrd-03, SHrd-04 | 4 |
+| 10 - Fault Detector | FLTD-01, FLTD-02, FLTD-03, FLTD-04 | 4 |
+| 11 - Elastic Recaching | ELRC-01, ELRC-02, ELRC-03, ELRC-04 | 4 |
+| 12 - Recovery Scheduling | RCV-01, RCV-02, RCV-03, RCV-04 | 4 |
+
 ---
 
 ## Notes
 
-- **Phase ordering rationale:** Exception handling is foundation → fault injection builds on it → checkpoint recovery needs both → verification validates all
-- **Dependency chain:** Try/except wrapper (Phase 4) → Rank-aware injection (Phase 5) → Checkpoint loading (Phase 6) → E2E test (Phase 7)
-- **Research findings:** torchrun is built-in, CheckpointManager already DDP-compatible, FaultInjector needs rank-awareness
+- **Phase ordering rationale:** Hash ring → Shard Manager → Fault Detector → Elastic Recaching → Recovery Scheduling
+- **Dependency chain:** Consistent hashing (Phase 8) → Shard lifecycle (Phase 9) → Fault detection (Phase 10) → Recaching (Phase 11) → Recovery (Phase 12)
+- **HASH_RING.md spec:** Based on SC'24 paper - 100 virtual nodes, one PFS access per lost shard
+- **Key optimization:** Each orphaned shard triggers exactly ONE central storage access (vs naive: every epoch)
 
 ---
 *Roadmap created: 2026-03-16*
-*Updated: 2026-04-17 for v1.1 milestone*
+*Updated: 2026-04-18 for v1.2 milestone*
