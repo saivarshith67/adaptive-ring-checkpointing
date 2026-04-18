@@ -85,6 +85,7 @@ from src.coci.data_ingestor.faceforensics import (
 from src.coci.checkpointing.checkpoint_manager import CheckpointManager
 from src.coci.checkpointing.hash_ring_checkpoint_manager import HashRingCheckpointManager
 from src.coci.checkpointing.convergence_scheduler import ConvergenceAwareScheduler
+from src.coci.hashing import create_hash_ring, HashRing
 from src.coci.metrics import MetricsCollector, MetricsExporter
 from src.coci.fault.checkpoint_fault_injector import (
     CheckpointBitFlipInjector,
@@ -1162,6 +1163,14 @@ Examples:
             is_ddp_wrapped=True,
         )
 
+    # Start heartbeat thread for hash-ring systems
+    if use_hash_ring:
+        checkpoint_manager.start_heartbeat_thread(rank=rank, world_size=world_size)
+        log_on_main(
+            "Hash-ring heartbeat thread started "
+            f"(rank={rank}, world_size={world_size})"
+        )
+
     convergence_scheduler = None
     calibrated_checkpoint_cost_sec = float(args.checkpoint_cost_sec)
     checkpoint_cost_calibration_count = 0
@@ -1536,6 +1545,9 @@ Examples:
                 model, optimizer, epoch, val_loss if "val_loss" in dir() else 0.0
             )
 
+            if use_hash_ring:
+                checkpoint_manager.stop_heartbeat_thread()
+
             # Log error
             log_on_main(f"Training failed at epoch {epoch}: {e}")
             log_on_main("Saving emergency checkpoint and exiting...")
@@ -1551,6 +1563,9 @@ Examples:
     log_on_main("=" * 70)
     log_on_main(f"Best validation accuracy: {best_val_acc:.2f}%")
     log_on_main(f"Checkpoints saved to: {args.checkpoint_dir}")
+
+    if use_hash_ring:
+        checkpoint_manager.stop_heartbeat_thread()
 
     # Export metrics (rank 0 only)
     if is_main_process():

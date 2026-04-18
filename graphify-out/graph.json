@@ -90,7 +90,7 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_convergence_hashring.py",
       "source_location": "L1",
       "id": "d_sai_hpc_project_adaptive_ring_checkpointing_scripts_train_convergence_hashring_py",
-      "community": 18,
+      "community": 20,
       "norm_label": "train_convergence_hashring.py"
     },
     {
@@ -99,7 +99,7 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_convergence_normal.py",
       "source_location": "L1",
       "id": "d_sai_hpc_project_adaptive_ring_checkpointing_scripts_train_convergence_normal_py",
-      "community": 19,
+      "community": 21,
       "norm_label": "train_convergence_normal.py"
     },
     {
@@ -234,7 +234,7 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_epoch_based.py",
       "source_location": "L1",
       "id": "d_sai_hpc_project_adaptive_ring_checkpointing_scripts_train_epoch_based_py",
-      "community": 20,
+      "community": 22,
       "norm_label": "train_epoch_based.py"
     },
     {
@@ -250,7 +250,7 @@
       "label": "seed_worker()",
       "file_type": "code",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L134",
+      "source_location": "L135",
       "id": "train_faceforensics_seed_worker",
       "community": 2,
       "norm_label": "seed_worker()"
@@ -259,7 +259,7 @@
       "label": "get_faceforensics_dataloader()",
       "file_type": "code",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L148",
+      "source_location": "L149",
       "id": "train_faceforensics_get_faceforensics_dataloader",
       "community": 2,
       "norm_label": "get_faceforensics_dataloader()"
@@ -268,7 +268,7 @@
       "label": "train_epoch()",
       "file_type": "code",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L229",
+      "source_location": "L230",
       "id": "train_faceforensics_train_epoch",
       "community": 2,
       "norm_label": "train_epoch()"
@@ -277,7 +277,7 @@
       "label": "evaluate()",
       "file_type": "code",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L318",
+      "source_location": "L319",
       "id": "train_faceforensics_evaluate",
       "community": 2,
       "norm_label": "evaluate()"
@@ -286,7 +286,7 @@
       "label": "download_and_prepare_dataset()",
       "file_type": "code",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L372",
+      "source_location": "L373",
       "id": "train_faceforensics_download_and_prepare_dataset",
       "community": 2,
       "norm_label": "download_and_prepare_dataset()"
@@ -295,7 +295,7 @@
       "label": "main()",
       "file_type": "code",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L397",
+      "source_location": "L398",
       "id": "train_faceforensics_main",
       "community": 2,
       "norm_label": "main()"
@@ -304,46 +304,46 @@
       "label": "Seed worker for reproducible data loading.",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L135",
-      "id": "train_faceforensics_rationale_135",
+      "source_location": "L136",
       "community": 1,
-      "norm_label": "seed worker for reproducible data loading."
+      "norm_label": "seed worker for reproducible data loading.",
+      "id": "train_faceforensics_rationale_136"
     },
     {
       "label": "Create DataLoader with DistributedSampler for FaceForensics++ dataset.      Ar",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L161",
-      "id": "train_faceforensics_rationale_161",
+      "source_location": "L162",
       "community": 1,
-      "norm_label": "create dataloader with distributedsampler for faceforensics++ dataset.      ar"
+      "norm_label": "create dataloader with distributedsampler for faceforensics++ dataset.      ar",
+      "id": "train_faceforensics_rationale_162"
     },
     {
       "label": "Train for one epoch.      Args:         model: The neural network model",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L239",
-      "id": "train_faceforensics_rationale_239",
+      "source_location": "L240",
       "community": 1,
-      "norm_label": "train for one epoch.      args:         model: the neural network model"
+      "norm_label": "train for one epoch.      args:         model: the neural network model",
+      "id": "train_faceforensics_rationale_240"
     },
     {
       "label": "Evaluate the model on test/validation data.      Args:         model: The neu",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L319",
-      "id": "train_faceforensics_rationale_319",
+      "source_location": "L320",
       "community": 1,
-      "norm_label": "evaluate the model on test/validation data.      args:         model: the neu"
+      "norm_label": "evaluate the model on test/validation data.      args:         model: the neu",
+      "id": "train_faceforensics_rationale_320"
     },
     {
       "label": "Download FaceForensics++ dataset using kagglehub.",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L373",
-      "id": "train_faceforensics_rationale_373",
+      "source_location": "L374",
       "community": 1,
-      "norm_label": "download faceforensics++ dataset using kagglehub."
+      "norm_label": "download faceforensics++ dataset using kagglehub.",
+      "id": "train_faceforensics_rationale_374"
     },
     {
       "label": "train_hashring_epoch.py",
@@ -351,7 +351,7 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_hashring_epoch.py",
       "source_location": "L1",
       "id": "d_sai_hpc_project_adaptive_ring_checkpointing_scripts_train_hashring_epoch_py",
-      "community": 21,
+      "community": 23,
       "norm_label": "train_hashring_epoch.py"
     },
     {
@@ -360,7 +360,7 @@
       "source_file": "src\\main.py",
       "source_location": "L1",
       "id": "src_main_py",
-      "community": 17,
+      "community": 19,
       "norm_label": "main.py"
     },
     {
@@ -369,7 +369,7 @@
       "source_file": "src\\main.py",
       "source_location": "L1",
       "id": "main_main",
-      "community": 17,
+      "community": 19,
       "norm_label": "main()"
     },
     {
@@ -378,7 +378,7 @@
       "source_file": "src\\coci\\config.py",
       "source_location": "L1",
       "id": "src_coci_config_py",
-      "community": 16,
+      "community": 18,
       "norm_label": "config.py"
     },
     {
@@ -387,7 +387,7 @@
       "source_file": "src\\coci\\config.py",
       "source_location": "L14",
       "id": "config_config",
-      "community": 16,
+      "community": 18,
       "norm_label": "config"
     },
     {
@@ -396,7 +396,7 @@
       "source_file": "src\\coci\\config.py",
       "source_location": "L28",
       "id": "config_load_config",
-      "community": 16,
+      "community": 18,
       "norm_label": "load_config()"
     },
     {
@@ -675,7 +675,7 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\convergence_scheduler.py",
       "source_location": "L1",
       "id": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_checkpointing_convergence_scheduler_py",
-      "community": 1,
+      "community": 11,
       "norm_label": "convergence_scheduler.py"
     },
     {
@@ -684,7 +684,7 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\convergence_scheduler.py",
       "source_location": "L8",
       "id": "convergence_scheduler_convergencefit",
-      "community": 1,
+      "community": 11,
       "norm_label": "convergencefit"
     },
     {
@@ -711,7 +711,7 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\convergence_scheduler.py",
       "source_location": "L55",
       "id": "convergence_scheduler_current_interval_seconds",
-      "community": 1,
+      "community": 11,
       "norm_label": "current_interval_seconds()"
     },
     {
@@ -747,7 +747,7 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\convergence_scheduler.py",
       "source_location": "L70",
       "id": "convergence_scheduler_convergenceawarescheduler_observe",
-      "community": 1,
+      "community": 11,
       "norm_label": ".observe()"
     },
     {
@@ -756,7 +756,7 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\convergence_scheduler.py",
       "source_location": "L109",
       "id": "convergence_scheduler_convergenceawarescheduler_fit_exponential",
-      "community": 1,
+      "community": 11,
       "norm_label": "._fit_exponential()"
     },
     {
@@ -765,7 +765,7 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\convergence_scheduler.py",
       "source_location": "L133",
       "id": "convergence_scheduler_convergenceawarescheduler_compute_interval_seconds",
-      "community": 1,
+      "community": 11,
       "norm_label": "._compute_interval_seconds()"
     },
     {
@@ -808,7 +808,7 @@
       "label": "._checkpoint_identifier()",
       "file_type": "code",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L45",
+      "source_location": "L54",
       "id": "hash_ring_checkpoint_manager_hashringcheckpointmanager_checkpoint_identifier",
       "community": 4,
       "norm_label": "._checkpoint_identifier()"
@@ -817,7 +817,7 @@
       "label": "._checkpoint_filename()",
       "file_type": "code",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L48",
+      "source_location": "L57",
       "id": "hash_ring_checkpoint_manager_hashringcheckpointmanager_checkpoint_filename",
       "community": 4,
       "norm_label": "._checkpoint_filename()"
@@ -826,7 +826,7 @@
       "label": "._checkpoint_path()",
       "file_type": "code",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L53",
+      "source_location": "L62",
       "id": "hash_ring_checkpoint_manager_hashringcheckpointmanager_checkpoint_path",
       "community": 4,
       "norm_label": "._checkpoint_path()"
@@ -835,7 +835,7 @@
       "label": "._shard_id()",
       "file_type": "code",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L56",
+      "source_location": "L65",
       "id": "hash_ring_checkpoint_manager_hashringcheckpointmanager_shard_id",
       "community": 4,
       "norm_label": "._shard_id()"
@@ -844,7 +844,7 @@
       "label": "._register_shard_if_needed()",
       "file_type": "code",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L59",
+      "source_location": "L68",
       "id": "hash_ring_checkpoint_manager_hashringcheckpointmanager_register_shard_if_needed",
       "community": 4,
       "norm_label": "._register_shard_if_needed()"
@@ -853,16 +853,16 @@
       "label": "._restore()",
       "file_type": "code",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L73",
+      "source_location": "L82",
       "id": "hash_ring_checkpoint_manager_hashringcheckpointmanager_restore",
-      "community": 4,
+      "community": 6,
       "norm_label": "._restore()"
     },
     {
       "label": ".save()",
       "file_type": "code",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L84",
+      "source_location": "L93",
       "id": "hash_ring_checkpoint_manager_hashringcheckpointmanager_save",
       "community": 4,
       "norm_label": ".save()"
@@ -871,10 +871,28 @@
       "label": ".load_latest()",
       "file_type": "code",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L120",
+      "source_location": "L129",
       "id": "hash_ring_checkpoint_manager_hashringcheckpointmanager_load_latest",
       "community": 4,
       "norm_label": ".load_latest()"
+    },
+    {
+      "label": ".start_heartbeat_thread()",
+      "file_type": "code",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
+      "source_location": "L178",
+      "id": "hash_ring_checkpoint_manager_hashringcheckpointmanager_start_heartbeat_thread",
+      "community": 1,
+      "norm_label": ".start_heartbeat_thread()"
+    },
+    {
+      "label": ".stop_heartbeat_thread()",
+      "file_type": "code",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
+      "source_location": "L188",
+      "id": "hash_ring_checkpoint_manager_hashringcheckpointmanager_stop_heartbeat_thread",
+      "community": 1,
+      "norm_label": ".stop_heartbeat_thread()"
     },
     {
       "label": "Checkpoint manager that layers hash-ring local shard caching over normal checkpo",
@@ -884,6 +902,24 @@
       "community": 1,
       "norm_label": "checkpoint manager that layers hash-ring local shard caching over normal checkpo",
       "id": "hash_ring_checkpoint_manager_rationale_11"
+    },
+    {
+      "label": "Start the heartbeat fault-detection thread for liveness monitoring.          A",
+      "file_type": "rationale",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
+      "source_location": "L179",
+      "id": "hash_ring_checkpoint_manager_rationale_179",
+      "community": 1,
+      "norm_label": "start the heartbeat fault-detection thread for liveness monitoring.          a"
+    },
+    {
+      "label": "Stop the heartbeat fault-detection thread gracefully.          Args:",
+      "file_type": "rationale",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
+      "source_location": "L189",
+      "id": "hash_ring_checkpoint_manager_rationale_189",
+      "community": 1,
+      "norm_label": "stop the heartbeat fault-detection thread gracefully.          args:"
     },
     {
       "label": "strategy.py",
@@ -1053,7 +1089,7 @@
       "source_file": "src\\coci\\data_ingestor\\dataset.py",
       "source_location": "L1",
       "id": "src_coci_data_ingestor_dataset_py",
-      "community": 13,
+      "community": 15,
       "norm_label": "dataset.py"
     },
     {
@@ -1062,7 +1098,7 @@
       "source_file": "src\\coci\\data_ingestor\\dataset.py",
       "source_location": "L6",
       "id": "dataset_imagedataset",
-      "community": 13,
+      "community": 15,
       "norm_label": "imagedataset"
     },
     {
@@ -1080,7 +1116,7 @@
       "source_file": "src\\coci\\data_ingestor\\dataset.py",
       "source_location": "L8",
       "id": "dataset_imagedataset_init",
-      "community": 13,
+      "community": 15,
       "norm_label": ".__init__()"
     },
     {
@@ -1089,7 +1125,7 @@
       "source_file": "src\\coci\\data_ingestor\\dataset.py",
       "source_location": "L23",
       "id": "dataset_imagedataset_len",
-      "community": 13,
+      "community": 15,
       "norm_label": ".__len__()"
     },
     {
@@ -1098,7 +1134,7 @@
       "source_file": "src\\coci\\data_ingestor\\dataset.py",
       "source_location": "L26",
       "id": "dataset_imagedataset_getitem",
-      "community": 13,
+      "community": 15,
       "norm_label": ".__getitem__()"
     },
     {
@@ -1107,7 +1143,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L1",
       "id": "src_coci_data_ingestor_faceforensics_py",
-      "community": 2,
+      "community": 8,
       "norm_label": "faceforensics.py"
     },
     {
@@ -1116,7 +1152,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L46",
       "id": "faceforensics_download_faceforensics_dataset",
-      "community": 2,
+      "community": 8,
       "norm_label": "download_faceforensics_dataset()"
     },
     {
@@ -1134,7 +1170,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L86",
       "id": "faceforensics_precompute_face_crops",
-      "community": 2,
+      "community": 8,
       "norm_label": "precompute_face_crops()"
     },
     {
@@ -1143,7 +1179,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L215",
       "id": "faceforensics_process_batch",
-      "community": 2,
+      "community": 8,
       "norm_label": "process_batch()"
     },
     {
@@ -1161,7 +1197,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L281",
       "id": "faceforensics_faceforensicsdataset_init",
-      "community": 8,
+      "community": 9,
       "norm_label": ".__init__()"
     },
     {
@@ -1170,7 +1206,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L317",
       "id": "faceforensics_faceforensicsdataset_load_from_cache",
-      "community": 8,
+      "community": 9,
       "norm_label": "._load_from_cache()"
     },
     {
@@ -1179,7 +1215,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L329",
       "id": "faceforensics_faceforensicsdataset_setup_live_detection",
-      "community": 8,
+      "community": 9,
       "norm_label": "._setup_live_detection()"
     },
     {
@@ -1188,7 +1224,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L347",
       "id": "faceforensics_faceforensicsdataset_load_samples",
-      "community": 10,
+      "community": 12,
       "norm_label": "._load_samples()"
     },
     {
@@ -1197,7 +1233,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L371",
       "id": "faceforensics_faceforensicsdataset_collect_images_from_structure",
-      "community": 10,
+      "community": 12,
       "norm_label": "._collect_images_from_structure()"
     },
     {
@@ -1206,7 +1242,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L389",
       "id": "faceforensics_faceforensicsdataset_load_flat_structure",
-      "community": 10,
+      "community": 12,
       "norm_label": "._load_flat_structure()"
     },
     {
@@ -1224,7 +1260,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L406",
       "id": "faceforensics_faceforensicsdataset_getitem",
-      "community": 11,
+      "community": 13,
       "norm_label": ".__getitem__()"
     },
     {
@@ -1233,7 +1269,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L432",
       "id": "faceforensics_faceforensicsdataset_load_precropped",
-      "community": 11,
+      "community": 13,
       "norm_label": "._load_precropped()"
     },
     {
@@ -1242,7 +1278,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L440",
       "id": "faceforensics_faceforensicsdataset_detect_face_live",
-      "community": 11,
+      "community": 13,
       "norm_label": "._detect_face_live()"
     },
     {
@@ -1260,7 +1296,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L499",
       "id": "faceforensics_videofaceforensicsdataset_init",
-      "community": 9,
+      "community": 10,
       "norm_label": ".__init__()"
     },
     {
@@ -1269,7 +1305,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L530",
       "id": "faceforensics_videofaceforensicsdataset_build_video_index",
-      "community": 9,
+      "community": 10,
       "norm_label": "._build_video_index()"
     },
     {
@@ -1278,7 +1314,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L544",
       "id": "faceforensics_videofaceforensicsdataset_build_from_manifest",
-      "community": 9,
+      "community": 10,
       "norm_label": "._build_from_manifest()"
     },
     {
@@ -1287,7 +1323,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L597",
       "id": "faceforensics_videofaceforensicsdataset_build_from_directories",
-      "community": 9,
+      "community": 10,
       "norm_label": "._build_from_directories()"
     },
     {
@@ -1305,7 +1341,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L653",
       "id": "faceforensics_videofaceforensicsdataset_getitem",
-      "community": 14,
+      "community": 16,
       "norm_label": ".__getitem__()"
     },
     {
@@ -1314,7 +1350,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L701",
       "id": "faceforensics_videofaceforensicsdataset_load_frame",
-      "community": 14,
+      "community": 16,
       "norm_label": "._load_frame()"
     },
     {
@@ -1332,7 +1368,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L748",
       "id": "faceforensics_videodatasetfast_init",
-      "community": 8,
+      "community": 9,
       "norm_label": ".__init__()"
     },
     {
@@ -1341,7 +1377,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L761",
       "id": "faceforensics_videodatasetfast_load_samples",
-      "community": 8,
+      "community": 9,
       "norm_label": "._load_samples()"
     },
     {
@@ -1368,7 +1404,7 @@
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L802",
       "id": "faceforensics_preextract_frames",
-      "community": 2,
+      "community": 8,
       "norm_label": "preextract_frames()"
     },
     {
@@ -1376,7 +1412,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L1",
-      "community": 2,
+      "community": 8,
       "norm_label": "faceforensics++ dataset loader with mtcnn face detection.  provides: - facefo",
       "id": "faceforensics_rationale_1"
     },
@@ -1385,7 +1421,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L47",
-      "community": 2,
+      "community": 8,
       "norm_label": "download faceforensics++ dataset from kaggle via kagglehub.      returns:",
       "id": "faceforensics_rationale_47"
     },
@@ -1403,7 +1439,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L93",
-      "community": 2,
+      "community": 8,
       "norm_label": "pre-compute face crops using mtcnn and cache to disk.      this is the recomme",
       "id": "faceforensics_rationale_93"
     },
@@ -1412,7 +1448,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L216",
-      "community": 2,
+      "community": 8,
       "norm_label": "process a batch of images through mtcnn.",
       "id": "faceforensics_rationale_216"
     },
@@ -1430,7 +1466,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L318",
-      "community": 8,
+      "community": 9,
       "norm_label": "load samples from pre-computed crop cache.",
       "id": "faceforensics_rationale_318"
     },
@@ -1439,7 +1475,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L330",
-      "community": 8,
+      "community": 9,
       "norm_label": "set up for on-the-fly mtcnn detection (slow).",
       "id": "faceforensics_rationale_330"
     },
@@ -1448,7 +1484,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L348",
-      "community": 10,
+      "community": 12,
       "norm_label": "load all image paths from the dataset directory.",
       "id": "faceforensics_rationale_348"
     },
@@ -1457,7 +1493,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L372",
-      "community": 10,
+      "community": 12,
       "norm_label": "recursively collect image paths from video folder structure.",
       "id": "faceforensics_rationale_372"
     },
@@ -1466,7 +1502,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L390",
-      "community": 10,
+      "community": 12,
       "norm_label": "load images from flat directory structure.",
       "id": "faceforensics_rationale_390"
     },
@@ -1484,7 +1520,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L407",
-      "community": 11,
+      "community": 13,
       "norm_label": "get a single sample from the dataset.          if using pre-computed crops (re",
       "id": "faceforensics_rationale_407"
     },
@@ -1493,7 +1529,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L433",
-      "community": 11,
+      "community": 13,
       "norm_label": "load pre-computed face crop from numpy file.",
       "id": "faceforensics_rationale_433"
     },
@@ -1502,7 +1538,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L441",
-      "community": 11,
+      "community": 13,
       "norm_label": "detect face using mtcnn (slow).",
       "id": "faceforensics_rationale_441"
     },
@@ -1520,7 +1556,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L531",
-      "community": 9,
+      "community": 10,
       "norm_label": "build an index of videos from the pre-computed crops manifest.          each v",
       "id": "faceforensics_rationale_531"
     },
@@ -1529,7 +1565,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L545",
-      "community": 9,
+      "community": 10,
       "norm_label": "build video index from pre-computed crop manifest.",
       "id": "faceforensics_rationale_545"
     },
@@ -1538,7 +1574,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L598",
-      "community": 9,
+      "community": 10,
       "norm_label": "build video index from dataset directory structure.",
       "id": "faceforensics_rationale_598"
     },
@@ -1556,7 +1592,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L654",
-      "community": 14,
+      "community": 16,
       "norm_label": "get frames from a single video.          args:             idx: index of the",
       "id": "faceforensics_rationale_654"
     },
@@ -1565,7 +1601,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L702",
-      "community": 14,
+      "community": 16,
       "norm_label": "load a single frame and apply transforms.",
       "id": "faceforensics_rationale_702"
     },
@@ -1583,7 +1619,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L762",
-      "community": 8,
+      "community": 9,
       "norm_label": "load all .npy file paths from real/fake directories.",
       "id": "faceforensics_rationale_762"
     },
@@ -1601,7 +1637,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L808",
-      "community": 2,
+      "community": 8,
       "norm_label": "pre-extract frames from videos and save as .npy files.      this function proc",
       "id": "faceforensics_rationale_808"
     },
@@ -2051,7 +2087,7 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\hashing\\fault_detector.py",
       "source_location": "L46",
-      "community": 22,
+      "community": 24,
       "norm_label": "check if running in distributed mode.",
       "id": "fault_detector_rationale_46"
     },
@@ -2115,7 +2151,7 @@
       "source_file": "src\\coci\\hashing\\hash_ring.py",
       "source_location": "L1",
       "id": "src_coci_hashing_hash_ring_py",
-      "community": 3,
+      "community": 4,
       "norm_label": "hash_ring.py"
     },
     {
@@ -2124,7 +2160,7 @@
       "source_file": "src\\coci\\hashing\\hash_ring.py",
       "source_location": "L13",
       "id": "hash_ring_hashring",
-      "community": 3,
+      "community": 4,
       "norm_label": "hashring"
     },
     {
@@ -2133,7 +2169,7 @@
       "source_file": "src\\coci\\hashing\\hash_ring.py",
       "source_location": "L14",
       "id": "hash_ring_hashring_init",
-      "community": 3,
+      "community": 4,
       "norm_label": ".__init__()"
     },
     {
@@ -2142,7 +2178,7 @@
       "source_file": "src\\coci\\hashing\\hash_ring.py",
       "source_location": "L20",
       "id": "hash_ring_hashring_hash_position",
-      "community": 3,
+      "community": 4,
       "norm_label": "._hash_position()"
     },
     {
@@ -2151,7 +2187,7 @@
       "source_file": "src\\coci\\hashing\\hash_ring.py",
       "source_location": "L25",
       "id": "hash_ring_hashring_add_node",
-      "community": 3,
+      "community": 4,
       "norm_label": ".add_node()"
     },
     {
@@ -2160,7 +2196,7 @@
       "source_file": "src\\coci\\hashing\\hash_ring.py",
       "source_location": "L39",
       "id": "hash_ring_hashring_remove_node",
-      "community": 3,
+      "community": 4,
       "norm_label": ".remove_node()"
     },
     {
@@ -2169,7 +2205,7 @@
       "source_file": "src\\coci\\hashing\\hash_ring.py",
       "source_location": "L49",
       "id": "hash_ring_hashring_get_node",
-      "community": 3,
+      "community": 4,
       "norm_label": ".get_node()"
     },
     {
@@ -2178,7 +2214,7 @@
       "source_file": "src\\coci\\hashing\\hash_ring.py",
       "source_location": "L61",
       "id": "hash_ring_hashring_get_nodes",
-      "community": 3,
+      "community": 4,
       "norm_label": ".get_nodes()"
     },
     {
@@ -2187,7 +2223,7 @@
       "source_file": "src\\coci\\hashing\\hash_ring.py",
       "source_location": "L64",
       "id": "hash_ring_hashring_get_virtual_node_count",
-      "community": 3,
+      "community": 4,
       "norm_label": ".get_virtual_node_count()"
     },
     {
@@ -2214,7 +2250,7 @@
       "source_file": "src\\coci\\hashing\\hash_ring.py",
       "source_location": "L82",
       "id": "hash_ring_shardmanager_register_shard",
-      "community": 3,
+      "community": 4,
       "norm_label": ".register_shard()"
     },
     {
@@ -2250,7 +2286,7 @@
       "source_file": "src\\coci\\hashing\\hash_ring.py",
       "source_location": "L112",
       "id": "hash_ring_shardmanager_reassign_shard",
-      "community": 3,
+      "community": 4,
       "norm_label": ".reassign_shard()"
     },
     {
@@ -2583,7 +2619,7 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\metrics\\collector.py",
       "source_location": "L162",
       "id": "collector_metricscollector_start_epoch",
-      "community": 0,
+      "community": 2,
       "norm_label": ".start_epoch()"
     },
     {
@@ -2601,7 +2637,7 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\metrics\\collector.py",
       "source_location": "L198",
       "id": "collector_metricscollector_record_checkpoint",
-      "community": 0,
+      "community": 2,
       "norm_label": ".record_checkpoint()"
     },
     {
@@ -2852,7 +2888,7 @@
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\metrics\\collector.py",
       "source_location": "L163",
-      "community": 0,
+      "community": 2,
       "norm_label": "mark the start of an epoch.",
       "id": "collector_rationale_163"
     },
@@ -2870,7 +2906,7 @@
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\metrics\\collector.py",
       "source_location": "L200",
-      "community": 0,
+      "community": 2,
       "norm_label": "record checkpoint metrics.                  args:             checkpoint_size",
       "id": "collector_rationale_200"
     },
@@ -3391,6 +3427,51 @@
       "label": "Seed worker for reproducible data loading.",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L135",
+      "community": 1,
+      "norm_label": "seed worker for reproducible data loading.",
+      "id": "train_faceforensics_rationale_135"
+    },
+    {
+      "label": "Create DataLoader with DistributedSampler for FaceForensics++ dataset.      Ar",
+      "file_type": "rationale",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L161",
+      "community": 1,
+      "norm_label": "create dataloader with distributedsampler for faceforensics++ dataset.      ar",
+      "id": "train_faceforensics_rationale_161"
+    },
+    {
+      "label": "Train for one epoch.      Args:         model: The neural network model",
+      "file_type": "rationale",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L239",
+      "community": 1,
+      "norm_label": "train for one epoch.      args:         model: the neural network model",
+      "id": "train_faceforensics_rationale_239"
+    },
+    {
+      "label": "Evaluate the model on test/validation data.      Args:         model: The neu",
+      "file_type": "rationale",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L319",
+      "community": 1,
+      "norm_label": "evaluate the model on test/validation data.      args:         model: the neu",
+      "id": "train_faceforensics_rationale_319"
+    },
+    {
+      "label": "Download FaceForensics++ dataset using kagglehub.",
+      "file_type": "rationale",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L373",
+      "community": 1,
+      "norm_label": "download faceforensics++ dataset using kagglehub.",
+      "id": "train_faceforensics_rationale_373"
+    },
+    {
+      "label": "Seed worker for reproducible data loading.",
+      "file_type": "rationale",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L133",
       "community": 1,
       "norm_label": "seed worker for reproducible data loading.",
@@ -3534,70 +3615,70 @@
     {
       "label": "Convergence-Aware Checkpointing (COCI)",
       "file_type": "document",
-      "community": 12,
+      "community": 14,
       "norm_label": "convergence-aware checkpointing (coci)",
       "id": "coci_convergence_aware_checkpointing"
     },
     {
       "label": "Hash Ring Checkpointing",
       "file_type": "document",
-      "community": 12,
+      "community": 14,
       "norm_label": "hash ring checkpointing",
       "id": "hash_ring_checkpointing"
     },
     {
       "label": "Soft Error Injection Mechanism",
       "file_type": "document",
-      "community": 12,
+      "community": 14,
       "norm_label": "soft error injection mechanism",
       "id": "fault_injection_mechanism"
     },
     {
       "label": "End-to-End Fault Tolerance Verification",
       "file_type": "document",
-      "community": 15,
+      "community": 17,
       "norm_label": "end-to-end fault tolerance verification",
       "id": "e2e_fault_tolerance_verification"
     },
     {
       "label": "Phase 4 - Exception Handling",
       "file_type": "document",
-      "community": 15,
+      "community": 17,
       "norm_label": "phase 4 - exception handling",
       "id": "phase_4_exception_handling"
     },
     {
       "label": "Phase 5 - Fault Injection",
       "file_type": "document",
-      "community": 15,
+      "community": 17,
       "norm_label": "phase 5 - fault injection",
       "id": "phase_5_fault_injection"
     },
     {
       "label": "Phase 6 - Checkpoint Recovery",
       "file_type": "document",
-      "community": 15,
+      "community": 17,
       "norm_label": "phase 6 - checkpoint recovery",
       "id": "phase_6_checkpoint_recovery"
     },
     {
       "label": "Adaptive Ring Checkpointing",
       "file_type": "document",
-      "community": 12,
+      "community": 14,
       "norm_label": "adaptive ring checkpointing",
       "id": "adaptive_ring_checkpointing_project"
     },
     {
       "label": "Piecewise Online Fitting (POF)",
       "file_type": "document",
-      "community": 12,
+      "community": 14,
       "norm_label": "piecewise online fitting (pof)",
       "id": "piecewise_online_fitting"
     },
     {
       "label": "Loss Curve Model (Exponential Decay)",
       "file_type": "document",
-      "community": 12,
+      "community": 14,
       "norm_label": "loss curve model (exponential decay)",
       "id": "loss_curve_model"
     }
@@ -5155,7 +5236,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L134",
+      "source_location": "L135",
       "weight": 1.0,
       "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_scripts_train_faceforensics_py",
       "_tgt": "train_faceforensics_seed_worker",
@@ -5167,7 +5248,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L148",
+      "source_location": "L149",
       "weight": 1.0,
       "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_scripts_train_faceforensics_py",
       "_tgt": "train_faceforensics_get_faceforensics_dataloader",
@@ -5179,7 +5260,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L229",
+      "source_location": "L230",
       "weight": 1.0,
       "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_scripts_train_faceforensics_py",
       "_tgt": "train_faceforensics_train_epoch",
@@ -5191,7 +5272,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L318",
+      "source_location": "L319",
       "weight": 1.0,
       "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_scripts_train_faceforensics_py",
       "_tgt": "train_faceforensics_evaluate",
@@ -5203,7 +5284,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L372",
+      "source_location": "L373",
       "weight": 1.0,
       "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_scripts_train_faceforensics_py",
       "_tgt": "train_faceforensics_download_and_prepare_dataset",
@@ -5215,7 +5296,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L397",
+      "source_location": "L398",
       "weight": 1.0,
       "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_scripts_train_faceforensics_py",
       "_tgt": "train_faceforensics_main",
@@ -5227,19 +5308,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L135",
+      "source_location": "L136",
       "weight": 1.0,
-      "_src": "train_faceforensics_rationale_135",
+      "_src": "train_faceforensics_rationale_136",
       "_tgt": "train_faceforensics_seed_worker",
       "source": "train_faceforensics_seed_worker",
-      "target": "train_faceforensics_rationale_135",
+      "target": "train_faceforensics_rationale_136",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L985",
+      "source_location": "L986",
       "weight": 1.0,
       "_src": "train_faceforensics_main",
       "_tgt": "train_faceforensics_get_faceforensics_dataloader",
@@ -5251,12 +5332,12 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L161",
+      "source_location": "L162",
       "weight": 1.0,
-      "_src": "train_faceforensics_rationale_161",
+      "_src": "train_faceforensics_rationale_162",
       "_tgt": "train_faceforensics_get_faceforensics_dataloader",
       "source": "train_faceforensics_get_faceforensics_dataloader",
-      "target": "train_faceforensics_rationale_161",
+      "target": "train_faceforensics_rationale_162",
       "confidence_score": 1.0
     },
     {
@@ -5299,7 +5380,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L1419",
+      "source_location": "L1428",
       "weight": 1.0,
       "_src": "train_faceforensics_main",
       "_tgt": "train_faceforensics_train_epoch",
@@ -5311,12 +5392,12 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L239",
+      "source_location": "L240",
       "weight": 1.0,
-      "_src": "train_faceforensics_rationale_239",
+      "_src": "train_faceforensics_rationale_240",
       "_tgt": "train_faceforensics_train_epoch",
       "source": "train_faceforensics_train_epoch",
-      "target": "train_faceforensics_rationale_239",
+      "target": "train_faceforensics_rationale_240",
       "confidence_score": 1.0
     },
     {
@@ -5347,7 +5428,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L1435",
+      "source_location": "L1444",
       "weight": 1.0,
       "_src": "train_faceforensics_main",
       "_tgt": "train_faceforensics_evaluate",
@@ -5359,19 +5440,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L319",
+      "source_location": "L320",
       "weight": 1.0,
-      "_src": "train_faceforensics_rationale_319",
+      "_src": "train_faceforensics_rationale_320",
       "_tgt": "train_faceforensics_evaluate",
       "source": "train_faceforensics_evaluate",
-      "target": "train_faceforensics_rationale_319",
+      "target": "train_faceforensics_rationale_320",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L798",
+      "source_location": "L799",
       "weight": 1.0,
       "_src": "train_faceforensics_main",
       "_tgt": "train_faceforensics_download_and_prepare_dataset",
@@ -5383,12 +5464,12 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L373",
+      "source_location": "L374",
       "weight": 1.0,
-      "_src": "train_faceforensics_rationale_373",
+      "_src": "train_faceforensics_rationale_374",
       "_tgt": "train_faceforensics_download_and_prepare_dataset",
       "source": "train_faceforensics_download_and_prepare_dataset",
-      "target": "train_faceforensics_rationale_373",
+      "target": "train_faceforensics_rationale_374",
       "confidence_score": 1.0
     },
     {
@@ -5612,6 +5693,18 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L1175",
+      "weight": 1.0,
+      "_src": "train_faceforensics_main",
+      "_tgt": "fault_detector_faultdetector_start_heartbeat_thread",
+      "source": "train_faceforensics_main",
+      "target": "fault_detector_faultdetector_start_heartbeat_thread"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L1107",
       "weight": 1.0,
       "_src": "train_faceforensics_main",
@@ -5768,6 +5861,18 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L1556",
+      "weight": 1.0,
+      "_src": "train_faceforensics_main",
+      "_tgt": "fault_detector_faultdetector_stop_heartbeat_thread",
+      "source": "train_faceforensics_main",
+      "target": "fault_detector_faultdetector_stop_heartbeat_thread"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L1461",
       "weight": 1.0,
       "_src": "train_faceforensics_main",
@@ -5848,16 +5953,40 @@
       "target": "exporter_metricsexporter_export_markdown_report"
     },
     {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L1168",
+      "weight": 1.0,
+      "_src": "train_faceforensics_main",
+      "_tgt": "init_create_fault_detector",
+      "source": "train_faceforensics_main",
+      "target": "init_create_fault_detector"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L1174",
+      "weight": 1.0,
+      "_src": "train_faceforensics_main",
+      "_tgt": "init_register_fault_detector_nodes",
+      "source": "train_faceforensics_main",
+      "target": "init_register_fault_detector_nodes"
+    },
+    {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L76",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_135",
+      "_src": "train_faceforensics_rationale_136",
       "_tgt": "faceforensics_faceforensicsdataset",
-      "source": "train_faceforensics_rationale_135",
-      "target": "faceforensics_faceforensicsdataset",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_136",
+      "target": "faceforensics_faceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -5865,11 +5994,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L76",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_135",
+      "_src": "train_faceforensics_rationale_136",
       "_tgt": "faceforensics_videofaceforensicsdataset",
-      "source": "train_faceforensics_rationale_135",
-      "target": "faceforensics_videofaceforensicsdataset",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_136",
+      "target": "faceforensics_videofaceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -5877,11 +6006,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L76",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_135",
+      "_src": "train_faceforensics_rationale_136",
       "_tgt": "faceforensics_videodatasetfast",
-      "source": "train_faceforensics_rationale_135",
-      "target": "faceforensics_videodatasetfast",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_136",
+      "target": "faceforensics_videodatasetfast"
     },
     {
       "relation": "uses",
@@ -5889,11 +6018,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L85",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_135",
+      "_src": "train_faceforensics_rationale_136",
       "_tgt": "checkpoint_manager_checkpointmanager",
-      "source": "train_faceforensics_rationale_135",
-      "target": "checkpoint_manager_checkpointmanager",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_136",
+      "target": "checkpoint_manager_checkpointmanager"
     },
     {
       "relation": "uses",
@@ -5901,11 +6030,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L86",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_135",
+      "_src": "train_faceforensics_rationale_136",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
-      "source": "train_faceforensics_rationale_135",
-      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_136",
+      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager"
     },
     {
       "relation": "uses",
@@ -5913,47 +6042,47 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_135",
+      "_src": "train_faceforensics_rationale_136",
       "_tgt": "convergence_scheduler_convergenceawarescheduler",
-      "source": "train_faceforensics_rationale_135",
-      "target": "convergence_scheduler_convergenceawarescheduler",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_136",
+      "target": "convergence_scheduler_convergenceawarescheduler"
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_135",
+      "_src": "train_faceforensics_rationale_136",
       "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "source": "train_faceforensics_rationale_135",
-      "target": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_136",
+      "target": "checkpoint_fault_injector_checkpointbitflipinjector"
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_135",
+      "_src": "train_faceforensics_rationale_136",
       "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
-      "source": "train_faceforensics_rationale_135",
-      "target": "checkpoint_fault_injector_checkpointfaultconfig",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_136",
+      "target": "checkpoint_fault_injector_checkpointfaultconfig"
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_135",
+      "_src": "train_faceforensics_rationale_136",
       "_tgt": "checkpoint_fault_injector_faulttype",
-      "source": "train_faceforensics_rationale_135",
-      "target": "checkpoint_fault_injector_faulttype",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_136",
+      "target": "checkpoint_fault_injector_faulttype"
     },
     {
       "relation": "uses",
@@ -5961,11 +6090,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L76",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_161",
+      "_src": "train_faceforensics_rationale_162",
       "_tgt": "faceforensics_faceforensicsdataset",
-      "source": "train_faceforensics_rationale_161",
-      "target": "faceforensics_faceforensicsdataset",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_162",
+      "target": "faceforensics_faceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -5973,11 +6102,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L76",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_161",
+      "_src": "train_faceforensics_rationale_162",
       "_tgt": "faceforensics_videofaceforensicsdataset",
-      "source": "train_faceforensics_rationale_161",
-      "target": "faceforensics_videofaceforensicsdataset",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_162",
+      "target": "faceforensics_videofaceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -5985,11 +6114,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L76",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_161",
+      "_src": "train_faceforensics_rationale_162",
       "_tgt": "faceforensics_videodatasetfast",
-      "source": "train_faceforensics_rationale_161",
-      "target": "faceforensics_videodatasetfast",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_162",
+      "target": "faceforensics_videodatasetfast"
     },
     {
       "relation": "uses",
@@ -5997,11 +6126,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L85",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_161",
+      "_src": "train_faceforensics_rationale_162",
       "_tgt": "checkpoint_manager_checkpointmanager",
-      "source": "train_faceforensics_rationale_161",
-      "target": "checkpoint_manager_checkpointmanager",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_162",
+      "target": "checkpoint_manager_checkpointmanager"
     },
     {
       "relation": "uses",
@@ -6009,11 +6138,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L86",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_161",
+      "_src": "train_faceforensics_rationale_162",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
-      "source": "train_faceforensics_rationale_161",
-      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_162",
+      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager"
     },
     {
       "relation": "uses",
@@ -6021,47 +6150,47 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_161",
+      "_src": "train_faceforensics_rationale_162",
       "_tgt": "convergence_scheduler_convergenceawarescheduler",
-      "source": "train_faceforensics_rationale_161",
-      "target": "convergence_scheduler_convergenceawarescheduler",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_162",
+      "target": "convergence_scheduler_convergenceawarescheduler"
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_161",
+      "_src": "train_faceforensics_rationale_162",
       "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "source": "train_faceforensics_rationale_161",
-      "target": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_162",
+      "target": "checkpoint_fault_injector_checkpointbitflipinjector"
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_161",
+      "_src": "train_faceforensics_rationale_162",
       "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
-      "source": "train_faceforensics_rationale_161",
-      "target": "checkpoint_fault_injector_checkpointfaultconfig",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_162",
+      "target": "checkpoint_fault_injector_checkpointfaultconfig"
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_161",
+      "_src": "train_faceforensics_rationale_162",
       "_tgt": "checkpoint_fault_injector_faulttype",
-      "source": "train_faceforensics_rationale_161",
-      "target": "checkpoint_fault_injector_faulttype",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_162",
+      "target": "checkpoint_fault_injector_faulttype"
     },
     {
       "relation": "uses",
@@ -6069,11 +6198,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L76",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_239",
+      "_src": "train_faceforensics_rationale_240",
       "_tgt": "faceforensics_faceforensicsdataset",
-      "source": "train_faceforensics_rationale_239",
-      "target": "faceforensics_faceforensicsdataset",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_240",
+      "target": "faceforensics_faceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -6081,11 +6210,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L76",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_239",
+      "_src": "train_faceforensics_rationale_240",
       "_tgt": "faceforensics_videofaceforensicsdataset",
-      "source": "train_faceforensics_rationale_239",
-      "target": "faceforensics_videofaceforensicsdataset",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_240",
+      "target": "faceforensics_videofaceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -6093,11 +6222,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L76",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_239",
+      "_src": "train_faceforensics_rationale_240",
       "_tgt": "faceforensics_videodatasetfast",
-      "source": "train_faceforensics_rationale_239",
-      "target": "faceforensics_videodatasetfast",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_240",
+      "target": "faceforensics_videodatasetfast"
     },
     {
       "relation": "uses",
@@ -6105,11 +6234,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L85",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_239",
+      "_src": "train_faceforensics_rationale_240",
       "_tgt": "checkpoint_manager_checkpointmanager",
-      "source": "train_faceforensics_rationale_239",
-      "target": "checkpoint_manager_checkpointmanager",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_240",
+      "target": "checkpoint_manager_checkpointmanager"
     },
     {
       "relation": "uses",
@@ -6117,11 +6246,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L86",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_239",
+      "_src": "train_faceforensics_rationale_240",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
-      "source": "train_faceforensics_rationale_239",
-      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_240",
+      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager"
     },
     {
       "relation": "uses",
@@ -6129,47 +6258,47 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_239",
+      "_src": "train_faceforensics_rationale_240",
       "_tgt": "convergence_scheduler_convergenceawarescheduler",
-      "source": "train_faceforensics_rationale_239",
-      "target": "convergence_scheduler_convergenceawarescheduler",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_240",
+      "target": "convergence_scheduler_convergenceawarescheduler"
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_239",
+      "_src": "train_faceforensics_rationale_240",
       "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "source": "train_faceforensics_rationale_239",
-      "target": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_240",
+      "target": "checkpoint_fault_injector_checkpointbitflipinjector"
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_239",
+      "_src": "train_faceforensics_rationale_240",
       "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
-      "source": "train_faceforensics_rationale_239",
-      "target": "checkpoint_fault_injector_checkpointfaultconfig",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_240",
+      "target": "checkpoint_fault_injector_checkpointfaultconfig"
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_239",
+      "_src": "train_faceforensics_rationale_240",
       "_tgt": "checkpoint_fault_injector_faulttype",
-      "source": "train_faceforensics_rationale_239",
-      "target": "checkpoint_fault_injector_faulttype",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_240",
+      "target": "checkpoint_fault_injector_faulttype"
     },
     {
       "relation": "uses",
@@ -6177,11 +6306,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L76",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_319",
+      "_src": "train_faceforensics_rationale_320",
       "_tgt": "faceforensics_faceforensicsdataset",
-      "source": "train_faceforensics_rationale_319",
-      "target": "faceforensics_faceforensicsdataset",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_320",
+      "target": "faceforensics_faceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -6189,11 +6318,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L76",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_319",
+      "_src": "train_faceforensics_rationale_320",
       "_tgt": "faceforensics_videofaceforensicsdataset",
-      "source": "train_faceforensics_rationale_319",
-      "target": "faceforensics_videofaceforensicsdataset",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_320",
+      "target": "faceforensics_videofaceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -6201,11 +6330,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L76",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_319",
+      "_src": "train_faceforensics_rationale_320",
       "_tgt": "faceforensics_videodatasetfast",
-      "source": "train_faceforensics_rationale_319",
-      "target": "faceforensics_videodatasetfast",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_320",
+      "target": "faceforensics_videodatasetfast"
     },
     {
       "relation": "uses",
@@ -6213,11 +6342,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L85",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_319",
+      "_src": "train_faceforensics_rationale_320",
       "_tgt": "checkpoint_manager_checkpointmanager",
-      "source": "train_faceforensics_rationale_319",
-      "target": "checkpoint_manager_checkpointmanager",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_320",
+      "target": "checkpoint_manager_checkpointmanager"
     },
     {
       "relation": "uses",
@@ -6225,11 +6354,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L86",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_319",
+      "_src": "train_faceforensics_rationale_320",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
-      "source": "train_faceforensics_rationale_319",
-      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_320",
+      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager"
     },
     {
       "relation": "uses",
@@ -6237,47 +6366,47 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_319",
+      "_src": "train_faceforensics_rationale_320",
       "_tgt": "convergence_scheduler_convergenceawarescheduler",
-      "source": "train_faceforensics_rationale_319",
-      "target": "convergence_scheduler_convergenceawarescheduler",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_320",
+      "target": "convergence_scheduler_convergenceawarescheduler"
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_319",
+      "_src": "train_faceforensics_rationale_320",
       "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "source": "train_faceforensics_rationale_319",
-      "target": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_320",
+      "target": "checkpoint_fault_injector_checkpointbitflipinjector"
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_319",
+      "_src": "train_faceforensics_rationale_320",
       "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
-      "source": "train_faceforensics_rationale_319",
-      "target": "checkpoint_fault_injector_checkpointfaultconfig",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_320",
+      "target": "checkpoint_fault_injector_checkpointfaultconfig"
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_319",
+      "_src": "train_faceforensics_rationale_320",
       "_tgt": "checkpoint_fault_injector_faulttype",
-      "source": "train_faceforensics_rationale_319",
-      "target": "checkpoint_fault_injector_faulttype",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_320",
+      "target": "checkpoint_fault_injector_faulttype"
     },
     {
       "relation": "uses",
@@ -6285,11 +6414,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L76",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_373",
+      "_src": "train_faceforensics_rationale_374",
       "_tgt": "faceforensics_faceforensicsdataset",
-      "source": "train_faceforensics_rationale_373",
-      "target": "faceforensics_faceforensicsdataset",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_374",
+      "target": "faceforensics_faceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -6297,11 +6426,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L76",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_373",
+      "_src": "train_faceforensics_rationale_374",
       "_tgt": "faceforensics_videofaceforensicsdataset",
-      "source": "train_faceforensics_rationale_373",
-      "target": "faceforensics_videofaceforensicsdataset",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_374",
+      "target": "faceforensics_videofaceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -6309,11 +6438,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L76",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_373",
+      "_src": "train_faceforensics_rationale_374",
       "_tgt": "faceforensics_videodatasetfast",
-      "source": "train_faceforensics_rationale_373",
-      "target": "faceforensics_videodatasetfast",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_374",
+      "target": "faceforensics_videodatasetfast"
     },
     {
       "relation": "uses",
@@ -6321,11 +6450,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L85",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_373",
+      "_src": "train_faceforensics_rationale_374",
       "_tgt": "checkpoint_manager_checkpointmanager",
-      "source": "train_faceforensics_rationale_373",
-      "target": "checkpoint_manager_checkpointmanager",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_374",
+      "target": "checkpoint_manager_checkpointmanager"
     },
     {
       "relation": "uses",
@@ -6333,11 +6462,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L86",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_373",
+      "_src": "train_faceforensics_rationale_374",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
-      "source": "train_faceforensics_rationale_373",
-      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_374",
+      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager"
     },
     {
       "relation": "uses",
@@ -6345,47 +6474,47 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_373",
+      "_src": "train_faceforensics_rationale_374",
       "_tgt": "convergence_scheduler_convergenceawarescheduler",
-      "source": "train_faceforensics_rationale_373",
-      "target": "convergence_scheduler_convergenceawarescheduler",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_374",
+      "target": "convergence_scheduler_convergenceawarescheduler"
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_373",
+      "_src": "train_faceforensics_rationale_374",
       "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "source": "train_faceforensics_rationale_373",
-      "target": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_374",
+      "target": "checkpoint_fault_injector_checkpointbitflipinjector"
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_373",
+      "_src": "train_faceforensics_rationale_374",
       "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
-      "source": "train_faceforensics_rationale_373",
-      "target": "checkpoint_fault_injector_checkpointfaultconfig",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_374",
+      "target": "checkpoint_fault_injector_checkpointfaultconfig"
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_373",
+      "_src": "train_faceforensics_rationale_374",
       "_tgt": "checkpoint_fault_injector_faulttype",
-      "source": "train_faceforensics_rationale_373",
-      "target": "checkpoint_fault_injector_faulttype",
-      "confidence_score": 0.5
+      "confidence_score": 0.5,
+      "source": "train_faceforensics_rationale_374",
+      "target": "checkpoint_fault_injector_faulttype"
     },
     {
       "relation": "contains",
@@ -6892,6 +7021,30 @@
       "target": "hash_ring_checkpoint_manager_rationale_11"
     },
     {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
+      "source_location": "L6",
+      "weight": 0.8,
+      "_src": "hash_ring_checkpoint_manager_rationale_179",
+      "_tgt": "checkpoint_manager_checkpointmanager",
+      "source": "checkpoint_manager_checkpointmanager",
+      "target": "hash_ring_checkpoint_manager_rationale_179",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
+      "source_location": "L6",
+      "weight": 0.8,
+      "_src": "hash_ring_checkpoint_manager_rationale_189",
+      "_tgt": "checkpoint_manager_checkpointmanager",
+      "source": "checkpoint_manager_checkpointmanager",
+      "target": "hash_ring_checkpoint_manager_rationale_189",
+      "confidence_score": 0.5
+    },
+    {
       "relation": "calls",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
@@ -6907,10 +7060,70 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L85",
+      "weight": 0.8,
+      "_src": "checkpoint_manager_checkpointmanager",
+      "_tgt": "train_faceforensics_rationale_135",
+      "confidence_score": 0.5,
+      "source": "checkpoint_manager_checkpointmanager",
+      "target": "train_faceforensics_rationale_135"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L85",
+      "weight": 0.8,
+      "_src": "checkpoint_manager_checkpointmanager",
+      "_tgt": "train_faceforensics_rationale_161",
+      "confidence_score": 0.5,
+      "source": "checkpoint_manager_checkpointmanager",
+      "target": "train_faceforensics_rationale_161"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L85",
+      "weight": 0.8,
+      "_src": "checkpoint_manager_checkpointmanager",
+      "_tgt": "train_faceforensics_rationale_239",
+      "confidence_score": 0.5,
+      "source": "checkpoint_manager_checkpointmanager",
+      "target": "train_faceforensics_rationale_239"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L85",
+      "weight": 0.8,
+      "_src": "checkpoint_manager_checkpointmanager",
+      "_tgt": "train_faceforensics_rationale_319",
+      "confidence_score": 0.5,
+      "source": "checkpoint_manager_checkpointmanager",
+      "target": "train_faceforensics_rationale_319"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L85",
+      "weight": 0.8,
+      "_src": "checkpoint_manager_checkpointmanager",
+      "_tgt": "train_faceforensics_rationale_373",
+      "confidence_score": 0.5,
+      "source": "checkpoint_manager_checkpointmanager",
+      "target": "train_faceforensics_rationale_373"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L83",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_133",
-      "_tgt": "checkpoint_manager_checkpointmanager",
+      "_src": "checkpoint_manager_checkpointmanager",
+      "_tgt": "train_faceforensics_rationale_133",
       "confidence_score": 0.5,
       "source": "checkpoint_manager_checkpointmanager",
       "target": "train_faceforensics_rationale_133"
@@ -6921,8 +7134,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L83",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_159",
-      "_tgt": "checkpoint_manager_checkpointmanager",
+      "_src": "checkpoint_manager_checkpointmanager",
+      "_tgt": "train_faceforensics_rationale_159",
       "confidence_score": 0.5,
       "source": "checkpoint_manager_checkpointmanager",
       "target": "train_faceforensics_rationale_159"
@@ -6933,8 +7146,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L83",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_237",
-      "_tgt": "checkpoint_manager_checkpointmanager",
+      "_src": "checkpoint_manager_checkpointmanager",
+      "_tgt": "train_faceforensics_rationale_237",
       "confidence_score": 0.5,
       "source": "checkpoint_manager_checkpointmanager",
       "target": "train_faceforensics_rationale_237"
@@ -6945,8 +7158,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L83",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_317",
-      "_tgt": "checkpoint_manager_checkpointmanager",
+      "_src": "checkpoint_manager_checkpointmanager",
+      "_tgt": "train_faceforensics_rationale_317",
       "confidence_score": 0.5,
       "source": "checkpoint_manager_checkpointmanager",
       "target": "train_faceforensics_rationale_317"
@@ -6957,8 +7170,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L83",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_371",
-      "_tgt": "checkpoint_manager_checkpointmanager",
+      "_src": "checkpoint_manager_checkpointmanager",
+      "_tgt": "train_faceforensics_rationale_371",
       "confidence_score": 0.5,
       "source": "checkpoint_manager_checkpointmanager",
       "target": "train_faceforensics_rationale_371"
@@ -7291,10 +7504,70 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L87",
+      "weight": 0.8,
+      "_src": "convergence_scheduler_convergenceawarescheduler",
+      "_tgt": "train_faceforensics_rationale_135",
+      "confidence_score": 0.5,
+      "source": "convergence_scheduler_convergenceawarescheduler",
+      "target": "train_faceforensics_rationale_135"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L87",
+      "weight": 0.8,
+      "_src": "convergence_scheduler_convergenceawarescheduler",
+      "_tgt": "train_faceforensics_rationale_161",
+      "confidence_score": 0.5,
+      "source": "convergence_scheduler_convergenceawarescheduler",
+      "target": "train_faceforensics_rationale_161"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L87",
+      "weight": 0.8,
+      "_src": "convergence_scheduler_convergenceawarescheduler",
+      "_tgt": "train_faceforensics_rationale_239",
+      "confidence_score": 0.5,
+      "source": "convergence_scheduler_convergenceawarescheduler",
+      "target": "train_faceforensics_rationale_239"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L87",
+      "weight": 0.8,
+      "_src": "convergence_scheduler_convergenceawarescheduler",
+      "_tgt": "train_faceforensics_rationale_319",
+      "confidence_score": 0.5,
+      "source": "convergence_scheduler_convergenceawarescheduler",
+      "target": "train_faceforensics_rationale_319"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L87",
+      "weight": 0.8,
+      "_src": "convergence_scheduler_convergenceawarescheduler",
+      "_tgt": "train_faceforensics_rationale_373",
+      "confidence_score": 0.5,
+      "source": "convergence_scheduler_convergenceawarescheduler",
+      "target": "train_faceforensics_rationale_373"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L85",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_133",
-      "_tgt": "convergence_scheduler_convergenceawarescheduler",
+      "_src": "convergence_scheduler_convergenceawarescheduler",
+      "_tgt": "train_faceforensics_rationale_133",
       "confidence_score": 0.5,
       "source": "convergence_scheduler_convergenceawarescheduler",
       "target": "train_faceforensics_rationale_133"
@@ -7305,8 +7578,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L85",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_159",
-      "_tgt": "convergence_scheduler_convergenceawarescheduler",
+      "_src": "convergence_scheduler_convergenceawarescheduler",
+      "_tgt": "train_faceforensics_rationale_159",
       "confidence_score": 0.5,
       "source": "convergence_scheduler_convergenceawarescheduler",
       "target": "train_faceforensics_rationale_159"
@@ -7317,8 +7590,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L85",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_237",
-      "_tgt": "convergence_scheduler_convergenceawarescheduler",
+      "_src": "convergence_scheduler_convergenceawarescheduler",
+      "_tgt": "train_faceforensics_rationale_237",
       "confidence_score": 0.5,
       "source": "convergence_scheduler_convergenceawarescheduler",
       "target": "train_faceforensics_rationale_237"
@@ -7329,8 +7602,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L85",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_317",
-      "_tgt": "convergence_scheduler_convergenceawarescheduler",
+      "_src": "convergence_scheduler_convergenceawarescheduler",
+      "_tgt": "train_faceforensics_rationale_317",
       "confidence_score": 0.5,
       "source": "convergence_scheduler_convergenceawarescheduler",
       "target": "train_faceforensics_rationale_317"
@@ -7341,8 +7614,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L85",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_371",
-      "_tgt": "convergence_scheduler_convergenceawarescheduler",
+      "_src": "convergence_scheduler_convergenceawarescheduler",
+      "_tgt": "train_faceforensics_rationale_371",
       "confidence_score": 0.5,
       "source": "convergence_scheduler_convergenceawarescheduler",
       "target": "train_faceforensics_rationale_371"
@@ -7459,7 +7732,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L45",
+      "source_location": "L54",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_checkpoint_identifier",
@@ -7471,7 +7744,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L48",
+      "source_location": "L57",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_checkpoint_filename",
@@ -7483,7 +7756,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L53",
+      "source_location": "L62",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_checkpoint_path",
@@ -7495,7 +7768,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L56",
+      "source_location": "L65",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_shard_id",
@@ -7507,7 +7780,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L59",
+      "source_location": "L68",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_register_shard_if_needed",
@@ -7519,7 +7792,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L73",
+      "source_location": "L82",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_restore",
@@ -7531,7 +7804,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L84",
+      "source_location": "L93",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_save",
@@ -7543,12 +7816,36 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L120",
+      "source_location": "L129",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_load_latest",
       "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
       "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager_load_latest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
+      "source_location": "L178",
+      "weight": 1.0,
+      "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_start_heartbeat_thread",
+      "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager_start_heartbeat_thread",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
+      "source_location": "L188",
+      "weight": 1.0,
+      "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_stop_heartbeat_thread",
+      "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager_stop_heartbeat_thread",
       "confidence_score": 1.0
     },
     {
@@ -7567,10 +7864,70 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L86",
+      "weight": 0.8,
+      "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "_tgt": "train_faceforensics_rationale_135",
+      "confidence_score": 0.5,
+      "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "target": "train_faceforensics_rationale_135"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L86",
+      "weight": 0.8,
+      "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "_tgt": "train_faceforensics_rationale_161",
+      "confidence_score": 0.5,
+      "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "target": "train_faceforensics_rationale_161"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L86",
+      "weight": 0.8,
+      "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "_tgt": "train_faceforensics_rationale_239",
+      "confidence_score": 0.5,
+      "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "target": "train_faceforensics_rationale_239"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L86",
+      "weight": 0.8,
+      "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "_tgt": "train_faceforensics_rationale_319",
+      "confidence_score": 0.5,
+      "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "target": "train_faceforensics_rationale_319"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L86",
+      "weight": 0.8,
+      "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "_tgt": "train_faceforensics_rationale_373",
+      "confidence_score": 0.5,
+      "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "target": "train_faceforensics_rationale_373"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L84",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_133",
-      "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "_tgt": "train_faceforensics_rationale_133",
       "confidence_score": 0.5,
       "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
       "target": "train_faceforensics_rationale_133"
@@ -7581,8 +7938,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L84",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_159",
-      "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "_tgt": "train_faceforensics_rationale_159",
       "confidence_score": 0.5,
       "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
       "target": "train_faceforensics_rationale_159"
@@ -7593,8 +7950,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L84",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_237",
-      "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "_tgt": "train_faceforensics_rationale_237",
       "confidence_score": 0.5,
       "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
       "target": "train_faceforensics_rationale_237"
@@ -7605,8 +7962,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L84",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_317",
-      "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "_tgt": "train_faceforensics_rationale_317",
       "confidence_score": 0.5,
       "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
       "target": "train_faceforensics_rationale_317"
@@ -7617,8 +7974,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L84",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_371",
-      "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "_tgt": "train_faceforensics_rationale_371",
       "confidence_score": 0.5,
       "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
       "target": "train_faceforensics_rationale_371"
@@ -7709,9 +8066,33 @@
     },
     {
       "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager_init",
+      "_tgt": "init_create_fault_detector",
+      "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager_init",
+      "target": "init_create_fault_detector"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager_init",
+      "_tgt": "init_register_fault_detector_nodes",
+      "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager_init",
+      "target": "init_register_fault_detector_nodes"
+    },
+    {
+      "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L57",
+      "source_location": "L66",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager_shard_id",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_checkpoint_identifier",
@@ -7723,7 +8104,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L54",
+      "source_location": "L63",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager_checkpoint_path",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_checkpoint_filename",
@@ -7735,7 +8116,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L64",
+      "source_location": "L73",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager_register_shard_if_needed",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_checkpoint_path",
@@ -7747,7 +8128,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L107",
+      "source_location": "L116",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager_save",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_checkpoint_path",
@@ -7759,7 +8140,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L60",
+      "source_location": "L69",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager_register_shard_if_needed",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_shard_id",
@@ -7771,7 +8152,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L104",
+      "source_location": "L113",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager_save",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_shard_id",
@@ -7783,7 +8164,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L148",
+      "source_location": "L157",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager_load_latest",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_shard_id",
@@ -7795,7 +8176,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L103",
+      "source_location": "L112",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager_save",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_register_shard_if_needed",
@@ -7807,7 +8188,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L147",
+      "source_location": "L156",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager_load_latest",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_register_shard_if_needed",
@@ -7843,7 +8224,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
-      "source_location": "L153",
+      "source_location": "L162",
       "weight": 1.0,
       "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager_load_latest",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_restore",
@@ -7946,6 +8327,30 @@
       "_tgt": "hash_ring_shardmanager_load_cached_shard",
       "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager_load_latest",
       "target": "hash_ring_shardmanager_load_cached_shard"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
+      "source_location": "L179",
+      "weight": 1.0,
+      "_src": "hash_ring_checkpoint_manager_rationale_179",
+      "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_start_heartbeat_thread",
+      "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager_start_heartbeat_thread",
+      "target": "hash_ring_checkpoint_manager_rationale_179",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
+      "source_location": "L189",
+      "weight": 1.0,
+      "_src": "hash_ring_checkpoint_manager_rationale_189",
+      "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager_stop_heartbeat_thread",
+      "source": "hash_ring_checkpoint_manager_hashringcheckpointmanager_stop_heartbeat_thread",
+      "target": "hash_ring_checkpoint_manager_rationale_189",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -8671,10 +9076,70 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L76",
+      "weight": 0.8,
+      "_src": "faceforensics_faceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_135",
+      "confidence_score": 0.5,
+      "source": "faceforensics_faceforensicsdataset",
+      "target": "train_faceforensics_rationale_135"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L76",
+      "weight": 0.8,
+      "_src": "faceforensics_faceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_161",
+      "confidence_score": 0.5,
+      "source": "faceforensics_faceforensicsdataset",
+      "target": "train_faceforensics_rationale_161"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L76",
+      "weight": 0.8,
+      "_src": "faceforensics_faceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_239",
+      "confidence_score": 0.5,
+      "source": "faceforensics_faceforensicsdataset",
+      "target": "train_faceforensics_rationale_239"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L76",
+      "weight": 0.8,
+      "_src": "faceforensics_faceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_319",
+      "confidence_score": 0.5,
+      "source": "faceforensics_faceforensicsdataset",
+      "target": "train_faceforensics_rationale_319"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L76",
+      "weight": 0.8,
+      "_src": "faceforensics_faceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_373",
+      "confidence_score": 0.5,
+      "source": "faceforensics_faceforensicsdataset",
+      "target": "train_faceforensics_rationale_373"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L74",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_133",
-      "_tgt": "faceforensics_faceforensicsdataset",
+      "_src": "faceforensics_faceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_133",
       "confidence_score": 0.5,
       "source": "faceforensics_faceforensicsdataset",
       "target": "train_faceforensics_rationale_133"
@@ -8685,8 +9150,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L74",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_159",
-      "_tgt": "faceforensics_faceforensicsdataset",
+      "_src": "faceforensics_faceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_159",
       "confidence_score": 0.5,
       "source": "faceforensics_faceforensicsdataset",
       "target": "train_faceforensics_rationale_159"
@@ -8697,8 +9162,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L74",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_237",
-      "_tgt": "faceforensics_faceforensicsdataset",
+      "_src": "faceforensics_faceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_237",
       "confidence_score": 0.5,
       "source": "faceforensics_faceforensicsdataset",
       "target": "train_faceforensics_rationale_237"
@@ -8709,8 +9174,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L74",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_317",
-      "_tgt": "faceforensics_faceforensicsdataset",
+      "_src": "faceforensics_faceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_317",
       "confidence_score": 0.5,
       "source": "faceforensics_faceforensicsdataset",
       "target": "train_faceforensics_rationale_317"
@@ -8721,8 +9186,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L74",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_371",
-      "_tgt": "faceforensics_faceforensicsdataset",
+      "_src": "faceforensics_faceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_371",
       "confidence_score": 0.5,
       "source": "faceforensics_faceforensicsdataset",
       "target": "train_faceforensics_rationale_371"
@@ -9079,10 +9544,70 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L76",
+      "weight": 0.8,
+      "_src": "faceforensics_videofaceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_135",
+      "confidence_score": 0.5,
+      "source": "faceforensics_videofaceforensicsdataset",
+      "target": "train_faceforensics_rationale_135"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L76",
+      "weight": 0.8,
+      "_src": "faceforensics_videofaceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_161",
+      "confidence_score": 0.5,
+      "source": "faceforensics_videofaceforensicsdataset",
+      "target": "train_faceforensics_rationale_161"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L76",
+      "weight": 0.8,
+      "_src": "faceforensics_videofaceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_239",
+      "confidence_score": 0.5,
+      "source": "faceforensics_videofaceforensicsdataset",
+      "target": "train_faceforensics_rationale_239"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L76",
+      "weight": 0.8,
+      "_src": "faceforensics_videofaceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_319",
+      "confidence_score": 0.5,
+      "source": "faceforensics_videofaceforensicsdataset",
+      "target": "train_faceforensics_rationale_319"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L76",
+      "weight": 0.8,
+      "_src": "faceforensics_videofaceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_373",
+      "confidence_score": 0.5,
+      "source": "faceforensics_videofaceforensicsdataset",
+      "target": "train_faceforensics_rationale_373"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L74",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_133",
-      "_tgt": "faceforensics_videofaceforensicsdataset",
+      "_src": "faceforensics_videofaceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_133",
       "confidence_score": 0.5,
       "source": "faceforensics_videofaceforensicsdataset",
       "target": "train_faceforensics_rationale_133"
@@ -9093,8 +9618,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L74",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_159",
-      "_tgt": "faceforensics_videofaceforensicsdataset",
+      "_src": "faceforensics_videofaceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_159",
       "confidence_score": 0.5,
       "source": "faceforensics_videofaceforensicsdataset",
       "target": "train_faceforensics_rationale_159"
@@ -9105,8 +9630,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L74",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_237",
-      "_tgt": "faceforensics_videofaceforensicsdataset",
+      "_src": "faceforensics_videofaceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_237",
       "confidence_score": 0.5,
       "source": "faceforensics_videofaceforensicsdataset",
       "target": "train_faceforensics_rationale_237"
@@ -9117,8 +9642,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L74",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_317",
-      "_tgt": "faceforensics_videofaceforensicsdataset",
+      "_src": "faceforensics_videofaceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_317",
       "confidence_score": 0.5,
       "source": "faceforensics_videofaceforensicsdataset",
       "target": "train_faceforensics_rationale_317"
@@ -9129,8 +9654,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L74",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_371",
-      "_tgt": "faceforensics_videofaceforensicsdataset",
+      "_src": "faceforensics_videofaceforensicsdataset",
+      "_tgt": "train_faceforensics_rationale_371",
       "confidence_score": 0.5,
       "source": "faceforensics_videofaceforensicsdataset",
       "target": "train_faceforensics_rationale_371"
@@ -9379,10 +9904,70 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L76",
+      "weight": 0.8,
+      "_src": "faceforensics_videodatasetfast",
+      "_tgt": "train_faceforensics_rationale_135",
+      "confidence_score": 0.5,
+      "source": "faceforensics_videodatasetfast",
+      "target": "train_faceforensics_rationale_135"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L76",
+      "weight": 0.8,
+      "_src": "faceforensics_videodatasetfast",
+      "_tgt": "train_faceforensics_rationale_161",
+      "confidence_score": 0.5,
+      "source": "faceforensics_videodatasetfast",
+      "target": "train_faceforensics_rationale_161"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L76",
+      "weight": 0.8,
+      "_src": "faceforensics_videodatasetfast",
+      "_tgt": "train_faceforensics_rationale_239",
+      "confidence_score": 0.5,
+      "source": "faceforensics_videodatasetfast",
+      "target": "train_faceforensics_rationale_239"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L76",
+      "weight": 0.8,
+      "_src": "faceforensics_videodatasetfast",
+      "_tgt": "train_faceforensics_rationale_319",
+      "confidence_score": 0.5,
+      "source": "faceforensics_videodatasetfast",
+      "target": "train_faceforensics_rationale_319"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L76",
+      "weight": 0.8,
+      "_src": "faceforensics_videodatasetfast",
+      "_tgt": "train_faceforensics_rationale_373",
+      "confidence_score": 0.5,
+      "source": "faceforensics_videodatasetfast",
+      "target": "train_faceforensics_rationale_373"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L74",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_133",
-      "_tgt": "faceforensics_videodatasetfast",
+      "_src": "faceforensics_videodatasetfast",
+      "_tgt": "train_faceforensics_rationale_133",
       "confidence_score": 0.5,
       "source": "faceforensics_videodatasetfast",
       "target": "train_faceforensics_rationale_133"
@@ -9393,8 +9978,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L74",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_159",
-      "_tgt": "faceforensics_videodatasetfast",
+      "_src": "faceforensics_videodatasetfast",
+      "_tgt": "train_faceforensics_rationale_159",
       "confidence_score": 0.5,
       "source": "faceforensics_videodatasetfast",
       "target": "train_faceforensics_rationale_159"
@@ -9405,8 +9990,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L74",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_237",
-      "_tgt": "faceforensics_videodatasetfast",
+      "_src": "faceforensics_videodatasetfast",
+      "_tgt": "train_faceforensics_rationale_237",
       "confidence_score": 0.5,
       "source": "faceforensics_videodatasetfast",
       "target": "train_faceforensics_rationale_237"
@@ -9417,8 +10002,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L74",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_317",
-      "_tgt": "faceforensics_videodatasetfast",
+      "_src": "faceforensics_videodatasetfast",
+      "_tgt": "train_faceforensics_rationale_317",
       "confidence_score": 0.5,
       "source": "faceforensics_videodatasetfast",
       "target": "train_faceforensics_rationale_317"
@@ -9429,8 +10014,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L74",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_371",
-      "_tgt": "faceforensics_videodatasetfast",
+      "_src": "faceforensics_videodatasetfast",
+      "_tgt": "train_faceforensics_rationale_371",
       "confidence_score": 0.5,
       "source": "faceforensics_videodatasetfast",
       "target": "train_faceforensics_rationale_371"
@@ -9631,10 +10216,70 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L89",
+      "weight": 0.8,
+      "_src": "checkpoint_fault_injector_faulttype",
+      "_tgt": "train_faceforensics_rationale_135",
+      "confidence_score": 0.5,
+      "source": "checkpoint_fault_injector_faulttype",
+      "target": "train_faceforensics_rationale_135"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L89",
+      "weight": 0.8,
+      "_src": "checkpoint_fault_injector_faulttype",
+      "_tgt": "train_faceforensics_rationale_161",
+      "confidence_score": 0.5,
+      "source": "checkpoint_fault_injector_faulttype",
+      "target": "train_faceforensics_rationale_161"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L89",
+      "weight": 0.8,
+      "_src": "checkpoint_fault_injector_faulttype",
+      "_tgt": "train_faceforensics_rationale_239",
+      "confidence_score": 0.5,
+      "source": "checkpoint_fault_injector_faulttype",
+      "target": "train_faceforensics_rationale_239"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L89",
+      "weight": 0.8,
+      "_src": "checkpoint_fault_injector_faulttype",
+      "_tgt": "train_faceforensics_rationale_319",
+      "confidence_score": 0.5,
+      "source": "checkpoint_fault_injector_faulttype",
+      "target": "train_faceforensics_rationale_319"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L89",
+      "weight": 0.8,
+      "_src": "checkpoint_fault_injector_faulttype",
+      "_tgt": "train_faceforensics_rationale_373",
+      "confidence_score": 0.5,
+      "source": "checkpoint_fault_injector_faulttype",
+      "target": "train_faceforensics_rationale_373"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_133",
-      "_tgt": "checkpoint_fault_injector_faulttype",
+      "_src": "checkpoint_fault_injector_faulttype",
+      "_tgt": "train_faceforensics_rationale_133",
       "confidence_score": 0.5,
       "source": "checkpoint_fault_injector_faulttype",
       "target": "train_faceforensics_rationale_133"
@@ -9645,8 +10290,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_159",
-      "_tgt": "checkpoint_fault_injector_faulttype",
+      "_src": "checkpoint_fault_injector_faulttype",
+      "_tgt": "train_faceforensics_rationale_159",
       "confidence_score": 0.5,
       "source": "checkpoint_fault_injector_faulttype",
       "target": "train_faceforensics_rationale_159"
@@ -9657,8 +10302,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_237",
-      "_tgt": "checkpoint_fault_injector_faulttype",
+      "_src": "checkpoint_fault_injector_faulttype",
+      "_tgt": "train_faceforensics_rationale_237",
       "confidence_score": 0.5,
       "source": "checkpoint_fault_injector_faulttype",
       "target": "train_faceforensics_rationale_237"
@@ -9669,8 +10314,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_317",
-      "_tgt": "checkpoint_fault_injector_faulttype",
+      "_src": "checkpoint_fault_injector_faulttype",
+      "_tgt": "train_faceforensics_rationale_317",
       "confidence_score": 0.5,
       "source": "checkpoint_fault_injector_faulttype",
       "target": "train_faceforensics_rationale_317"
@@ -9681,8 +10326,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_371",
-      "_tgt": "checkpoint_fault_injector_faulttype",
+      "_src": "checkpoint_fault_injector_faulttype",
+      "_tgt": "train_faceforensics_rationale_371",
       "confidence_score": 0.5,
       "source": "checkpoint_fault_injector_faulttype",
       "target": "train_faceforensics_rationale_371"
@@ -9931,10 +10576,70 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L89",
+      "weight": 0.8,
+      "_src": "checkpoint_fault_injector_checkpointfaultconfig",
+      "_tgt": "train_faceforensics_rationale_135",
+      "confidence_score": 0.5,
+      "source": "checkpoint_fault_injector_checkpointfaultconfig",
+      "target": "train_faceforensics_rationale_135"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L89",
+      "weight": 0.8,
+      "_src": "checkpoint_fault_injector_checkpointfaultconfig",
+      "_tgt": "train_faceforensics_rationale_161",
+      "confidence_score": 0.5,
+      "source": "checkpoint_fault_injector_checkpointfaultconfig",
+      "target": "train_faceforensics_rationale_161"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L89",
+      "weight": 0.8,
+      "_src": "checkpoint_fault_injector_checkpointfaultconfig",
+      "_tgt": "train_faceforensics_rationale_239",
+      "confidence_score": 0.5,
+      "source": "checkpoint_fault_injector_checkpointfaultconfig",
+      "target": "train_faceforensics_rationale_239"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L89",
+      "weight": 0.8,
+      "_src": "checkpoint_fault_injector_checkpointfaultconfig",
+      "_tgt": "train_faceforensics_rationale_319",
+      "confidence_score": 0.5,
+      "source": "checkpoint_fault_injector_checkpointfaultconfig",
+      "target": "train_faceforensics_rationale_319"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L89",
+      "weight": 0.8,
+      "_src": "checkpoint_fault_injector_checkpointfaultconfig",
+      "_tgt": "train_faceforensics_rationale_373",
+      "confidence_score": 0.5,
+      "source": "checkpoint_fault_injector_checkpointfaultconfig",
+      "target": "train_faceforensics_rationale_373"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_133",
-      "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
+      "_src": "checkpoint_fault_injector_checkpointfaultconfig",
+      "_tgt": "train_faceforensics_rationale_133",
       "confidence_score": 0.5,
       "source": "checkpoint_fault_injector_checkpointfaultconfig",
       "target": "train_faceforensics_rationale_133"
@@ -9945,8 +10650,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_159",
-      "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
+      "_src": "checkpoint_fault_injector_checkpointfaultconfig",
+      "_tgt": "train_faceforensics_rationale_159",
       "confidence_score": 0.5,
       "source": "checkpoint_fault_injector_checkpointfaultconfig",
       "target": "train_faceforensics_rationale_159"
@@ -9957,8 +10662,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_237",
-      "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
+      "_src": "checkpoint_fault_injector_checkpointfaultconfig",
+      "_tgt": "train_faceforensics_rationale_237",
       "confidence_score": 0.5,
       "source": "checkpoint_fault_injector_checkpointfaultconfig",
       "target": "train_faceforensics_rationale_237"
@@ -9969,8 +10674,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_317",
-      "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
+      "_src": "checkpoint_fault_injector_checkpointfaultconfig",
+      "_tgt": "train_faceforensics_rationale_317",
       "confidence_score": 0.5,
       "source": "checkpoint_fault_injector_checkpointfaultconfig",
       "target": "train_faceforensics_rationale_317"
@@ -9981,8 +10686,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_371",
-      "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
+      "_src": "checkpoint_fault_injector_checkpointfaultconfig",
+      "_tgt": "train_faceforensics_rationale_371",
       "confidence_score": 0.5,
       "source": "checkpoint_fault_injector_checkpointfaultconfig",
       "target": "train_faceforensics_rationale_371"
@@ -10267,10 +10972,70 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L89",
+      "weight": 0.8,
+      "_src": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "_tgt": "train_faceforensics_rationale_135",
+      "confidence_score": 0.5,
+      "source": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "target": "train_faceforensics_rationale_135"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L89",
+      "weight": 0.8,
+      "_src": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "_tgt": "train_faceforensics_rationale_161",
+      "confidence_score": 0.5,
+      "source": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "target": "train_faceforensics_rationale_161"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L89",
+      "weight": 0.8,
+      "_src": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "_tgt": "train_faceforensics_rationale_239",
+      "confidence_score": 0.5,
+      "source": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "target": "train_faceforensics_rationale_239"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L89",
+      "weight": 0.8,
+      "_src": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "_tgt": "train_faceforensics_rationale_319",
+      "confidence_score": 0.5,
+      "source": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "target": "train_faceforensics_rationale_319"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
+      "source_location": "L89",
+      "weight": 0.8,
+      "_src": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "_tgt": "train_faceforensics_rationale_373",
+      "confidence_score": 0.5,
+      "source": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "target": "train_faceforensics_rationale_373"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_133",
-      "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "_src": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "_tgt": "train_faceforensics_rationale_133",
       "confidence_score": 0.5,
       "source": "checkpoint_fault_injector_checkpointbitflipinjector",
       "target": "train_faceforensics_rationale_133"
@@ -10281,8 +11046,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_159",
-      "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "_src": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "_tgt": "train_faceforensics_rationale_159",
       "confidence_score": 0.5,
       "source": "checkpoint_fault_injector_checkpointbitflipinjector",
       "target": "train_faceforensics_rationale_159"
@@ -10293,8 +11058,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_237",
-      "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "_src": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "_tgt": "train_faceforensics_rationale_237",
       "confidence_score": 0.5,
       "source": "checkpoint_fault_injector_checkpointbitflipinjector",
       "target": "train_faceforensics_rationale_237"
@@ -10305,8 +11070,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_317",
-      "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "_src": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "_tgt": "train_faceforensics_rationale_317",
       "confidence_score": 0.5,
       "source": "checkpoint_fault_injector_checkpointbitflipinjector",
       "target": "train_faceforensics_rationale_317"
@@ -10317,8 +11082,8 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L87",
       "weight": 0.8,
-      "_src": "train_faceforensics_rationale_371",
-      "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "_src": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "_tgt": "train_faceforensics_rationale_371",
       "confidence_score": 0.5,
       "source": "checkpoint_fault_injector_checkpointbitflipinjector",
       "target": "train_faceforensics_rationale_371"

@@ -4,7 +4,7 @@ from typing import List, Optional, Tuple
 import torch
 
 from .checkpoint_manager import CheckpointManager
-from ..hashing import create_hash_ring, create_shard_manager
+from ..hashing import create_hash_ring, create_shard_manager, create_fault_detector, register_fault_detector_nodes
 
 
 class HashRingCheckpointManager:
@@ -41,6 +41,15 @@ class HashRingCheckpointManager:
         )
 
         os.makedirs(self.cache_root, exist_ok=True)
+
+        # Initialize fault detector for heartbeat-based liveness detection
+        self.fault_detector = create_fault_detector(
+            ttl_seconds=5.0,
+            timeout_limit=3,
+            heartbeat_interval=1.0,
+            suspicion_quorum_pct=51,
+        )
+        register_fault_detector_nodes(self.fault_detector, self.hash_ring)
 
     def _checkpoint_identifier(self, epoch: int, checkpoint_id: Optional[str] = None) -> str:
         return checkpoint_id if checkpoint_id is not None else f"epoch_{epoch}"
@@ -165,3 +174,22 @@ class HashRingCheckpointManager:
             device,
             checkpoint_injector=checkpoint_injector,
         )
+
+    def start_heartbeat_thread(self, rank: int, world_size: int) -> None:
+        """Start the heartbeat fault-detection thread for liveness monitoring.
+
+        Args:
+            rank: Local rank in the distributed process group
+            world_size: Total number of processes in the distributed process group
+        """
+        if self.fault_detector is not None:
+            self.fault_detector.start_heartbeat_thread(rank=rank, world_size=world_size)
+
+    def stop_heartbeat_thread(self, timeout: float = 2.0) -> None:
+        """Stop the heartbeat fault-detection thread gracefully.
+
+        Args:
+            timeout: Maximum time in seconds to wait for thread termination
+        """
+        if self.fault_detector is not None:
+            self.fault_detector.stop_heartbeat_thread(timeout=timeout)
