@@ -1,125 +1,162 @@
 # Architecture
 
-**Analysis Date:** 2026-03-16
+**Analysis Date:** 2026-04-18
 
 ## Pattern Overview
 
-**Overall:** Modular Machine Learning Training Pipeline with Strategy Pattern
+**Overall:** Modular training framework with distributed checkpointing and fault tolerance
 
 **Key Characteristics:**
-- Single-entry training script orchestrating all components
-- Strategy pattern for checkpoint timing algorithms
-- Factory pattern for strategy creation
-- PyTorch-based deep learning model training
-- Fault injection for testing checkpoint reliability
+- Multi-GPU distributed training via PyTorch DDP with NCCL backend
+- Adaptive checkpoint strategies (fixed interval, Young-Daly formula, epoch-based)
+- Ring-based sharding for distributed cache management with fault detection
+- Fault injection for testing fault tolerance
 
 ## Layers
 
-**Configuration Layer:**
-- Purpose: Load and validate runtime configuration from YAML
-- Location: `src/coci/config.py`
-- Contains: `Config` dataclass, `load_config()` function
-- Depends on: `yaml` module
-- Used by: `scripts/train.py`
+**Training Layer:**
+- Purpose: Orchestrate training loop, evaluation, and fault handling
+- Location: `scripts/train.py`, `scripts/train_distributed.py`
+- Contains: Training loops, evaluation, experiment logging
+- Depends on: Model, Data, Checkpointing, Fault Injection layers
+- Used by: Main entry points
 
 **Model Layer:**
-- Purpose: Factory for creating neural network models
+- Purpose: Neural network architectures and model creation
 - Location: `src/coci/models/model.py`
-- Contains: `get_model()` function
-- Depends on: `torch`, `torchvision.models`
-- Used by: `scripts/train.py`
+- Contains: `get_model()`, `get_efficientnet_binary()`, `MultiFrameModel`
+- Depends on: torch, torchvision.models
+- Used by: Training scripts
 
-**Data Layer:**
+**Data Ingestion Layer:**
 - Purpose: Dataset loading and preprocessing
 - Location: `src/coci/data_ingestor/`
-- Contains: `get_cifar100_dataset()` in `cifar.py`, `ImageDataset` class in `dataset.py`
-- Depends on: `torchvision`, `torch.utils.data`, `cv2`
-- Used by: `scripts/train.py`
+- Contains: `dataset.py`, `cifar.py`, `faceforensics.py`
+- Depends on: torch.utils.data, opencv-python
+- Used by: Training scripts
 
 **Checkpointing Layer:**
-- Purpose: Model state persistence and checkpoint timing strategies
+- Purpose: Model/optimizer state persistence and recovery
 - Location: `src/coci/checkpointing/`
-- Contains: `CheckpointManager` class in `checkpoint_manager.py`, strategy classes in `strategy.py`
-- Depends on: `torch`, `os`, `time`, `math`
-- Used by: `scripts/train.py`
+- Contains: `checkpoint_manager.py`, `strategy.py`
+- Depends on: torch, strategy pattern
+- Used by: Training scripts
+
+**Distributed Layer:**
+- Purpose: Multi-GPU coordination and process group management
+- Location: `src/coci/distributed.py`
+- Contains: rank detection, barrier, metrics aggregation
+- Depends on: torch.distributed
+- Used by: train_distributed.py, checkpoint_manager
+
+**Hashing/Ring Layer:**
+- Purpose: Distributed cache sharding and fault detection
+- Location: `src/coci/hashing/`
+- Contains: `hash_ring.py`, `fault_detector.py`, `recovery_scheduler.py`
+- Depends on: hashlib, threading
+- Used by: Cache management (not yet integrated into training)
 
 **Fault Injection Layer:**
-- Purpose: Simulate runtime failures to test checkpoint/recovery
+- Purpose: Simulate failures for fault tolerance testing
 - Location: `src/coci/fault/fault_injector.py`
-- Contains: `FaultInjector` class
-- Depends on: `random`, `time`, `math`
-- Used by: `scripts/train.py`
+- Contains: Poisson-based failure injection
+- Depends on: random, time, math
+- Used by: train.py (via --inject_fault flag)
+
+**Configuration Layer:**
+- Purpose: Configuration loading and dataclass definition
+- Location: `src/coci/config.py`
+- Contains: Config dataclass, load_config()
+- Depends on: yaml, dataclasses
+- Used by: All scripts
 
 ## Data Flow
 
-**Training Flow:**
+**Single-GPU Training:**
+```
+train.py → Config → Load dataset → Model → Training Loop
+                                  ↓
+                           CheckpointStrategy (should_checkpoint?)
+                                  ↓
+                           CheckpointManager.save()
+```
 
-1. **Initialization**: Parse args → Load config → Create device → Initialize DataLoader → Create model → Setup optimizer → Initialize CheckpointManager → Create strategy
-2. **Resume**: CheckpointManager.load_latest() restores model/optimizer state from disk
-3. **Epoch Loop**: For each epoch, iterate through train_loader batches
-4. **Forward/Backward**: Forward pass → Compute loss → Backward pass → Optimizer step
-5. **Checkpoint Decision**: Strategy.should_checkpoint() called per batch → if true, CheckpointManager.save()
-6. **Evaluation**: After each epoch, evaluate on test_loader
-7. **Logging**: Write experiment summary to JSONL file
+**Distributed Training:**
+```
+train_distributed.py → setup_distributed() → DDP wrapper
+                                          ↓
+                           DistributedSampler (data partitioning)
+                                          ↓
+                           Training Loop with barrier()
+                                          ↓
+                           reduce_metrics() → all-reduce across GPUs
+```
 
-**Fault Injection Flow:**
+**Checkpoint Recovery:**
+```
+RuntimeError caught → train.py exits with code 1
+→ Re-run train.py → CheckpointManager.load_latest()
+→ Resume from saved epoch
+```
 
-1. FaultInjector initialized with failure_rate_per_second (Poisson process)
-2. After each training batch, fault_injector.maybe_fail() called
-3. If random value < Poisson probability, RuntimeError raised
-4. Error caught in train.py main(), crash summary logged, process exits
+**Ring-based Sharding:**
+```
+HashRing.add_node() → SHA256 position mapping
+                     → ShardManager.register_shard()
+                     → FaultDetector monitors heartbeats
+                     → ElasticRecaching handles node failures
+```
 
 ## Key Abstractions
 
-**CheckpointStrategy (Abstract Base Class):**
-- Purpose: Interface for checkpoint timing algorithms
-- Location: `src/coci/checkpointing/strategy.py`
+**CheckpointStrategy (Abstract):**
+- Purpose: Determine when to save checkpoints
 - Examples: `FixedIntervalStrategy`, `YoungDalyStrategy`, `EpochStrategy`
-- Pattern: Strategy pattern with ABC
+- Pattern: Strategy pattern via CheckpointStrategyFactory
 
-**CheckpointStrategyFactory:**
-- Purpose: Create strategy instances based on config
-- Location: `src/coci/checkpointing/strategy.py`
-- Examples: Creates strategy based on `cfg.strategy` ("fixed", "young_daly", "epoch")
-- Pattern: Factory pattern
+**HashRing:**
+- Purpose: Consistent hashing for shard distribution
+- Examples: `hash_ring.py` - HashRing, ShardManager classes
+- Pattern: Virtual nodes for even distribution
 
-**CheckpointManager:**
-- Purpose: Handle save/load of PyTorch model checkpoints
-- Location: `src/coci/checkpointing/checkpoint_manager.py`
-- Examples: save(), load_latest()
-- Pattern: Repository pattern for model state
+**FaultDetector:**
+- Purpose: Node health monitoring with suspicion quorum
+- Examples: `fault_detector.py` - NodeStatus enum, ElasticRecaching
+- Pattern: Phi accrual failure detector variant
 
 ## Entry Points
 
-**Training Entry:**
+**Single-GPU:**
 - Location: `scripts/train.py`
-- Triggers: `python scripts/train.py --mode dev|server [--inject_fault]`
-- Responsibilities: Orchestrate entire training pipeline, handle errors, log results
+- Triggers: `python scripts/train.py [--mode {dev,server}] [--inject_fault]`
+- Responsibilities: Config loading, dataset creation, model training, checkpointing, fault injection
 
-**Development Entry:**
+**Distributed:**
+- Location: `scripts/train_distributed.py`
+- Triggers: `torchrun --nproc_per_node=N scripts/train_distributed.py`
+- Responsibilities: Distributed setup, DDP wrapping, epoch synchronization, metrics aggregation
+
+**Main Stub:**
 - Location: `src/main.py`
-- Triggers: `python src/main.py`
-- Responsibilities: Placeholder (prints hello message)
+- Triggers: `python -m src.main`
+- Responsibilities: Placeholder (just prints hello)
 
 ## Error Handling
 
-**Strategy:**
-- Try-catch in train.py main() for RuntimeError from fault injection
-- Graceful recovery via checkpoint loading
-- Crash summaries logged to `crash_experiment_log_{strategy}.jsonl`
+**Strategy:** Graceful degradation with checkpoint recovery
 
-**Checkpoint Errors:**
-- No checkpoint found → start from epoch 0
-- Invalid checkpoint → would raise torch.load error (not caught)
+**Patterns:**
+- RuntimeError catching in train.py with crash logging to `crash_experiment_log_*.jsonl`
+- Distributed cleanup via `cleanup_distributed()` in finally/except blocks
+- Checkpoint load returns (start_epoch, best_metric) to resume correctly
+- Rank-aware checkpoint saving (only rank 0 saves) with barrier for sync
 
 ## Cross-Cutting Concerns
 
-**Logging:** Print statements with f-strings, experiment results to JSONL files
-
-**Validation:** Config loaded via yaml.safe_load(), no explicit validation
-
+**Logging:** `log_on_main()` for rank-0-only output, experiment summary printing
+**Validation:** Config loaded from YAML via `load_config()`, validated at dataclass level
 **Authentication:** Not applicable (local training)
 
 ---
 
-*Architecture analysis: 2026-03-16*
+*Architecture analysis: 2026-04-18*
