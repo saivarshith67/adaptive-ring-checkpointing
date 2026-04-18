@@ -1,95 +1,87 @@
 # External Integrations
 
-**Analysis Date:** 2026-03-16
+**Analysis Date:** 2026-04-18
 
 ## APIs & External Services
 
-**Not applicable** - This is a standalone deep learning training project without external API integrations.
+**Dataset Downloads:**
+- **Kaggle** - FaceForensics++ dataset download
+  - SDK/Client: `kagglehub` (>=0.3.0)
+  - Dataset: `hungle3401/faceforensics`
+  - Usage: `src/coci/data_ingestor/faceforensics.py` - `download_faceforensics_dataset()`
+
+**Model Checkpoints:**
+- **facenet-pytorch** - Pre-trained MTCNN for face detection
+  - Package: `facenet-pytorch>=2.5.3`
+  - Purpose: Face detection in FaceForensics++ dataset
+  - Model: MTCNN (Multi-task Cascaded Convolutional Networks)
+
+**Model Weights:**
+- **TorchVision** - Pre-trained model weights
+  - Package: `torchvision>=0.25.0`
+  - Used for: ResNet18, ResNet50 model initialization
+  - Source: `torchvision.models`
 
 ## Data Storage
 
 **Local Filesystem:**
-- Checkpoint storage: `checkpoints/` directory
-  - Format: PyTorch `.pt` files
-  - Managed by: `src/coci/checkpointing/checkpoint_manager.py`
-  - Implementation: Local file I/O using `torch.save()` and `torch.load()`
+- Checkpoint directory: `checkpoints/`
+- Dataset directory: `data/`
+- Config directory: `configs/`
+- Logs: JSONL files in project root
 
-**Datasets:**
-- CIFAR-100: Downloaded via torchvision
-  - Location: `./data` directory (configurable)
-  - Source: PyTorch official dataset repository
-  - Auto-download: Enabled in `src/coci/data_ingestor/cifar.py`
-
-- Custom Image Dataset: Local folder structure
-  - Location: Configurable via `dataset_path` in YAML configs
-  - Structure: `{root}/real/` and `{root}/fake/` subdirectories
-  - Implementation: `src/coci/data_ingestor/dataset.py` using OpenCV
-
-**Experiment Logs:**
-- JSONL format for experiment results
-- Output files: `final_experiment_log_{strategy}.jsonl`, `crash_experiment_log_{strategy}.jsonl`
-- Implementation: Direct file writes in `scripts/train.py`
+**No Remote Storage:**
+- No cloud storage integration (S3, GCS, etc.)
+- No database connections
+- All data stored locally
 
 ## Authentication & Identity
 
-**Not applicable** - No authentication required. Training runs locally.
+**No External Auth:**
+- No authentication providers
+- No OAuth/SSO integrations
+- Training runs are local-only
 
 ## Monitoring & Observability
 
-**Logging:**
-- Console output via `print()` statements
-- No structured logging framework
+**No External Monitoring:**
+- No error tracking service (Sentry, etc.)
+- No logging service (Loggly, etc.)
+- No metrics backend (Prometheus, etc.)
 
-**Metrics:**
-- Custom metrics tracked in code:
-  - Checkpoint count: `checkpoint_manager.num_checkpoints`
-  - Total checkpoint time: `checkpoint_manager.total_checkpoint_time`
-  - Failure statistics: `fault_injector.get_stats()`
-  - Runtime: `total_runtime` calculated in `scripts/train.py`
-
-**Error Tracking:**
-- Not integrated with external error tracking services
+**Local Logging:**
+- JSONL experiment logs in project root:
+  - `experiment_log.jsonl`
+  - `experiment_log_epoch.jsonl`
+  - `experiment_log_young_daly.jsonl`
+  - `experimental_log_*.jsonl`
 
 ## CI/CD & Deployment
 
-**Hosting:**
-- Not applicable - Local execution only
-
-**CI Pipeline:**
-- Not configured
+**No CI/CD:**
+- No CI pipeline configured
+- No deployment automation
+- No Docker/container support
+- No cloud deployment configs
 
 ## Environment Configuration
 
-**Required env vars:**
-- None detected - All configuration via YAML files
+**No Environment Variables Required:**
+- No mandatory env vars for basic operation
+- Optional: `CUDA_VISIBLE_DEVICES` for GPU selection
 
-**Config file approach:**
-- `configs/dev.yaml` - Development configuration
-- `configs/server.yaml` - Production/Server configuration
-
-**Configurable parameters:**
-| Parameter | Description |
-|-----------|-------------|
-| dataset_path | Path to custom dataset |
-| dataset_limit | Limit number of samples |
-| batch_size | Training batch size |
-| epochs | Number of training epochs |
-| num_workers | DataLoader workers |
-| model | Model architecture (resnet18, resnet50, mobilenet) |
-| checkpoint_interval | Checkpoint frequency |
-| failure_rate_per_second | Fault injection rate |
-| strategy | Checkpoint strategy (fixed, young_daly, epoch) |
-| fixed_interval | Fixed interval seconds |
-| checkpoint_cost_estimate | Estimated checkpoint cost |
+**torchrun Environment Variables (for distributed training):**
+- `LOCAL_RANK` - Local GPU device index
+- `RANK` - Global process rank
+- `WORLD_SIZE` - Total number of processes
 
 ## Webhooks & Callbacks
 
-**Incoming:**
-- Not applicable - No HTTP endpoints
-
-**Outgoing:**
-- Not applicable - No external notifications or webhooks
+**None:**
+- No incoming webhooks
+- No outgoing webhooks
+- No callback services
 
 ---
 
-*Integration audit: 2026-03-16*
+*Integration audit: 2026-04-18*
