@@ -224,7 +224,7 @@
 
 ---
 
-### Phase 10: Fault Detector (v1.2 - PLANNED)
+### Phase 10: Fault Detector (v1.2 - IN PROGRESS)
 
 **Goal:** Implement timeout-based failure detection with gossip quorum
 
@@ -240,7 +240,7 @@
 
 **Plans:** 1/1 plans
 
-- [ ] 10-01-PLAN.md — Fault detection with quorum
+- [x] 10-fault-detector-01-PLAN.md — Fault detection with quorum
 
 ---
 
@@ -297,7 +297,7 @@
 | 7. Fault Tolerance Verification | 1/1 | Completed | 2026-04-17 |
 | 8. Hash Ring | 1/1 | Complete    | 2026-04-18 |
 | 9. Shard Manager | 1/1 | Complete    | 2026-04-18 |
-| 10. Fault Detector | 0/1 | Pending | — |
+| 10. Fault Detector | 1/1 | Planned | 2026-04-18 |
 | 11. Elastic Recaching | 0/1 | Pending | — |
 | 12. Recovery Scheduling | 0/1 | Pending | — |
 

@@ -92,10 +92,10 @@
 
 ### Fault Detector
 
-- [ ] **FLTD-01**: Timeout-based failure detection with configurable TTL and timeout_count
-- [ ] **FLTD-02**: Node status tracking (ALIVE | SUSPECTED | DEAD)
-- [ ] **FLTD-03**: Gossip-based failure broadcast to peers
-- [ ] **FLTD-04**: Quorum-based failure confirmation (51% required)
+- [x] **FLTD-01**: Timeout-based failure detection with configurable TTL and timeout_count
+- [x] **FLTD-02**: Node status tracking (ALIVE | SUSPECTED | DEAD)
+- [x] **FLTD-03**: Gossip-based failure broadcast to peers
+- [x] **FLTD-04**: Quorum-based failure confirmation (51% required)
 
 ### Elastic Recaching
 
@@ -138,10 +138,10 @@
 | SHrd-02 | Phase 9 | Complete |
 | SHrd-03 | Phase 9 | Complete |
 | SHrd-04 | Phase 9 | Complete |
-| FLTD-01 | Phase 10 | Pending |
-| FLTD-02 | Phase 10 | Pending |
-| FLTD-03 | Phase 10 | Pending |
-| FLTD-04 | Phase 10 | Pending |
+| FLTD-01 | Phase 10 | Complete |
+| FLTD-02 | Phase 10 | Complete |
+| FLTD-03 | Phase 10 | Complete |
+| FLTD-04 | Phase 10 | Complete |
 | ELRC-01 | Phase 11 | Pending |
 | ELRC-02 | Phase 11 | Pending |
 | ELRC-03 | Phase 11 | Pending |
