@@ -125,63 +125,63 @@
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_distributed.py",
       "source_location": "L1",
-      "id": "train_distributed_rationale_1",
       "community": 1,
-      "norm_label": "distributed training entry point using torchrun.  this script is designed to b"
+      "norm_label": "distributed training entry point using torchrun.  this script is designed to b",
+      "id": "train_distributed_rationale_1"
     },
     {
       "label": "Seed worker for reproducible data loading across epochs.     Ensures each worke",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_distributed.py",
       "source_location": "L58",
-      "id": "train_distributed_rationale_58",
       "community": 1,
-      "norm_label": "seed worker for reproducible data loading across epochs.     ensures each worke"
+      "norm_label": "seed worker for reproducible data loading across epochs.     ensures each worke",
+      "id": "train_distributed_rationale_58"
     },
     {
       "label": "Get CIFAR-100 dataset with standard transforms.",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_distributed.py",
       "source_location": "L70",
-      "id": "train_distributed_rationale_70",
       "community": 1,
-      "norm_label": "get cifar-100 dataset with standard transforms."
+      "norm_label": "get cifar-100 dataset with standard transforms.",
+      "id": "train_distributed_rationale_70"
     },
     {
       "label": "Create a DataLoader with DistributedSampler for proper data partitioning.",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_distributed.py",
       "source_location": "L99",
-      "id": "train_distributed_rationale_99",
       "community": 1,
-      "norm_label": "create a dataloader with distributedsampler for proper data partitioning."
+      "norm_label": "create a dataloader with distributedsampler for proper data partitioning.",
+      "id": "train_distributed_rationale_99"
     },
     {
       "label": "Train for one epoch.      Args:         model: The neural network model.",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_distributed.py",
       "source_location": "L139",
-      "id": "train_distributed_rationale_139",
       "community": 1,
-      "norm_label": "train for one epoch.      args:         model: the neural network model."
+      "norm_label": "train for one epoch.      args:         model: the neural network model.",
+      "id": "train_distributed_rationale_139"
     },
     {
       "label": "Evaluate the model on test data.      Args:         model: The neural network",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_distributed.py",
       "source_location": "L179",
-      "id": "train_distributed_rationale_179",
       "community": 1,
-      "norm_label": "evaluate the model on test data.      args:         model: the neural network"
+      "norm_label": "evaluate the model on test data.      args:         model: the neural network",
+      "id": "train_distributed_rationale_179"
     },
     {
       "label": "Main training function.",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_distributed.py",
       "source_location": "L213",
-      "id": "train_distributed_rationale_213",
       "community": 1,
-      "norm_label": "main training function."
+      "norm_label": "main training function.",
+      "id": "train_distributed_rationale_213"
     },
     {
       "label": "train_epoch_based.py",
@@ -260,45 +260,45 @@
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L131",
-      "id": "train_faceforensics_rationale_131",
       "community": 1,
-      "norm_label": "seed worker for reproducible data loading."
+      "norm_label": "seed worker for reproducible data loading.",
+      "id": "train_faceforensics_rationale_131"
     },
     {
       "label": "Create DataLoader with DistributedSampler for FaceForensics++ dataset.      Ar",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L157",
-      "id": "train_faceforensics_rationale_157",
       "community": 1,
-      "norm_label": "create dataloader with distributedsampler for faceforensics++ dataset.      ar"
+      "norm_label": "create dataloader with distributedsampler for faceforensics++ dataset.      ar",
+      "id": "train_faceforensics_rationale_157"
     },
     {
       "label": "Train for one epoch.      Args:         model: The neural network model",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L235",
-      "id": "train_faceforensics_rationale_235",
       "community": 1,
-      "norm_label": "train for one epoch.      args:         model: the neural network model"
+      "norm_label": "train for one epoch.      args:         model: the neural network model",
+      "id": "train_faceforensics_rationale_235"
     },
     {
       "label": "Evaluate the model on test/validation data.      Args:         model: The neu",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L315",
-      "id": "train_faceforensics_rationale_315",
       "community": 1,
-      "norm_label": "evaluate the model on test/validation data.      args:         model: the neu"
+      "norm_label": "evaluate the model on test/validation data.      args:         model: the neu",
+      "id": "train_faceforensics_rationale_315"
     },
     {
       "label": "Download FaceForensics++ dataset using kagglehub.",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
       "source_location": "L369",
-      "id": "train_faceforensics_rationale_369",
       "community": 1,
-      "norm_label": "download faceforensics++ dataset using kagglehub."
+      "norm_label": "download faceforensics++ dataset using kagglehub.",
+      "id": "train_faceforensics_rationale_369"
     },
     {
       "label": "train_hashring_epoch.py",
@@ -458,99 +458,99 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\distributed.py",
       "source_location": "L1",
-      "id": "distributed_rationale_1",
       "community": 3,
-      "norm_label": "distributed training utilities for multi-gpu coordination.  provides functions"
+      "norm_label": "distributed training utilities for multi-gpu coordination.  provides functions",
+      "id": "distributed_rationale_1"
     },
     {
       "label": "Check if the default process group is initialized.      Returns:         bool",
       "file_type": "rationale",
       "source_file": "src\\coci\\distributed.py",
       "source_location": "L24",
-      "id": "distributed_rationale_24",
       "community": 3,
-      "norm_label": "check if the default process group is initialized.      returns:         bool"
+      "norm_label": "check if the default process group is initialized.      returns:         bool",
+      "id": "distributed_rationale_24"
     },
     {
       "label": "Get the rank of the current process in the distributed group.      Returns:",
       "file_type": "rationale",
       "source_file": "src\\coci\\distributed.py",
       "source_location": "L35",
-      "id": "distributed_rationale_35",
       "community": 3,
-      "norm_label": "get the rank of the current process in the distributed group.      returns:"
+      "norm_label": "get the rank of the current process in the distributed group.      returns:",
+      "id": "distributed_rationale_35"
     },
     {
       "label": "Get the total number of processes in the distributed group.      Returns:",
       "file_type": "rationale",
       "source_file": "src\\coci\\distributed.py",
       "source_location": "L47",
-      "id": "distributed_rationale_47",
       "community": 3,
-      "norm_label": "get the total number of processes in the distributed group.      returns:"
+      "norm_label": "get the total number of processes in the distributed group.      returns:",
+      "id": "distributed_rationale_47"
     },
     {
       "label": "Get the local rank of the current process.      The local rank is the GPU devi",
       "file_type": "rationale",
       "source_file": "src\\coci\\distributed.py",
       "source_location": "L59",
-      "id": "distributed_rationale_59",
       "community": 3,
-      "norm_label": "get the local rank of the current process.      the local rank is the gpu devi"
+      "norm_label": "get the local rank of the current process.      the local rank is the gpu devi",
+      "id": "distributed_rationale_59"
     },
     {
       "label": "Check if the current process is the main process (rank 0).      Returns:",
       "file_type": "rationale",
       "source_file": "src\\coci\\distributed.py",
       "source_location": "L72",
-      "id": "distributed_rationale_72",
       "community": 3,
-      "norm_label": "check if the current process is the main process (rank 0).      returns:"
+      "norm_label": "check if the current process is the main process (rank 0).      returns:",
+      "id": "distributed_rationale_72"
     },
     {
       "label": "Synchronize all processes in the distributed group.      This blocks until all",
       "file_type": "rationale",
       "source_file": "src\\coci\\distributed.py",
       "source_location": "L82",
-      "id": "distributed_rationale_82",
       "community": 3,
-      "norm_label": "synchronize all processes in the distributed group.      this blocks until all"
+      "norm_label": "synchronize all processes in the distributed group.      this blocks until all",
+      "id": "distributed_rationale_82"
     },
     {
       "label": "Initialize the distributed process group using torchrun environment variables.",
       "file_type": "rationale",
       "source_file": "src\\coci\\distributed.py",
       "source_location": "L96",
-      "id": "distributed_rationale_96",
       "community": 3,
-      "norm_label": "initialize the distributed process group using torchrun environment variables."
+      "norm_label": "initialize the distributed process group using torchrun environment variables.",
+      "id": "distributed_rationale_96"
     },
     {
       "label": "Clean up the distributed process group.      This should be called at the end",
       "file_type": "rationale",
       "source_file": "src\\coci\\distributed.py",
       "source_location": "L152",
-      "id": "distributed_rationale_152",
       "community": 3,
-      "norm_label": "clean up the distributed process group.      this should be called at the end"
+      "norm_label": "clean up the distributed process group.      this should be called at the end",
+      "id": "distributed_rationale_152"
     },
     {
       "label": "Log message only on the main process (rank 0).      This prevents duplicate ou",
       "file_type": "rationale",
       "source_file": "src\\coci\\distributed.py",
       "source_location": "L170",
-      "id": "distributed_rationale_170",
       "community": 3,
-      "norm_label": "log message only on the main process (rank 0).      this prevents duplicate ou"
+      "norm_label": "log message only on the main process (rank 0).      this prevents duplicate ou",
+      "id": "distributed_rationale_170"
     },
     {
       "label": "Reduce metrics across all ranks using all-reduce.      This aggregates loss, c",
       "file_type": "rationale",
       "source_file": "src\\coci\\distributed.py",
       "source_location": "L191",
-      "id": "distributed_rationale_191",
       "community": 3,
-      "norm_label": "reduce metrics across all ranks using all-reduce.      this aggregates loss, c"
+      "norm_label": "reduce metrics across all ranks using all-reduce.      this aggregates loss, c",
+      "id": "distributed_rationale_191"
     },
     {
       "label": "checkpoint_manager.py",
@@ -611,18 +611,18 @@
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\checkpoint_manager.py",
       "source_location": "L33",
-      "id": "checkpoint_manager_rationale_33",
       "community": 3,
-      "norm_label": "save a checkpoint.          args:             model: the model to save (or dd"
+      "norm_label": "save a checkpoint.          args:             model: the model to save (or dd",
+      "id": "checkpoint_manager_rationale_33"
     },
     {
       "label": "Load the latest checkpoint and restore model/optimizer state.          Args:",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\checkpoint_manager.py",
       "source_location": "L88",
-      "id": "checkpoint_manager_rationale_88",
       "community": 1,
-      "norm_label": "load the latest checkpoint and restore model/optimizer state.          args:"
+      "norm_label": "load the latest checkpoint and restore model/optimizer state.          args:",
+      "id": "checkpoint_manager_rationale_88"
     },
     {
       "label": "convergence_scheduler.py",
@@ -719,9 +719,9 @@
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\convergence_scheduler.py",
       "source_location": "L14",
-      "id": "convergence_scheduler_rationale_14",
       "community": 7,
-      "norm_label": "coci-inspired online scheduler for convergence-aware checkpoint timing.      t"
+      "norm_label": "coci-inspired online scheduler for convergence-aware checkpoint timing.      t",
+      "id": "convergence_scheduler_rationale_14"
     },
     {
       "label": "hash_ring_checkpoint_manager.py",
@@ -827,9 +827,9 @@
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
       "source_location": "L11",
-      "id": "hash_ring_checkpoint_manager_rationale_11",
       "community": 2,
-      "norm_label": "checkpoint manager that layers hash-ring local shard caching over normal checkpo"
+      "norm_label": "checkpoint manager that layers hash-ring local shard caching over normal checkpo",
+      "id": "hash_ring_checkpoint_manager_rationale_11"
     },
     {
       "label": "strategy.py",
@@ -1322,234 +1322,234 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L1",
-      "id": "faceforensics_rationale_1",
       "community": 9,
-      "norm_label": "faceforensics++ dataset loader with mtcnn face detection.  provides: - facefo"
+      "norm_label": "faceforensics++ dataset loader with mtcnn face detection.  provides: - facefo",
+      "id": "faceforensics_rationale_1"
     },
     {
       "label": "Download FaceForensics++ dataset from Kaggle via kagglehub.      Returns:",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L47",
-      "id": "faceforensics_rationale_47",
       "community": 9,
-      "norm_label": "download faceforensics++ dataset from kaggle via kagglehub.      returns:"
+      "norm_label": "download faceforensics++ dataset from kaggle via kagglehub.      returns:",
+      "id": "faceforensics_rationale_47"
     },
     {
       "label": "Get transforms for FaceForensics++ face images.      Args:         include_re",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L59",
-      "id": "faceforensics_rationale_59",
       "community": 3,
-      "norm_label": "get transforms for faceforensics++ face images.      args:         include_re"
+      "norm_label": "get transforms for faceforensics++ face images.      args:         include_re",
+      "id": "faceforensics_rationale_59"
     },
     {
       "label": "Pre-compute face crops using MTCNN and cache to disk.      This is the recomme",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L93",
-      "id": "faceforensics_rationale_93",
       "community": 9,
-      "norm_label": "pre-compute face crops using mtcnn and cache to disk.      this is the recomme"
+      "norm_label": "pre-compute face crops using mtcnn and cache to disk.      this is the recomme",
+      "id": "faceforensics_rationale_93"
     },
     {
       "label": "Process a batch of images through MTCNN.",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L216",
-      "id": "faceforensics_rationale_216",
       "community": 9,
-      "norm_label": "process a batch of images through mtcnn."
+      "norm_label": "process a batch of images through mtcnn.",
+      "id": "faceforensics_rationale_216"
     },
     {
       "label": "PyTorch Dataset for FaceForensics++ deepfake detection.      Supports two mode",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L248",
-      "id": "faceforensics_rationale_248",
       "community": 5,
-      "norm_label": "pytorch dataset for faceforensics++ deepfake detection.      supports two mode"
+      "norm_label": "pytorch dataset for faceforensics++ deepfake detection.      supports two mode",
+      "id": "faceforensics_rationale_248"
     },
     {
       "label": "Load samples from pre-computed crop cache.",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L318",
-      "id": "faceforensics_rationale_318",
       "community": 5,
-      "norm_label": "load samples from pre-computed crop cache."
+      "norm_label": "load samples from pre-computed crop cache.",
+      "id": "faceforensics_rationale_318"
     },
     {
       "label": "Set up for on-the-fly MTCNN detection (slow).",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L330",
-      "id": "faceforensics_rationale_330",
       "community": 5,
-      "norm_label": "set up for on-the-fly mtcnn detection (slow)."
+      "norm_label": "set up for on-the-fly mtcnn detection (slow).",
+      "id": "faceforensics_rationale_330"
     },
     {
       "label": "Load all image paths from the dataset directory.",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L348",
-      "id": "faceforensics_rationale_348",
       "community": 5,
-      "norm_label": "load all image paths from the dataset directory."
+      "norm_label": "load all image paths from the dataset directory.",
+      "id": "faceforensics_rationale_348"
     },
     {
       "label": "Recursively collect image paths from video folder structure.",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L372",
-      "id": "faceforensics_rationale_372",
       "community": 5,
-      "norm_label": "recursively collect image paths from video folder structure."
+      "norm_label": "recursively collect image paths from video folder structure.",
+      "id": "faceforensics_rationale_372"
     },
     {
       "label": "Load images from flat directory structure.",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L390",
-      "id": "faceforensics_rationale_390",
       "community": 5,
-      "norm_label": "load images from flat directory structure."
+      "norm_label": "load images from flat directory structure.",
+      "id": "faceforensics_rationale_390"
     },
     {
       "label": "Return the number of samples in the dataset.",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L403",
-      "id": "faceforensics_rationale_403",
       "community": 5,
-      "norm_label": "return the number of samples in the dataset."
+      "norm_label": "return the number of samples in the dataset.",
+      "id": "faceforensics_rationale_403"
     },
     {
       "label": "Get a single sample from the dataset.          If using pre-computed crops (re",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L407",
-      "id": "faceforensics_rationale_407",
       "community": 5,
-      "norm_label": "get a single sample from the dataset.          if using pre-computed crops (re"
+      "norm_label": "get a single sample from the dataset.          if using pre-computed crops (re",
+      "id": "faceforensics_rationale_407"
     },
     {
       "label": "Load pre-computed face crop from numpy file.",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L433",
-      "id": "faceforensics_rationale_433",
       "community": 5,
-      "norm_label": "load pre-computed face crop from numpy file."
+      "norm_label": "load pre-computed face crop from numpy file.",
+      "id": "faceforensics_rationale_433"
     },
     {
       "label": "Detect face using MTCNN (slow).",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L441",
-      "id": "faceforensics_rationale_441",
       "community": 5,
-      "norm_label": "detect face using mtcnn (slow)."
+      "norm_label": "detect face using mtcnn (slow).",
+      "id": "faceforensics_rationale_441"
     },
     {
       "label": "Video-level PyTorch Dataset for FaceForensics++ deepfake detection.      This",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L472",
-      "id": "faceforensics_rationale_472",
       "community": 6,
-      "norm_label": "video-level pytorch dataset for faceforensics++ deepfake detection.      this"
+      "norm_label": "video-level pytorch dataset for faceforensics++ deepfake detection.      this",
+      "id": "faceforensics_rationale_472"
     },
     {
       "label": "Build an index of videos from the pre-computed crops manifest.          Each v",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L531",
-      "id": "faceforensics_rationale_531",
       "community": 6,
-      "norm_label": "build an index of videos from the pre-computed crops manifest.          each v"
+      "norm_label": "build an index of videos from the pre-computed crops manifest.          each v",
+      "id": "faceforensics_rationale_531"
     },
     {
       "label": "Build video index from pre-computed crop manifest.",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L545",
-      "id": "faceforensics_rationale_545",
       "community": 6,
-      "norm_label": "build video index from pre-computed crop manifest."
+      "norm_label": "build video index from pre-computed crop manifest.",
+      "id": "faceforensics_rationale_545"
     },
     {
       "label": "Build video index from dataset directory structure.",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L598",
-      "id": "faceforensics_rationale_598",
       "community": 6,
-      "norm_label": "build video index from dataset directory structure."
+      "norm_label": "build video index from dataset directory structure.",
+      "id": "faceforensics_rationale_598"
     },
     {
       "label": "Return the number of videos in the dataset.",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L650",
-      "id": "faceforensics_rationale_650",
       "community": 6,
-      "norm_label": "return the number of videos in the dataset."
+      "norm_label": "return the number of videos in the dataset.",
+      "id": "faceforensics_rationale_650"
     },
     {
       "label": "Get frames from a single video.          Args:             idx: Index of the",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L654",
-      "id": "faceforensics_rationale_654",
       "community": 6,
-      "norm_label": "get frames from a single video.          args:             idx: index of the"
+      "norm_label": "get frames from a single video.          args:             idx: index of the",
+      "id": "faceforensics_rationale_654"
     },
     {
       "label": "Load a single frame and apply transforms.",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L702",
-      "id": "faceforensics_rationale_702",
       "community": 6,
-      "norm_label": "load a single frame and apply transforms."
+      "norm_label": "load a single frame and apply transforms.",
+      "id": "faceforensics_rationale_702"
     },
     {
       "label": "Fast video-level dataset that loads pre-extracted frames from .npy files.",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L724",
-      "id": "faceforensics_rationale_724",
       "community": 1,
-      "norm_label": "fast video-level dataset that loads pre-extracted frames from .npy files."
+      "norm_label": "fast video-level dataset that loads pre-extracted frames from .npy files.",
+      "id": "faceforensics_rationale_724"
     },
     {
       "label": "Load all .npy file paths from real/fake directories.",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L762",
-      "id": "faceforensics_rationale_762",
       "community": 5,
-      "norm_label": "load all .npy file paths from real/fake directories."
+      "norm_label": "load all .npy file paths from real/fake directories.",
+      "id": "faceforensics_rationale_762"
     },
     {
       "label": "Get frames from a single video.          Returns:             tuple: (frames_",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L775",
-      "id": "faceforensics_rationale_775",
       "community": 1,
-      "norm_label": "get frames from a single video.          returns:             tuple: (frames_"
+      "norm_label": "get frames from a single video.          returns:             tuple: (frames_",
+      "id": "faceforensics_rationale_775"
     },
     {
       "label": "Pre-extract frames from videos and save as .npy files.      This function proc",
       "file_type": "rationale",
       "source_file": "src\\coci\\data_ingestor\\faceforensics.py",
       "source_location": "L808",
-      "id": "faceforensics_rationale_808",
       "community": 9,
-      "norm_label": "pre-extract frames from videos and save as .npy files.      this function proc"
+      "norm_label": "pre-extract frames from videos and save as .npy files.      this function proc",
+      "id": "faceforensics_rationale_808"
     },
     {
       "label": "checkpoint_fault_injector.py",
@@ -1709,18 +1709,18 @@
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\fault\\checkpoint_fault_injector.py",
       "source_location": "L42",
-      "id": "checkpoint_fault_injector_rationale_42",
       "community": 1,
-      "norm_label": "force deterministic behavior to isolate bit-flip impact from training noise."
+      "norm_label": "force deterministic behavior to isolate bit-flip impact from training noise.",
+      "id": "checkpoint_fault_injector_rationale_42"
     },
     {
       "label": "Inject bit-flips into checkpoint tensors before model/optimizer restore.",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\fault\\checkpoint_fault_injector.py",
       "source_location": "L56",
-      "id": "checkpoint_fault_injector_rationale_56",
       "community": 1,
-      "norm_label": "inject bit-flips into checkpoint tensors before model/optimizer restore."
+      "norm_label": "inject bit-flips into checkpoint tensors before model/optimizer restore.",
+      "id": "checkpoint_fault_injector_rationale_56"
     },
     {
       "label": "fault_injector.py",
@@ -1772,9 +1772,9 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\fault\\fault_injector.py",
       "source_location": "L7",
-      "id": "fault_injector_rationale_7",
       "community": 4,
-      "norm_label": "rank-aware fault injector for simulating gpu/node failures.      supports two"
+      "norm_label": "rank-aware fault injector for simulating gpu/node failures.      supports two",
+      "id": "fault_injector_rationale_7"
     },
     {
       "label": "fault_detector.py",
@@ -1997,63 +1997,63 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\hashing\\fault_detector.py",
       "source_location": "L46",
-      "id": "fault_detector_rationale_46",
       "community": 17,
-      "norm_label": "check if running in distributed mode."
+      "norm_label": "check if running in distributed mode.",
+      "id": "fault_detector_rationale_46"
     },
     {
       "label": "Broadcast heartbeat signals to all peers using dist.all_reduce.          Returns",
       "file_type": "rationale",
       "source_file": "src\\coci\\hashing\\fault_detector.py",
       "source_location": "L127",
-      "id": "fault_detector_rationale_127",
       "community": 0,
-      "norm_label": "broadcast heartbeat signals to all peers using dist.all_reduce.          returns"
+      "norm_label": "broadcast heartbeat signals to all peers using dist.all_reduce.          returns",
+      "id": "fault_detector_rationale_127"
     },
     {
       "label": "Gather suspicion votes from all ranks using dist.all_gather.          Returns ag",
       "file_type": "rationale",
       "source_file": "src\\coci\\hashing\\fault_detector.py",
       "source_location": "L169",
-      "id": "fault_detector_rationale_169",
       "community": 0,
-      "norm_label": "gather suspicion votes from all ranks using dist.all_gather.          returns ag"
+      "norm_label": "gather suspicion votes from all ranks using dist.all_gather.          returns ag",
+      "id": "fault_detector_rationale_169"
     },
     {
       "label": "Start background thread for periodic heartbeat broadcast.          Args:",
       "file_type": "rationale",
       "source_file": "src\\coci\\hashing\\fault_detector.py",
       "source_location": "L208",
-      "id": "fault_detector_rationale_208",
       "community": 0,
-      "norm_label": "start background thread for periodic heartbeat broadcast.          args:"
+      "norm_label": "start background thread for periodic heartbeat broadcast.          args:",
+      "id": "fault_detector_rationale_208"
     },
     {
       "label": "Stop the heartbeat thread gracefully.          Args:             timeout: Maximu",
       "file_type": "rationale",
       "source_file": "src\\coci\\hashing\\fault_detector.py",
       "source_location": "L228",
-      "id": "fault_detector_rationale_228",
       "community": 0,
-      "norm_label": "stop the heartbeat thread gracefully.          args:             timeout: maximu"
+      "norm_label": "stop the heartbeat thread gracefully.          args:             timeout: maximu",
+      "id": "fault_detector_rationale_228"
     },
     {
       "label": "Background loop that periodically broadcasts heartbeats.",
       "file_type": "rationale",
       "source_file": "src\\coci\\hashing\\fault_detector.py",
       "source_location": "L245",
-      "id": "fault_detector_rationale_245",
       "community": 0,
-      "norm_label": "background loop that periodically broadcasts heartbeats."
+      "norm_label": "background loop that periodically broadcasts heartbeats.",
+      "id": "fault_detector_rationale_245"
     },
     {
       "label": "Get a summary of node statuses.          Returns:             Dict with 'alive',",
       "file_type": "rationale",
       "source_file": "src\\coci\\hashing\\fault_detector.py",
       "source_location": "L267",
-      "id": "fault_detector_rationale_267",
       "community": 0,
-      "norm_label": "get a summary of node statuses.          returns:             dict with 'alive',"
+      "norm_label": "get a summary of node statuses.          returns:             dict with 'alive',",
+      "id": "fault_detector_rationale_267"
     },
     {
       "label": "hash_ring.py",
@@ -2267,45 +2267,45 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\hashing\\hash_ring.py",
       "source_location": "L134",
-      "id": "hash_ring_rationale_134",
       "community": 2,
-      "norm_label": "write shard to local nvme cache with atomic rename pattern."
+      "norm_label": "write shard to local nvme cache with atomic rename pattern.",
+      "id": "hash_ring_rationale_134"
     },
     {
       "label": "Load shard from local cache with verification.",
       "file_type": "rationale",
       "source_file": "src\\coci\\hashing\\hash_ring.py",
       "source_location": "L165",
-      "id": "hash_ring_rationale_165",
       "community": 2,
-      "norm_label": "load shard from local cache with verification."
+      "norm_label": "load shard from local cache with verification.",
+      "id": "hash_ring_rationale_165"
     },
     {
       "label": "Verify shard integrity by loading and checking.",
       "file_type": "rationale",
       "source_file": "src\\coci\\hashing\\hash_ring.py",
       "source_location": "L183",
-      "id": "hash_ring_rationale_183",
       "community": 2,
-      "norm_label": "verify shard integrity by loading and checking."
+      "norm_label": "verify shard integrity by loading and checking.",
+      "id": "hash_ring_rationale_183"
     },
     {
       "label": "Return cache usage statistics.",
       "file_type": "rationale",
       "source_file": "src\\coci\\hashing\\hash_ring.py",
       "source_location": "L196",
-      "id": "hash_ring_rationale_196",
       "community": 2,
-      "norm_label": "return cache usage statistics."
+      "norm_label": "return cache usage statistics.",
+      "id": "hash_ring_rationale_196"
     },
     {
       "label": "Remove cached files for shards owned by a dead node.",
       "file_type": "rationale",
       "source_file": "src\\coci\\hashing\\hash_ring.py",
       "source_location": "L206",
-      "id": "hash_ring_rationale_206",
       "community": 2,
-      "norm_label": "remove cached files for shards owned by a dead node."
+      "norm_label": "remove cached files for shards owned by a dead node.",
+      "id": "hash_ring_rationale_206"
     },
     {
       "label": "recovery_scheduler.py",
@@ -2438,9 +2438,9 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\hashing\\__init__.py",
       "source_location": "L28",
-      "id": "init_rationale_28",
       "community": 0,
-      "norm_label": "register all nodes from a hashring with a faultdetector.      args:         faul"
+      "norm_label": "register all nodes from a hashring with a faultdetector.      args:         faul",
+      "id": "init_rationale_28"
     },
     {
       "label": "model.py",
@@ -2510,106 +2510,106 @@
       "file_type": "rationale",
       "source_file": "src\\coci\\models\\model.py",
       "source_location": "L7",
-      "id": "model_rationale_7",
       "community": 8,
-      "norm_label": "create efficientnet-b0 model for binary classification.      args:         pr"
+      "norm_label": "create efficientnet-b0 model for binary classification.      args:         pr",
+      "id": "model_rationale_7"
     },
     {
       "label": "Create a multi-frame model for video-level deepfake detection.      This model",
       "file_type": "rationale",
       "source_file": "src\\coci\\models\\model.py",
       "source_location": "L74",
-      "id": "model_rationale_74",
       "community": 8,
-      "norm_label": "create a multi-frame model for video-level deepfake detection.      this model"
+      "norm_label": "create a multi-frame model for video-level deepfake detection.      this model",
+      "id": "model_rationale_74"
     },
     {
       "label": "Multi-frame video classification model.      Processes multiple frames through",
       "file_type": "rationale",
       "source_file": "src\\coci\\models\\model.py",
       "source_location": "L108",
-      "id": "model_rationale_108",
       "community": 8,
-      "norm_label": "multi-frame video classification model.      processes multiple frames through"
+      "norm_label": "multi-frame video classification model.      processes multiple frames through",
+      "id": "model_rationale_108"
     },
     {
       "label": "Forward pass.          Args:             x: Input tensor of shape (B, T, C, H",
       "file_type": "rationale",
       "source_file": "src\\coci\\models\\model.py",
       "source_location": "L194",
-      "id": "model_rationale_194",
       "community": 8,
-      "norm_label": "forward pass.          args:             x: input tensor of shape (b, t, c, h"
+      "norm_label": "forward pass.          args:             x: input tensor of shape (b, t, c, h",
+      "id": "model_rationale_194"
     },
     {
       "label": "Convergence-Aware Checkpointing (COCI)",
       "file_type": "document",
-      "id": "coci_convergence_aware_checkpointing",
       "community": 10,
-      "norm_label": "convergence-aware checkpointing (coci)"
+      "norm_label": "convergence-aware checkpointing (coci)",
+      "id": "coci_convergence_aware_checkpointing"
     },
     {
       "label": "Hash Ring Checkpointing",
       "file_type": "document",
-      "id": "hash_ring_checkpointing",
       "community": 10,
-      "norm_label": "hash ring checkpointing"
+      "norm_label": "hash ring checkpointing",
+      "id": "hash_ring_checkpointing"
     },
     {
       "label": "Soft Error Injection Mechanism",
       "file_type": "document",
-      "id": "fault_injection_mechanism",
       "community": 10,
-      "norm_label": "soft error injection mechanism"
+      "norm_label": "soft error injection mechanism",
+      "id": "fault_injection_mechanism"
     },
     {
       "label": "End-to-End Fault Tolerance Verification",
       "file_type": "document",
-      "id": "e2e_fault_tolerance_verification",
       "community": 11,
-      "norm_label": "end-to-end fault tolerance verification"
+      "norm_label": "end-to-end fault tolerance verification",
+      "id": "e2e_fault_tolerance_verification"
     },
     {
       "label": "Phase 4 - Exception Handling",
       "file_type": "document",
-      "id": "phase_4_exception_handling",
       "community": 11,
-      "norm_label": "phase 4 - exception handling"
+      "norm_label": "phase 4 - exception handling",
+      "id": "phase_4_exception_handling"
     },
     {
       "label": "Phase 5 - Fault Injection",
       "file_type": "document",
-      "id": "phase_5_fault_injection",
       "community": 11,
-      "norm_label": "phase 5 - fault injection"
+      "norm_label": "phase 5 - fault injection",
+      "id": "phase_5_fault_injection"
     },
     {
       "label": "Phase 6 - Checkpoint Recovery",
       "file_type": "document",
-      "id": "phase_6_checkpoint_recovery",
       "community": 11,
-      "norm_label": "phase 6 - checkpoint recovery"
+      "norm_label": "phase 6 - checkpoint recovery",
+      "id": "phase_6_checkpoint_recovery"
     },
     {
       "label": "Adaptive Ring Checkpointing",
       "file_type": "document",
-      "id": "adaptive_ring_checkpointing_project",
       "community": 10,
-      "norm_label": "adaptive ring checkpointing"
+      "norm_label": "adaptive ring checkpointing",
+      "id": "adaptive_ring_checkpointing_project"
     },
     {
       "label": "Piecewise Online Fitting (POF)",
       "file_type": "document",
-      "id": "piecewise_online_fitting",
       "community": 10,
-      "norm_label": "piecewise online fitting (pof)"
+      "norm_label": "piecewise online fitting (pof)",
+      "id": "piecewise_online_fitting"
     },
     {
       "label": "Loss Curve Model (Exponential Decay)",
       "file_type": "document",
-      "id": "loss_curve_model",
       "community": 10,
-      "norm_label": "loss curve model (exponential decay)"
+      "norm_label": "loss curve model (exponential decay)",
+      "id": "loss_curve_model"
     }
   ],
   "links": [
@@ -3269,9 +3269,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_1",
       "_tgt": "checkpoint_manager_checkpointmanager",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_1",
-      "target": "checkpoint_manager_checkpointmanager",
-      "confidence_score": 0.5
+      "target": "checkpoint_manager_checkpointmanager"
     },
     {
       "relation": "uses",
@@ -3281,9 +3281,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_1",
       "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_1",
-      "target": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointbitflipinjector"
     },
     {
       "relation": "uses",
@@ -3293,9 +3293,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_1",
       "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_1",
-      "target": "checkpoint_fault_injector_checkpointfaultconfig",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointfaultconfig"
     },
     {
       "relation": "uses",
@@ -3305,9 +3305,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_1",
       "_tgt": "checkpoint_fault_injector_faulttype",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_1",
-      "target": "checkpoint_fault_injector_faulttype",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_faulttype"
     },
     {
       "relation": "uses",
@@ -3317,9 +3317,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_58",
       "_tgt": "checkpoint_manager_checkpointmanager",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_58",
-      "target": "checkpoint_manager_checkpointmanager",
-      "confidence_score": 0.5
+      "target": "checkpoint_manager_checkpointmanager"
     },
     {
       "relation": "uses",
@@ -3329,9 +3329,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_58",
       "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_58",
-      "target": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointbitflipinjector"
     },
     {
       "relation": "uses",
@@ -3341,9 +3341,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_58",
       "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_58",
-      "target": "checkpoint_fault_injector_checkpointfaultconfig",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointfaultconfig"
     },
     {
       "relation": "uses",
@@ -3353,9 +3353,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_58",
       "_tgt": "checkpoint_fault_injector_faulttype",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_58",
-      "target": "checkpoint_fault_injector_faulttype",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_faulttype"
     },
     {
       "relation": "uses",
@@ -3365,9 +3365,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_70",
       "_tgt": "checkpoint_manager_checkpointmanager",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_70",
-      "target": "checkpoint_manager_checkpointmanager",
-      "confidence_score": 0.5
+      "target": "checkpoint_manager_checkpointmanager"
     },
     {
       "relation": "uses",
@@ -3377,9 +3377,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_70",
       "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_70",
-      "target": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointbitflipinjector"
     },
     {
       "relation": "uses",
@@ -3389,9 +3389,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_70",
       "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_70",
-      "target": "checkpoint_fault_injector_checkpointfaultconfig",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointfaultconfig"
     },
     {
       "relation": "uses",
@@ -3401,9 +3401,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_70",
       "_tgt": "checkpoint_fault_injector_faulttype",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_70",
-      "target": "checkpoint_fault_injector_faulttype",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_faulttype"
     },
     {
       "relation": "uses",
@@ -3413,9 +3413,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_99",
       "_tgt": "checkpoint_manager_checkpointmanager",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_99",
-      "target": "checkpoint_manager_checkpointmanager",
-      "confidence_score": 0.5
+      "target": "checkpoint_manager_checkpointmanager"
     },
     {
       "relation": "uses",
@@ -3425,9 +3425,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_99",
       "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_99",
-      "target": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointbitflipinjector"
     },
     {
       "relation": "uses",
@@ -3437,9 +3437,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_99",
       "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_99",
-      "target": "checkpoint_fault_injector_checkpointfaultconfig",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointfaultconfig"
     },
     {
       "relation": "uses",
@@ -3449,9 +3449,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_99",
       "_tgt": "checkpoint_fault_injector_faulttype",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_99",
-      "target": "checkpoint_fault_injector_faulttype",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_faulttype"
     },
     {
       "relation": "uses",
@@ -3461,9 +3461,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_139",
       "_tgt": "checkpoint_manager_checkpointmanager",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_139",
-      "target": "checkpoint_manager_checkpointmanager",
-      "confidence_score": 0.5
+      "target": "checkpoint_manager_checkpointmanager"
     },
     {
       "relation": "uses",
@@ -3473,9 +3473,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_139",
       "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_139",
-      "target": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointbitflipinjector"
     },
     {
       "relation": "uses",
@@ -3485,9 +3485,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_139",
       "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_139",
-      "target": "checkpoint_fault_injector_checkpointfaultconfig",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointfaultconfig"
     },
     {
       "relation": "uses",
@@ -3497,9 +3497,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_139",
       "_tgt": "checkpoint_fault_injector_faulttype",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_139",
-      "target": "checkpoint_fault_injector_faulttype",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_faulttype"
     },
     {
       "relation": "uses",
@@ -3509,9 +3509,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_179",
       "_tgt": "checkpoint_manager_checkpointmanager",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_179",
-      "target": "checkpoint_manager_checkpointmanager",
-      "confidence_score": 0.5
+      "target": "checkpoint_manager_checkpointmanager"
     },
     {
       "relation": "uses",
@@ -3521,9 +3521,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_179",
       "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_179",
-      "target": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointbitflipinjector"
     },
     {
       "relation": "uses",
@@ -3533,9 +3533,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_179",
       "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_179",
-      "target": "checkpoint_fault_injector_checkpointfaultconfig",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointfaultconfig"
     },
     {
       "relation": "uses",
@@ -3545,9 +3545,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_179",
       "_tgt": "checkpoint_fault_injector_faulttype",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_179",
-      "target": "checkpoint_fault_injector_faulttype",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_faulttype"
     },
     {
       "relation": "uses",
@@ -3557,9 +3557,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_213",
       "_tgt": "checkpoint_manager_checkpointmanager",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_213",
-      "target": "checkpoint_manager_checkpointmanager",
-      "confidence_score": 0.5
+      "target": "checkpoint_manager_checkpointmanager"
     },
     {
       "relation": "uses",
@@ -3569,9 +3569,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_213",
       "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_213",
-      "target": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointbitflipinjector"
     },
     {
       "relation": "uses",
@@ -3581,9 +3581,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_213",
       "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_213",
-      "target": "checkpoint_fault_injector_checkpointfaultconfig",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointfaultconfig"
     },
     {
       "relation": "uses",
@@ -3593,9 +3593,9 @@
       "weight": 0.8,
       "_src": "train_distributed_rationale_213",
       "_tgt": "checkpoint_fault_injector_faulttype",
+      "confidence_score": 0.5,
       "source": "train_distributed_rationale_213",
-      "target": "checkpoint_fault_injector_faulttype",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_faulttype"
     },
     {
       "relation": "contains",
@@ -4157,9 +4157,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_131",
       "_tgt": "faceforensics_faceforensicsdataset",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_131",
-      "target": "faceforensics_faceforensicsdataset",
-      "confidence_score": 0.5
+      "target": "faceforensics_faceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -4169,9 +4169,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_131",
       "_tgt": "faceforensics_videofaceforensicsdataset",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_131",
-      "target": "faceforensics_videofaceforensicsdataset",
-      "confidence_score": 0.5
+      "target": "faceforensics_videofaceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -4181,9 +4181,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_131",
       "_tgt": "faceforensics_videodatasetfast",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_131",
-      "target": "faceforensics_videodatasetfast",
-      "confidence_score": 0.5
+      "target": "faceforensics_videodatasetfast"
     },
     {
       "relation": "uses",
@@ -4193,9 +4193,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_131",
       "_tgt": "checkpoint_manager_checkpointmanager",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_131",
-      "target": "checkpoint_manager_checkpointmanager",
-      "confidence_score": 0.5
+      "target": "checkpoint_manager_checkpointmanager"
     },
     {
       "relation": "uses",
@@ -4205,9 +4205,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_131",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_131",
-      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
-      "confidence_score": 0.5
+      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager"
     },
     {
       "relation": "uses",
@@ -4217,9 +4217,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_131",
       "_tgt": "convergence_scheduler_convergenceawarescheduler",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_131",
-      "target": "convergence_scheduler_convergenceawarescheduler",
-      "confidence_score": 0.5
+      "target": "convergence_scheduler_convergenceawarescheduler"
     },
     {
       "relation": "uses",
@@ -4229,9 +4229,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_131",
       "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_131",
-      "target": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointbitflipinjector"
     },
     {
       "relation": "uses",
@@ -4241,9 +4241,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_131",
       "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_131",
-      "target": "checkpoint_fault_injector_checkpointfaultconfig",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointfaultconfig"
     },
     {
       "relation": "uses",
@@ -4253,9 +4253,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_131",
       "_tgt": "checkpoint_fault_injector_faulttype",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_131",
-      "target": "checkpoint_fault_injector_faulttype",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_faulttype"
     },
     {
       "relation": "uses",
@@ -4265,9 +4265,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_157",
       "_tgt": "faceforensics_faceforensicsdataset",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_157",
-      "target": "faceforensics_faceforensicsdataset",
-      "confidence_score": 0.5
+      "target": "faceforensics_faceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -4277,9 +4277,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_157",
       "_tgt": "faceforensics_videofaceforensicsdataset",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_157",
-      "target": "faceforensics_videofaceforensicsdataset",
-      "confidence_score": 0.5
+      "target": "faceforensics_videofaceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -4289,9 +4289,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_157",
       "_tgt": "faceforensics_videodatasetfast",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_157",
-      "target": "faceforensics_videodatasetfast",
-      "confidence_score": 0.5
+      "target": "faceforensics_videodatasetfast"
     },
     {
       "relation": "uses",
@@ -4301,9 +4301,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_157",
       "_tgt": "checkpoint_manager_checkpointmanager",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_157",
-      "target": "checkpoint_manager_checkpointmanager",
-      "confidence_score": 0.5
+      "target": "checkpoint_manager_checkpointmanager"
     },
     {
       "relation": "uses",
@@ -4313,9 +4313,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_157",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_157",
-      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
-      "confidence_score": 0.5
+      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager"
     },
     {
       "relation": "uses",
@@ -4325,9 +4325,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_157",
       "_tgt": "convergence_scheduler_convergenceawarescheduler",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_157",
-      "target": "convergence_scheduler_convergenceawarescheduler",
-      "confidence_score": 0.5
+      "target": "convergence_scheduler_convergenceawarescheduler"
     },
     {
       "relation": "uses",
@@ -4337,9 +4337,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_157",
       "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_157",
-      "target": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointbitflipinjector"
     },
     {
       "relation": "uses",
@@ -4349,9 +4349,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_157",
       "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_157",
-      "target": "checkpoint_fault_injector_checkpointfaultconfig",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointfaultconfig"
     },
     {
       "relation": "uses",
@@ -4361,9 +4361,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_157",
       "_tgt": "checkpoint_fault_injector_faulttype",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_157",
-      "target": "checkpoint_fault_injector_faulttype",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_faulttype"
     },
     {
       "relation": "uses",
@@ -4373,9 +4373,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_235",
       "_tgt": "faceforensics_faceforensicsdataset",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_235",
-      "target": "faceforensics_faceforensicsdataset",
-      "confidence_score": 0.5
+      "target": "faceforensics_faceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -4385,9 +4385,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_235",
       "_tgt": "faceforensics_videofaceforensicsdataset",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_235",
-      "target": "faceforensics_videofaceforensicsdataset",
-      "confidence_score": 0.5
+      "target": "faceforensics_videofaceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -4397,9 +4397,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_235",
       "_tgt": "faceforensics_videodatasetfast",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_235",
-      "target": "faceforensics_videodatasetfast",
-      "confidence_score": 0.5
+      "target": "faceforensics_videodatasetfast"
     },
     {
       "relation": "uses",
@@ -4409,9 +4409,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_235",
       "_tgt": "checkpoint_manager_checkpointmanager",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_235",
-      "target": "checkpoint_manager_checkpointmanager",
-      "confidence_score": 0.5
+      "target": "checkpoint_manager_checkpointmanager"
     },
     {
       "relation": "uses",
@@ -4421,9 +4421,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_235",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_235",
-      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
-      "confidence_score": 0.5
+      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager"
     },
     {
       "relation": "uses",
@@ -4433,9 +4433,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_235",
       "_tgt": "convergence_scheduler_convergenceawarescheduler",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_235",
-      "target": "convergence_scheduler_convergenceawarescheduler",
-      "confidence_score": 0.5
+      "target": "convergence_scheduler_convergenceawarescheduler"
     },
     {
       "relation": "uses",
@@ -4445,9 +4445,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_235",
       "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_235",
-      "target": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointbitflipinjector"
     },
     {
       "relation": "uses",
@@ -4457,9 +4457,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_235",
       "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_235",
-      "target": "checkpoint_fault_injector_checkpointfaultconfig",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointfaultconfig"
     },
     {
       "relation": "uses",
@@ -4469,9 +4469,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_235",
       "_tgt": "checkpoint_fault_injector_faulttype",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_235",
-      "target": "checkpoint_fault_injector_faulttype",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_faulttype"
     },
     {
       "relation": "uses",
@@ -4481,9 +4481,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_315",
       "_tgt": "faceforensics_faceforensicsdataset",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_315",
-      "target": "faceforensics_faceforensicsdataset",
-      "confidence_score": 0.5
+      "target": "faceforensics_faceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -4493,9 +4493,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_315",
       "_tgt": "faceforensics_videofaceforensicsdataset",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_315",
-      "target": "faceforensics_videofaceforensicsdataset",
-      "confidence_score": 0.5
+      "target": "faceforensics_videofaceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -4505,9 +4505,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_315",
       "_tgt": "faceforensics_videodatasetfast",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_315",
-      "target": "faceforensics_videodatasetfast",
-      "confidence_score": 0.5
+      "target": "faceforensics_videodatasetfast"
     },
     {
       "relation": "uses",
@@ -4517,9 +4517,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_315",
       "_tgt": "checkpoint_manager_checkpointmanager",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_315",
-      "target": "checkpoint_manager_checkpointmanager",
-      "confidence_score": 0.5
+      "target": "checkpoint_manager_checkpointmanager"
     },
     {
       "relation": "uses",
@@ -4529,9 +4529,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_315",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_315",
-      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
-      "confidence_score": 0.5
+      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager"
     },
     {
       "relation": "uses",
@@ -4541,9 +4541,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_315",
       "_tgt": "convergence_scheduler_convergenceawarescheduler",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_315",
-      "target": "convergence_scheduler_convergenceawarescheduler",
-      "confidence_score": 0.5
+      "target": "convergence_scheduler_convergenceawarescheduler"
     },
     {
       "relation": "uses",
@@ -4553,9 +4553,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_315",
       "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_315",
-      "target": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointbitflipinjector"
     },
     {
       "relation": "uses",
@@ -4565,9 +4565,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_315",
       "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_315",
-      "target": "checkpoint_fault_injector_checkpointfaultconfig",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointfaultconfig"
     },
     {
       "relation": "uses",
@@ -4577,9 +4577,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_315",
       "_tgt": "checkpoint_fault_injector_faulttype",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_315",
-      "target": "checkpoint_fault_injector_faulttype",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_faulttype"
     },
     {
       "relation": "uses",
@@ -4589,9 +4589,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_369",
       "_tgt": "faceforensics_faceforensicsdataset",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_369",
-      "target": "faceforensics_faceforensicsdataset",
-      "confidence_score": 0.5
+      "target": "faceforensics_faceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -4601,9 +4601,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_369",
       "_tgt": "faceforensics_videofaceforensicsdataset",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_369",
-      "target": "faceforensics_videofaceforensicsdataset",
-      "confidence_score": 0.5
+      "target": "faceforensics_videofaceforensicsdataset"
     },
     {
       "relation": "uses",
@@ -4613,9 +4613,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_369",
       "_tgt": "faceforensics_videodatasetfast",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_369",
-      "target": "faceforensics_videodatasetfast",
-      "confidence_score": 0.5
+      "target": "faceforensics_videodatasetfast"
     },
     {
       "relation": "uses",
@@ -4625,9 +4625,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_369",
       "_tgt": "checkpoint_manager_checkpointmanager",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_369",
-      "target": "checkpoint_manager_checkpointmanager",
-      "confidence_score": 0.5
+      "target": "checkpoint_manager_checkpointmanager"
     },
     {
       "relation": "uses",
@@ -4637,9 +4637,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_369",
       "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_369",
-      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
-      "confidence_score": 0.5
+      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager"
     },
     {
       "relation": "uses",
@@ -4649,9 +4649,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_369",
       "_tgt": "convergence_scheduler_convergenceawarescheduler",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_369",
-      "target": "convergence_scheduler_convergenceawarescheduler",
-      "confidence_score": 0.5
+      "target": "convergence_scheduler_convergenceawarescheduler"
     },
     {
       "relation": "uses",
@@ -4661,9 +4661,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_369",
       "_tgt": "checkpoint_fault_injector_checkpointbitflipinjector",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_369",
-      "target": "checkpoint_fault_injector_checkpointbitflipinjector",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointbitflipinjector"
     },
     {
       "relation": "uses",
@@ -4673,9 +4673,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_369",
       "_tgt": "checkpoint_fault_injector_checkpointfaultconfig",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_369",
-      "target": "checkpoint_fault_injector_checkpointfaultconfig",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_checkpointfaultconfig"
     },
     {
       "relation": "uses",
@@ -4685,9 +4685,9 @@
       "weight": 0.8,
       "_src": "train_faceforensics_rationale_369",
       "_tgt": "checkpoint_fault_injector_faulttype",
+      "confidence_score": 0.5,
       "source": "train_faceforensics_rationale_369",
-      "target": "checkpoint_fault_injector_faulttype",
-      "confidence_score": 0.5
+      "target": "checkpoint_fault_injector_faulttype"
     },
     {
       "relation": "contains",
@@ -5175,11 +5175,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
       "source_location": "L6",
       "weight": 0.8,
-      "_src": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
-      "_tgt": "checkpoint_manager_checkpointmanager",
+      "_src": "checkpoint_manager_checkpointmanager",
+      "_tgt": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
+      "confidence_score": 0.5,
       "source": "checkpoint_manager_checkpointmanager",
-      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager",
-      "confidence_score": 0.5
+      "target": "hash_ring_checkpoint_manager_hashringcheckpointmanager"
     },
     {
       "relation": "uses",
@@ -5187,11 +5187,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
       "source_location": "L6",
       "weight": 0.8,
-      "_src": "hash_ring_checkpoint_manager_rationale_11",
-      "_tgt": "checkpoint_manager_checkpointmanager",
+      "_src": "checkpoint_manager_checkpointmanager",
+      "_tgt": "hash_ring_checkpoint_manager_rationale_11",
+      "confidence_score": 0.5,
       "source": "checkpoint_manager_checkpointmanager",
-      "target": "hash_ring_checkpoint_manager_rationale_11",
-      "confidence_score": 0.5
+      "target": "hash_ring_checkpoint_manager_rationale_11"
     },
     {
       "relation": "calls",
@@ -7637,9 +7637,9 @@
       "weight": 0.8,
       "_src": "fault_detector_nodestatus",
       "_tgt": "init_rationale_28",
+      "confidence_score": 0.5,
       "source": "fault_detector_nodestatus",
-      "target": "init_rationale_28",
-      "confidence_score": 0.5
+      "target": "init_rationale_28"
     },
     {
       "relation": "method",
@@ -7841,9 +7841,9 @@
       "weight": 0.8,
       "_src": "fault_detector_faultdetector",
       "_tgt": "init_rationale_28",
+      "confidence_score": 0.5,
       "source": "fault_detector_faultdetector",
-      "target": "init_rationale_28",
-      "confidence_score": 0.5
+      "target": "init_rationale_28"
     },
     {
       "relation": "calls",
@@ -8033,9 +8033,9 @@
       "weight": 0.8,
       "_src": "fault_detector_elasticrecaching",
       "_tgt": "init_rationale_28",
+      "confidence_score": 0.5,
       "source": "fault_detector_elasticrecaching",
-      "target": "init_rationale_28",
-      "confidence_score": 0.5
+      "target": "init_rationale_28"
     },
     {
       "relation": "calls",
@@ -8237,9 +8237,9 @@
       "weight": 0.8,
       "_src": "hash_ring_hashring",
       "_tgt": "init_rationale_28",
+      "confidence_score": 0.5,
       "source": "hash_ring_hashring",
-      "target": "init_rationale_28",
-      "confidence_score": 0.5
+      "target": "init_rationale_28"
     },
     {
       "relation": "calls",
@@ -8501,9 +8501,9 @@
       "weight": 0.8,
       "_src": "hash_ring_shardmanager",
       "_tgt": "init_rationale_28",
+      "confidence_score": 0.5,
       "source": "hash_ring_shardmanager",
-      "target": "init_rationale_28",
-      "confidence_score": 0.5
+      "target": "init_rationale_28"
     },
     {
       "relation": "calls",
@@ -8645,9 +8645,9 @@
       "weight": 0.8,
       "_src": "recovery_scheduler_resumemode",
       "_tgt": "init_rationale_28",
+      "confidence_score": 0.5,
       "source": "recovery_scheduler_resumemode",
-      "target": "init_rationale_28",
-      "confidence_score": 0.5
+      "target": "init_rationale_28"
     },
     {
       "relation": "method",
@@ -8729,9 +8729,9 @@
       "weight": 0.8,
       "_src": "recovery_scheduler_recoveryscheduler",
       "_tgt": "init_rationale_28",
+      "confidence_score": 0.5,
       "source": "recovery_scheduler_recoveryscheduler",
-      "target": "init_rationale_28",
-      "confidence_score": 0.5
+      "target": "init_rationale_28"
     },
     {
       "relation": "calls",
@@ -8978,72 +8978,72 @@
       "confidence": "EXTRACTED",
       "_src": "coci_convergence_aware_checkpointing",
       "_tgt": "adaptive_ring_checkpointing_project",
+      "confidence_score": 1.0,
       "source": "coci_convergence_aware_checkpointing",
-      "target": "adaptive_ring_checkpointing_project",
-      "confidence_score": 1.0
+      "target": "adaptive_ring_checkpointing_project"
     },
     {
       "relation": "uses",
       "confidence": "EXTRACTED",
       "_src": "coci_convergence_aware_checkpointing",
       "_tgt": "loss_curve_model",
+      "confidence_score": 1.0,
       "source": "coci_convergence_aware_checkpointing",
-      "target": "loss_curve_model",
-      "confidence_score": 1.0
+      "target": "loss_curve_model"
     },
     {
       "relation": "employs_fitting_strategy",
       "confidence": "EXTRACTED",
       "_src": "coci_convergence_aware_checkpointing",
       "_tgt": "piecewise_online_fitting",
+      "confidence_score": 1.0,
       "source": "coci_convergence_aware_checkpointing",
-      "target": "piecewise_online_fitting",
-      "confidence_score": 1.0
+      "target": "piecewise_online_fitting"
     },
     {
       "relation": "implements",
       "confidence": "EXTRACTED",
       "_src": "hash_ring_checkpointing",
       "_tgt": "adaptive_ring_checkpointing_project",
+      "confidence_score": 1.0,
       "source": "hash_ring_checkpointing",
-      "target": "adaptive_ring_checkpointing_project",
-      "confidence_score": 1.0
+      "target": "adaptive_ring_checkpointing_project"
     },
     {
       "relation": "includes",
       "confidence": "INFERRED",
       "_src": "fault_injection_mechanism",
       "_tgt": "adaptive_ring_checkpointing_project",
+      "confidence_score": 0.5,
       "source": "fault_injection_mechanism",
-      "target": "adaptive_ring_checkpointing_project",
-      "confidence_score": 0.5
+      "target": "adaptive_ring_checkpointing_project"
     },
     {
       "relation": "verifies",
       "confidence": "EXTRACTED",
       "_src": "e2e_fault_tolerance_verification",
       "_tgt": "phase_4_exception_handling",
+      "confidence_score": 1.0,
       "source": "e2e_fault_tolerance_verification",
-      "target": "phase_4_exception_handling",
-      "confidence_score": 1.0
+      "target": "phase_4_exception_handling"
     },
     {
       "relation": "verifies",
       "confidence": "EXTRACTED",
       "_src": "e2e_fault_tolerance_verification",
       "_tgt": "phase_5_fault_injection",
+      "confidence_score": 1.0,
       "source": "e2e_fault_tolerance_verification",
-      "target": "phase_5_fault_injection",
-      "confidence_score": 1.0
+      "target": "phase_5_fault_injection"
     },
     {
       "relation": "verifies",
       "confidence": "EXTRACTED",
       "_src": "e2e_fault_tolerance_verification",
       "_tgt": "phase_6_checkpoint_recovery",
+      "confidence_score": 1.0,
       "source": "e2e_fault_tolerance_verification",
-      "target": "phase_6_checkpoint_recovery",
-      "confidence_score": 1.0
+      "target": "phase_6_checkpoint_recovery"
     }
   ],
   "hyperedges": []

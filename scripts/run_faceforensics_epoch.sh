@@ -63,7 +63,11 @@ TEMPORAL_MODEL="mean"
 # Note: injection is applied during checkpoint load, so resume must be enabled.
 ENABLE_FAULT_INJECTION=true
 AUTO_RESUME=true
-FAULT_TYPE="random_bit"
+# Fault type selection (uncomment exactly one)
+FAULT_TYPE="RANDOM_BIT"
+# FAULT_TYPE="SPECIFIC_BIT"   # Requires FAULT_SPECIFIC_BIT to be set
+# FAULT_TYPE="SIGN_BIT"
+# FAULT_TYPE="EXPONENT_MSB"
 FAULT_LOCATION="model"
 FAULT_PROBABILITY=1.0
 FAULT_BIT_FLIPS=1

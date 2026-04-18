@@ -1,7 +1,7 @@
 # Graph Report - D:\Sai\HPC\project\adaptive-ring-checkpointing  (2026-04-18)
 
 ## Corpus Check
-- 24 files · ~45,171 words
+- 24 files · ~45,765 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -42,8 +42,8 @@
 10. `CheckpointFaultConfig` - 16 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Checkpoint manager that layers hash-ring local shard caching over normal checkpo` --uses--> `CheckpointManager`  [INFERRED]
-  D:\Sai\HPC\project\adaptive-ring-checkpointing\src\coci\checkpointing\hash_ring_checkpoint_manager.py → D:\Sai\HPC\project\adaptive-ring-checkpointing\src\coci\checkpointing\checkpoint_manager.py
+- `CheckpointManager` --uses--> `Checkpoint manager that layers hash-ring local shard caching over normal checkpo`  [INFERRED]
+  D:\Sai\HPC\project\adaptive-ring-checkpointing\src\coci\checkpointing\checkpoint_manager.py → D:\Sai\HPC\project\adaptive-ring-checkpointing\src\coci\checkpointing\hash_ring_checkpoint_manager.py
 - `train()` --calls--> `train_epoch()`  [INFERRED]
   D:\Sai\HPC\project\adaptive-ring-checkpointing\scripts\train.py → D:\Sai\HPC\project\adaptive-ring-checkpointing\scripts\train_distributed.py
 - `train()` --calls--> `train_epoch()`  [INFERRED]
