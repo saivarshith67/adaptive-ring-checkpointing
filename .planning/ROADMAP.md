@@ -25,10 +25,11 @@
 ### v1.2 Milestone (CURRENT)
 
 - [x] **Phase 8: Hash Ring** - Implement consistent hashing with virtual nodes for shard management
- (completed 2026-04-18)
+  (completed 2026-04-18)
 - [x] **Phase 9: Shard Manager** - Implement checkpoint shard lifecycle and NVMe caching
- (completed 2026-04-18)
-- [ ] **Phase 10: Fault Detector** - Implement timeout-based failure detection with gossip quorum
+  (completed 2026-04-18)
+- [x] **Phase 10: Fault Detector** - Implement timeout-based failure detection with gossip quorum
+  (completed 2026-04-18)
 - [ ] **Phase 11: Elastic Recaching** - Implement one-time central storage recaching after failures
 - [ ] **Phase 12: Recovery Scheduling** - Implement epoch rollback and work rebalancing
 
@@ -224,7 +225,7 @@
 
 ---
 
-### Phase 10: Fault Detector (v1.2 - IN PROGRESS)
+### Phase 10: Fault Detector (v1.2 - COMPLETED)
 
 **Goal:** Implement timeout-based failure detection with gossip quorum
 
@@ -238,9 +239,9 @@
 3. Gossip-based failure broadcast to peers
 4. Quorum-based confirmation (51% required)
 
-**Plans:** 1/1 plans
+**Plans:** 1/1 plans complete
 
-- [x] 10-fault-detector-01-PLAN.md — Fault detection with quorum
+- [x] 10-fault-detector-01-PLAN.md — Fault detection with quorum (completed 2026-04-18)
 
 ---
 
@@ -297,7 +298,7 @@
 | 7. Fault Tolerance Verification | 1/1 | Completed | 2026-04-17 |
 | 8. Hash Ring | 1/1 | Complete    | 2026-04-18 |
 | 9. Shard Manager | 1/1 | Complete    | 2026-04-18 |
-| 10. Fault Detector | 1/1 | Planned | 2026-04-18 |
+| 10. Fault Detector | 1/1 | Complete   | 2026-04-18 |
 | 11. Elastic Recaching | 0/1 | Pending | — |
 | 12. Recovery Scheduling | 0/1 | Pending | — |
 
