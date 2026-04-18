@@ -68,6 +68,21 @@ USE_FAST_VIDEO_MODE=true
 NUM_FRAMES=16
 TEMPORAL_MODEL="mean"
 
+# Checkpoint fault injection settings (latest module in train_faceforensics.py)
+# Note: injection is applied during checkpoint load, so resume must be enabled.
+ENABLE_FAULT_INJECTION=true
+AUTO_RESUME=true
+FAULT_TYPE="random_bit"
+FAULT_LOCATION="model"
+FAULT_PROBABILITY=1.0
+FAULT_BIT_FLIPS=1
+FAULT_NUM_PROCESSES=1
+FAULT_LOG_PATH="$CHECKPOINT_DIR/fault_injection_convergence_hashring.jsonl"
+FAULT_BIT_RANGE=""
+FAULT_TARGET_LAYERS=""
+FAULT_SPECIFIC_BIT=""
+FAULT_SEED=42
+
 EXTRA_FLAGS=""
 
 echo ""
@@ -86,6 +101,14 @@ echo "  CkptCost(sec): $CHECKPOINT_COST_SEC"
 echo "  Ring VNodes:   $HASH_RING_VIRTUAL_NODES"
 echo "  Ring Cache:    $HASH_RING_CACHE_DIR"
 echo "  CheckpointDir: $CHECKPOINT_DIR"
+echo "  Fault Inject:  $ENABLE_FAULT_INJECTION"
+if [ "$ENABLE_FAULT_INJECTION" = true ]; then
+    echo "  Fault Type:    $FAULT_TYPE"
+    echo "  Fault Loc:     $FAULT_LOCATION"
+    echo "  Fault Prob:    $FAULT_PROBABILITY"
+    echo "  Fault Flips:   $FAULT_BIT_FLIPS"
+    echo "  Fault Procs:   $FAULT_NUM_PROCESSES"
+fi
 echo "=================================================="
 echo ""
 
@@ -113,6 +136,25 @@ if [ "$USE_FAST_VIDEO_MODE" = true ]; then
     CMD="$CMD --fast-video-mode --num-frames $NUM_FRAMES"
 elif [ "$USE_VIDEO_MODE" = true ]; then
     CMD="$CMD --video-mode --num-frames $NUM_FRAMES --temporal-model $TEMPORAL_MODEL"
+fi
+
+if [ "$AUTO_RESUME" = true ]; then
+    CMD="$CMD --resume"
+fi
+
+if [ "$ENABLE_FAULT_INJECTION" = true ]; then
+    CMD="$CMD --fault-type $FAULT_TYPE --fault-location $FAULT_LOCATION --fault-probability $FAULT_PROBABILITY --fault-bit-flips $FAULT_BIT_FLIPS --fault-num-processes $FAULT_NUM_PROCESSES --fault-log-path \"$FAULT_LOG_PATH\" --fault-seed $FAULT_SEED"
+    if [ -n "$FAULT_BIT_RANGE" ]; then
+        CMD="$CMD --fault-bit-range $FAULT_BIT_RANGE"
+    fi
+    if [ -n "$FAULT_TARGET_LAYERS" ]; then
+        CMD="$CMD --fault-target-layers $FAULT_TARGET_LAYERS"
+    fi
+    if [ -n "$FAULT_SPECIFIC_BIT" ]; then
+        CMD="$CMD --fault-specific-bit $FAULT_SPECIFIC_BIT"
+    fi
+else
+    CMD="$CMD --no-fault-injection"
 fi
 
 CMD="$CMD $EXTRA_FLAGS"

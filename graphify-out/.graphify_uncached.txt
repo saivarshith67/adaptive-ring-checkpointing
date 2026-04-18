@@ -1,6 +1,10 @@
 AGENTS.md
+CONVERGENCE_AWARE_CHECKPOINTING.md
+FAULT_INJECTION.md
 HASH_RING.md
 README.md
 requirements.txt
 VERIFICATION_E2E.md
 VERIFICATION_RESULTS.md
+graphify-out\graph.html
+graphify-out\GRAPH_REPORT.md
