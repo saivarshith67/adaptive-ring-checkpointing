@@ -1,0 +1,277 @@
+{
+  "timestamp": "2026-04-19T11:39:41.416034",
+  "summary": {
+    "experiment_name": "faceforensics_convergence_hash_ring_20260419_113143",
+    "training_mode": "convergence-hash-ring",
+    "dataset": "faceforensics",
+    "model": "efficientnet_b0",
+    "epochs": 20,
+    "batch_size": 2,
+    "total_training_time_sec": 477.90435791015625,
+    "total_checkpoint_time_sec": 26.437223196029663,
+    "total_checkpoint_count": 22,
+    "checkpoint_overhead_percent": 5.5319067002523,
+    "best_train_loss": 0.2502598762512207,
+    "best_val_loss": 0.737470269203186,
+    "best_val_accuracy": 73.75,
+    "final_train_loss": 0.2581227421760559,
+    "final_val_loss": 0.8711758852005005,
+    "final_val_accuracy": 71.25,
+    "total_samples_trained": 0,
+    "samples_per_sec": 0.0,
+    "convergence_metrics": {
+      "current_interval_sec": 1800.0,
+      "theta1": -0.0012353967050475199,
+      "theta2": -1.7189165737924301,
+      "loss_fit_error": null,
+      "segments_since_restart": 0,
+      "total_convergence_checkpoints": 17
+    },
+    "hash_ring_metrics": {
+      "total_shards": 0,
+      "local_cache_hits": 0,
+      "local_cache_misses": 0,
+      "cache_size_mb": 0.0,
+      "max_cache_size_mb": 0.0,
+      "shards_owned": 0,
+      "shard_recovery_count": 0,
+      "recovery_time_sec": 0.0
+    },
+    "fault_metrics": {
+      "injected_faults": 1,
+      "detected_faults": 0,
+      "recovered_successfully": 0,
+      "recovery_failures": 0,
+      "total_recovery_time_sec": 0.0,
+      "checkpoint_integrity_failures": 0
+    },
+    "distributed_metrics": {
+      "world_size": 4,
+      "num_syncs": 0,
+      "total_sync_time_sec": 0.0,
+      "comm_overhead_percent": 0.0
+    }
+  },
+  "epoch_metrics": [
+    {
+      "epoch": 0,
+      "train_loss": 0.6887867450714111,
+      "train_accuracy": 55.9375,
+      "val_loss": 0.7454053163528442,
+      "val_accuracy": 42.5,
+      "epoch_duration_sec": 38.843971252441406,
+      "checkpoint_count": 1,
+      "checkpoint_time_sec": 0.6033060550689697,
+      "checkpoint_size_mb": 46.36621856689453
+    },
+    {
+      "epoch": 1,
+      "train_loss": 0.6140431761741638,
+      "train_accuracy": 66.875,
+      "val_loss": 0.7569981217384338,
+      "val_accuracy": 53.75,
+      "epoch_duration_sec": 42.886619091033936,
+      "checkpoint_count": 1,
+      "checkpoint_time_sec": 0.584052324295044,
+      "checkpoint_size_mb": 46.36621856689453
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.5561398267745972,
+      "train_accuracy": 73.75,
+      "val_loss": 0.737470269203186,
+      "val_accuracy": 65.0,
+      "epoch_duration_sec": 28.983011484146118,
+      "checkpoint_count": 1,
+      "checkpoint_time_sec": 0.6302263736724854,
+      "checkpoint_size_mb": 46.36621856689453
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.49575310945510864,
+      "train_accuracy": 77.1875,
+      "val_loss": 0.7571731805801392,
+      "val_accuracy": 61.25,
+      "epoch_duration_sec": 21.86581254005432,
+      "checkpoint_count": 0,
+      "checkpoint_time_sec": 0.0,
+      "checkpoint_size_mb": 0.0
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.4261375665664673,
+      "train_accuracy": 80.625,
+      "val_loss": 0.7981795072555542,
+      "val_accuracy": 58.75,
+      "epoch_duration_sec": 20.294206142425537,
+      "checkpoint_count": 0,
+      "checkpoint_time_sec": 0.0,
+      "checkpoint_size_mb": 0.0
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.43154144287109375,
+      "train_accuracy": 78.75,
+      "val_loss": 0.7508416771888733,
+      "val_accuracy": 72.5,
+      "epoch_duration_sec": 20.335967302322388,
+      "checkpoint_count": 1,
+      "checkpoint_time_sec": 0.6176831722259521,
+      "checkpoint_size_mb": 46.36621856689453
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.40181994438171387,
+      "train_accuracy": 80.9375,
+      "val_loss": 0.7903125286102295,
+      "val_accuracy": 71.25,
+      "epoch_duration_sec": 21.979662895202637,
+      "checkpoint_count": 0,
+      "checkpoint_time_sec": 0.0,
+      "checkpoint_size_mb": 0.0
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.38978880643844604,
+      "train_accuracy": 81.5625,
+      "val_loss": 0.7730953693389893,
+      "val_accuracy": 70.0,
+      "epoch_duration_sec": 20.44951629638672,
+      "checkpoint_count": 0,
+      "checkpoint_time_sec": 0.0,
+      "checkpoint_size_mb": 0.0
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.3705946207046509,
+      "train_accuracy": 82.1875,
+      "val_loss": 0.7651462554931641,
+      "val_accuracy": 70.0,
+      "epoch_duration_sec": 20.49832797050476,
+      "checkpoint_count": 0,
+      "checkpoint_time_sec": 0.0,
+      "checkpoint_size_mb": 0.0
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.36374717950820923,
+      "train_accuracy": 83.75,
+      "val_loss": 0.8046033382415771,
+      "val_accuracy": 71.25,
+      "epoch_duration_sec": 20.43389320373535,
+      "checkpoint_count": 0,
+      "checkpoint_time_sec": 0.0,
+      "checkpoint_size_mb": 0.0
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.31928884983062744,
+      "train_accuracy": 84.375,
+      "val_loss": 0.822446882724762,
+      "val_accuracy": 72.5,
+      "epoch_duration_sec": 20.47732710838318,
+      "checkpoint_count": 0,
+      "checkpoint_time_sec": 0.0,
+      "checkpoint_size_mb": 0.0
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.3378227651119232,
+      "train_accuracy": 83.125,
+      "val_loss": 0.8485159873962402,
+      "val_accuracy": 73.75,
+      "epoch_duration_sec": 20.480233669281006,
+      "checkpoint_count": 1,
+      "checkpoint_time_sec": 0.5882306098937988,
+      "checkpoint_size_mb": 46.36621856689453
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.3269108235836029,
+      "train_accuracy": 84.6875,
+      "val_loss": 0.8382781147956848,
+      "val_accuracy": 73.75,
+      "epoch_duration_sec": 22.20527219772339,
+      "checkpoint_count": 0,
+      "checkpoint_time_sec": 0.0,
+      "checkpoint_size_mb": 0.0
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.315382182598114,
+      "train_accuracy": 84.6875,
+      "val_loss": 0.8718103170394897,
+      "val_accuracy": 71.25,
+      "epoch_duration_sec": 25.5515615940094,
+      "checkpoint_count": 0,
+      "checkpoint_time_sec": 0.0,
+      "checkpoint_size_mb": 0.0
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.27191808819770813,
+      "train_accuracy": 86.25,
+      "val_loss": 0.8985206484794617,
+      "val_accuracy": 72.5,
+      "epoch_duration_sec": 24.975321531295776,
+      "checkpoint_count": 0,
+      "checkpoint_time_sec": 0.0,
+      "checkpoint_size_mb": 0.0
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.28930652141571045,
+      "train_accuracy": 86.875,
+      "val_loss": 0.8699238300323486,
+      "val_accuracy": 70.0,
+      "epoch_duration_sec": 22.7603018283844,
+      "checkpoint_count": 0,
+      "checkpoint_time_sec": 0.0,
+      "checkpoint_size_mb": 0.0
+    },
+    {
+      "epoch": 16,
+      "train_loss": 0.26870882511138916,
+      "train_accuracy": 88.4375,
+      "val_loss": 0.9013776779174805,
+      "val_accuracy": 71.25,
+      "epoch_duration_sec": 20.449856996536255,
+      "checkpoint_count": 0,
+      "checkpoint_time_sec": 0.0,
+      "checkpoint_size_mb": 0.0
+    },
+    {
+      "epoch": 17,
+      "train_loss": 0.2502598762512207,
+      "train_accuracy": 88.125,
+      "val_loss": 0.9265875816345215,
+      "val_accuracy": 70.0,
+      "epoch_duration_sec": 20.48471736907959,
+      "checkpoint_count": 0,
+      "checkpoint_time_sec": 0.0,
+      "checkpoint_size_mb": 0.0
+    },
+    {
+      "epoch": 18,
+      "train_loss": 0.2669166326522827,
+      "train_accuracy": 89.6875,
+      "val_loss": 0.9100771546363831,
+      "val_accuracy": 70.0,
+      "epoch_duration_sec": 20.42916488647461,
+      "checkpoint_count": 0,
+      "checkpoint_time_sec": 0.0,
+      "checkpoint_size_mb": 0.0
+    },
+    {
+      "epoch": 19,
+      "train_loss": 0.2581227421760559,
+      "train_accuracy": 88.125,
+      "val_loss": 0.8711758852005005,
+      "val_accuracy": 71.25,
+      "epoch_duration_sec": 20.490406274795532,
+      "checkpoint_count": 0,
+      "checkpoint_time_sec": 0.0,
+      "checkpoint_size_mb": 0.0
+    }
+  ]
+}

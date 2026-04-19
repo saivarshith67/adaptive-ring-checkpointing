@@ -6,7 +6,11 @@ batch_size: 64
 epochs: 20
 num_workers: 8
 
-model: efficientnet_b0
+model: resnet50
 
 checkpoint_interval: 500
-failure_prob: 0.001
+fixed_interval: 30
+checkpoint_cost_estimate: 3.0
+
+failure_rate_per_second: 0.002
+strategy: epoch
