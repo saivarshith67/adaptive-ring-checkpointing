@@ -4,6 +4,9 @@
 # FaceForensics++ Deepfake Detection Training
 # -----------------------------------------------
 
+EXPERIMENT_PROFILE=${EXPERIMENT_PROFILE:-baseline}
+RESTART_DELAY_SEC=${RESTART_DELAY_SEC:-5}
+
 # --- Parse Arguments ---
 # Allow overriding via command line
 NUM_GPUS_ARG=${1:-"auto"}  # Default: auto-detect all GPUs
@@ -73,13 +76,27 @@ TEMPORAL_MODEL="mean"                  # mean | lstm | gru | attention
 EXTRACT_FRAMES=false                    # Set to true to extract frames before training
 
 # --- Optional Flags ---
-EXTRA_FLAGS=""
+EXTRA_FLAGS=${EXTRA_FLAGS:-""}
+
+AUTO_RESUME=false
+ENABLE_RUNTIME_FAULT_INJECTION=false
+RUNTIME_FAULT_AFTER_CHECKPOINTS=${RUNTIME_FAULT_AFTER_CHECKPOINTS:-1}
+
+if [ "$EXPERIMENT_PROFILE" = "resilience" ]; then
+    AUTO_RESUME=true
+    ENABLE_RUNTIME_FAULT_INJECTION=true
+elif [ "$EXPERIMENT_PROFILE" != "baseline" ]; then
+    echo "Unsupported EXPERIMENT_PROFILE: $EXPERIMENT_PROFILE"
+    echo "Use 'baseline' or 'resilience'."
+    exit 1
+fi
 
 # --- Run Training ---
 echo ""
 echo "=================================================="
 echo "FaceForensics++ Deepfake Detection Training"
 echo "=================================================="
+echo "  Profile:       $EXPERIMENT_PROFILE"
 echo "  GPUs:          $NUM_GPUS"
 if [ "$USE_FAST_VIDEO_MODE" = true ]; then
     echo "  Mode:          Fast Video ($NUM_FRAMES frames, pre-extracted)"
@@ -117,6 +134,10 @@ elif [ "$USE_VIDEO_MODE" = true ]; then
     CMD="$CMD --video-mode --num-frames $NUM_FRAMES --temporal-model $TEMPORAL_MODEL"
 fi
 
+if [ "$AUTO_RESUME" = true ]; then
+    CMD="$CMD --resume --runtime-fault-injection --runtime-fault-after-checkpoints $RUNTIME_FAULT_AFTER_CHECKPOINTS"
+fi
+
 # Add extra flags
 CMD="$CMD $EXTRA_FLAGS"
 
@@ -136,6 +157,6 @@ while true; do
     fi
 
     echo ""
-    echo "Training exited with code $EXIT_CODE. Restarting in 5 seconds..."
-    sleep 5
+    echo "Training exited with code $EXIT_CODE. Restarting in $RESTART_DELAY_SEC seconds..."
+    sleep "$RESTART_DELAY_SEC"
 done

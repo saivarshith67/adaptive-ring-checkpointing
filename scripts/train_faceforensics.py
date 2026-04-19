@@ -127,6 +127,7 @@ TRAINING_MODE_EPOCH = "epoch"
 TRAINING_MODE_CONVERGENCE = "convergence"
 TRAINING_MODE_HASH_RING_EPOCH = "hash-ring-epoch"
 TRAINING_MODE_CONVERGENCE_HASH_RING = "convergence-hash-ring"
+RECOVERY_CONTEXT_FILENAME = "recovery_context.json"
 
 
 # -------------------------------------------------
@@ -141,6 +142,49 @@ def seed_worker(worker_id):
     torch.manual_seed(worker_seed)
     np.random.seed(worker_seed)
     random.seed(worker_seed)
+
+
+def recovery_context_path(checkpoint_dir: str) -> str:
+    """Return the path to the persisted recovery-context sidecar."""
+    return os.path.join(checkpoint_dir, RECOVERY_CONTEXT_FILENAME)
+
+
+def load_recovery_context(checkpoint_dir: str) -> Optional[dict]:
+    """Load persisted recovery context if present."""
+    path = recovery_context_path(checkpoint_dir)
+    if not os.path.exists(path):
+        return None
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+    except Exception:
+        return None
+
+
+def save_recovery_context(checkpoint_dir: str, payload: dict) -> None:
+    """Persist recovery context across crash/restart cycles."""
+    path = recovery_context_path(checkpoint_dir)
+    with open(path, "w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2)
+
+
+def clear_recovery_context(checkpoint_dir: str) -> None:
+    """Remove persisted recovery context after a successful resume."""
+    path = recovery_context_path(checkpoint_dir)
+    if os.path.exists(path):
+        os.remove(path)
+
+
+def parse_step_from_checkpoint_id(checkpoint_id: Optional[str]) -> int:
+    """Best-effort extraction of a global step from a checkpoint identifier."""
+    if not checkpoint_id:
+        return 0
+    if checkpoint_id.startswith("step_"):
+        try:
+            return int(checkpoint_id.split("_", maxsplit=1)[1])
+        except ValueError:
+            return 0
+    return 0
 
 
 # -------------------------------------------------
@@ -1211,6 +1255,52 @@ Examples:
     metrics.set_distributed_config(world_size=world_size)
     log_on_main(f"Metrics collection enabled | experiment: {experiment_name}")
 
+    def sync_hash_ring_metrics() -> None:
+        runtime_metrics = getattr(checkpoint_manager, "get_runtime_metrics", lambda: {})()
+        if not runtime_metrics:
+            return
+        metrics.update_hash_ring_metrics(
+            total_shards=runtime_metrics.get("total_shards", 0),
+            cache_size_mb=runtime_metrics.get("cache_size_mb", 0.0),
+            max_cache_mb=runtime_metrics.get("max_cache_size_mb", 0.0),
+            shards_owned=runtime_metrics.get("shards_owned", 0),
+        )
+        metrics.current_hash_ring.local_cache_hits = runtime_metrics.get(
+            "local_cache_hits", metrics.current_hash_ring.local_cache_hits
+        )
+        metrics.current_hash_ring.local_cache_misses = runtime_metrics.get(
+            "local_cache_misses", metrics.current_hash_ring.local_cache_misses
+        )
+        metrics.current_hash_ring.local_cache_loads = runtime_metrics.get(
+            "local_cache_loads", metrics.current_hash_ring.local_cache_loads
+        )
+        metrics.current_hash_ring.central_storage_loads = runtime_metrics.get(
+            "central_storage_loads", metrics.current_hash_ring.central_storage_loads
+        )
+        metrics.current_hash_ring.cache_write_count = runtime_metrics.get(
+            "cache_write_count", metrics.current_hash_ring.cache_write_count
+        )
+        metrics.current_hash_ring.orphaned_shards = runtime_metrics.get(
+            "orphaned_shards", metrics.current_hash_ring.orphaned_shards
+        )
+        metrics.current_hash_ring.reassigned_shards = runtime_metrics.get(
+            "reassigned_shards", metrics.current_hash_ring.reassigned_shards
+        )
+        metrics.current_hash_ring.recached_shards = runtime_metrics.get(
+            "recached_shards", metrics.current_hash_ring.recached_shards
+        )
+        metrics.current_hash_ring.shard_recovery_count = runtime_metrics.get(
+            "shard_recovery_count", metrics.current_hash_ring.shard_recovery_count
+        )
+        metrics.current_hash_ring.recovery_time_sec = runtime_metrics.get(
+            "recovery_time_sec", metrics.current_hash_ring.recovery_time_sec
+        )
+        metrics.current_hash_ring.last_load_source = runtime_metrics.get(
+            "load_source", metrics.current_hash_ring.last_load_source
+        )
+
+    sync_hash_ring_metrics()
+
     bit_range = None
     if args.fault_bit_range:
         low_str, high_str = args.fault_bit_range.split(",", maxsplit=1)
@@ -1250,6 +1340,7 @@ Examples:
 
     runtime_fault_saves_seen = 0
     runtime_fault_triggered = False
+    pending_recovery_context = load_recovery_context(args.checkpoint_dir)
 
     def maybe_inject_runtime_fault(checkpoint_label: str) -> None:
         nonlocal runtime_fault_saves_seen, runtime_fault_triggered
@@ -1297,7 +1388,25 @@ Examples:
         optimizer.load_state_dict(runtime_checkpoint["optimizer_state_dict"])
 
         runtime_fault_triggered = True
-        metrics.increment_injected_fault()
+        fault_wall_time = time.time()
+        metrics.record_runtime_fault(
+            checkpoint_id=checkpoint_label,
+            epoch=epoch + 1,
+            global_step=global_step,
+            wall_time_sec=fault_wall_time,
+        )
+        save_recovery_context(
+            args.checkpoint_dir,
+            {
+                "checkpoint_label": checkpoint_label,
+                "fault_epoch": epoch + 1,
+                "fault_global_step": global_step,
+                "fault_wall_time_sec": fault_wall_time,
+                "runtime_fault_after_checkpoints": runtime_fault_saves_seen,
+                "crash_after_injection": args.runtime_fault_crash_after_injection,
+                "training_mode": active_training_mode,
+            },
+        )
         log_on_main(
             "  [Runtime Fault] Injected live checkpoint fault "
             f"after {runtime_fault_saves_seen} saved checkpoint(s) "
@@ -1313,12 +1422,52 @@ Examples:
     start_epoch = 0
     best_val_acc = 0.0
     if args.resume:
+        metrics.record_resume_attempt()
         start_epoch, best_val_acc = checkpoint_manager.load_latest(
             model,
             optimizer,
             device,
             checkpoint_injector=checkpoint_injector,
         )
+        load_metadata = getattr(checkpoint_manager, "last_load_metadata", None) or {}
+        load_source = load_metadata.get("load_source", "central-storage")
+        metrics.record_hash_ring_load(load_source)
+        if pending_recovery_context:
+            time_to_resume_sec = max(
+                0.0,
+                time.time() - pending_recovery_context.get("fault_wall_time_sec", time.time()),
+            )
+            loaded_epoch = int(load_metadata.get("epoch", max(0, start_epoch - 1)))
+            loaded_step = parse_step_from_checkpoint_id(load_metadata.get("checkpoint_id"))
+            rollback_epochs = max(
+                0.0,
+                float(pending_recovery_context.get("fault_epoch", loaded_epoch) - loaded_epoch),
+            )
+            rollback_steps = max(
+                0,
+                int(pending_recovery_context.get("fault_global_step", 0) - loaded_step),
+            )
+            metrics.record_resume_success(
+                resumed_from_epoch=start_epoch,
+                checkpoint_id=load_metadata.get("checkpoint_id"),
+                checkpoint_path=load_metadata.get("path"),
+                load_source=load_source,
+                time_to_resume_sec=time_to_resume_sec,
+                rollback_epochs=rollback_epochs,
+                rollback_steps=rollback_steps,
+                lost_work_sec=0.0,
+            )
+            metrics.increment_detected_fault()
+            metrics.record_recovery(success=True, recovery_time_sec=time_to_resume_sec)
+            clear_recovery_context(args.checkpoint_dir)
+            pending_recovery_context = None
+        else:
+            metrics.record_resume_success(
+                resumed_from_epoch=start_epoch,
+                checkpoint_id=load_metadata.get("checkpoint_id"),
+                checkpoint_path=load_metadata.get("path"),
+                load_source=load_source,
+            )
         log_on_main(
             f"Resuming from epoch {start_epoch} (best_val_acc: {best_val_acc:.2f}%)"
         )
@@ -1355,6 +1504,7 @@ Examples:
                 nonlocal calibrated_checkpoint_cost_sec
                 nonlocal checkpoint_cost_calibration_count
                 global_step += 1
+                metrics.mark_progress(epoch=epoch, global_step=global_step)
 
                 if convergence_scheduler is None:
                     return
@@ -1406,6 +1556,7 @@ Examples:
                     
                     metrics.record_batch_checkpoint(batch_id=global_step, checkpoint_size_mb=ckpt_size_mb, save_time_sec=ckpt_time)
                     metrics.increment_convergence_checkpoint()
+                    sync_hash_ring_metrics()
 
                     if args.auto_calibrate_checkpoint_cost:
                         if checkpoint_cost_calibration_count == 0:
@@ -1492,6 +1643,7 @@ Examples:
                 val_loss=val_loss,
                 val_acc=val_acc
             )
+            metrics.mark_progress(epoch=epoch + 1, global_step=global_step)
 
             # Log results (main process only)
             log_on_main(f"  Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.2f}%")
@@ -1524,6 +1676,7 @@ Examples:
                     except:
                         ckpt_size_mb = 0.0
                     metrics.record_checkpoint(checkpoint_size_mb=ckpt_size_mb, save_time_sec=ckpt_time, checkpoint_id=best_checkpoint_id)
+                    sync_hash_ring_metrics()
 
                     maybe_inject_runtime_fault(best_checkpoint_id)
                     
@@ -1547,6 +1700,7 @@ Examples:
                     except:
                         ckpt_size_mb = 0.0
                     metrics.record_checkpoint(checkpoint_size_mb=ckpt_size_mb, save_time_sec=ckpt_time)
+                    sync_hash_ring_metrics()
 
                     maybe_inject_runtime_fault(f"epoch_{epoch + 1:04d}")
 
@@ -1557,11 +1711,17 @@ Examples:
         except Exception as e:
             # Barrier sync first - prevents rank 0 from saving while others are still running
             barrier()
+            metrics.record_failure_event(
+                reason=str(e),
+                epoch=epoch,
+                global_step=global_step,
+            )
 
             # Emergency checkpoint save with current epoch and val_loss
             checkpoint_manager.save(
                 model, optimizer, epoch, val_loss if "val_loss" in dir() else 0.0
             )
+            sync_hash_ring_metrics()
 
             if use_hash_ring:
                 checkpoint_manager.stop_heartbeat_thread()
@@ -1584,6 +1744,7 @@ Examples:
 
     if use_hash_ring:
         checkpoint_manager.stop_heartbeat_thread()
+    sync_hash_ring_metrics()
 
     # Export metrics (rank 0 only)
     if is_main_process():

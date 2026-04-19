@@ -117,6 +117,9 @@ class MetricsExporter:
             # Hash ring metrics
             'cache_hits': summary.hash_ring_metrics.local_cache_hits,
             'cache_misses': summary.hash_ring_metrics.local_cache_misses,
+            'local_cache_loads': summary.hash_ring_metrics.local_cache_loads,
+            'central_storage_loads': summary.hash_ring_metrics.central_storage_loads,
+            'cache_write_count': summary.hash_ring_metrics.cache_write_count,
             'cache_hit_rate_percent': (summary.hash_ring_metrics.local_cache_hits / 
                                        (summary.hash_ring_metrics.local_cache_hits + 
                                         summary.hash_ring_metrics.local_cache_misses) * 100.0
@@ -124,12 +127,31 @@ class MetricsExporter:
                                            summary.hash_ring_metrics.local_cache_misses) > 0 else 0.0),
             'cache_size_mb': summary.hash_ring_metrics.cache_size_mb,
             'shards_owned': summary.hash_ring_metrics.shards_owned,
+            'orphaned_shards': summary.hash_ring_metrics.orphaned_shards,
+            'reassigned_shards': summary.hash_ring_metrics.reassigned_shards,
+            'recached_shards': summary.hash_ring_metrics.recached_shards,
             'shard_recovery_count': summary.hash_ring_metrics.shard_recovery_count,
+            'last_load_source': summary.hash_ring_metrics.last_load_source,
             # Fault metrics
             'injected_faults': summary.fault_metrics.injected_faults,
+            'detected_faults': summary.fault_metrics.detected_faults,
+            'recovery_attempts': summary.fault_metrics.recovery_attempts,
             'recovered_successfully': summary.fault_metrics.recovered_successfully,
             'recovery_failures': summary.fault_metrics.recovery_failures,
             'total_recovery_time_sec': summary.fault_metrics.total_recovery_time_sec,
+            'runtime_fault_triggered': summary.fault_metrics.runtime_fault_triggered,
+            'runtime_fault_checkpoint_id': summary.fault_metrics.runtime_fault_checkpoint_id,
+            'runtime_fault_epoch': summary.fault_metrics.runtime_fault_epoch,
+            'runtime_fault_global_step': summary.fault_metrics.runtime_fault_global_step,
+            'resume_attempted': summary.fault_metrics.resume_attempted,
+            'resume_succeeded': summary.fault_metrics.resume_succeeded,
+            'resumed_from_epoch': summary.fault_metrics.resumed_from_epoch,
+            'resumed_checkpoint_id': summary.fault_metrics.resumed_checkpoint_id,
+            'resume_load_source': summary.fault_metrics.resume_load_source,
+            'time_to_resume_sec': summary.fault_metrics.time_to_resume_sec,
+            'rollback_epochs': summary.fault_metrics.rollback_epochs,
+            'rollback_steps': summary.fault_metrics.rollback_steps,
+            'lost_work_sec': summary.fault_metrics.lost_work_sec,
             # Distributed metrics
             'world_size': summary.distributed_metrics.world_size,
             'num_syncs': summary.distributed_metrics.num_syncs,
@@ -359,6 +381,14 @@ class MetricsExporter:
                 <div class="metric-label">Shards Owned</div>
                 <div class="metric-value">{summary.hash_ring_metrics.shards_owned}</div>
             </div>
+            <div class="metric-card">
+                <div class="metric-label">Central Storage Loads</div>
+                <div class="metric-value">{summary.hash_ring_metrics.central_storage_loads}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Re-cached Shards</div>
+                <div class="metric-value">{summary.hash_ring_metrics.recached_shards}</div>
+            </div>
         </div>
         
         <h2>Fault Tolerance Metrics</h2>
@@ -378,6 +408,14 @@ class MetricsExporter:
             <div class="metric-card">
                 <div class="metric-label">Total Recovery Time</div>
                 <div class="metric-value">{summary.fault_metrics.total_recovery_time_sec:.1f}s</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Resume Time</div>
+                <div class="metric-value">{summary.fault_metrics.time_to_resume_sec:.1f}s</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Rollback Epochs</div>
+                <div class="metric-value">{summary.fault_metrics.rollback_epochs:.2f}</div>
             </div>
         </div>
         
@@ -478,8 +516,15 @@ class MetricsExporter:
 | Max Cache Size (MB) | {summary.hash_ring_metrics.max_cache_size_mb:.1f} |
 | Total Shards | {summary.hash_ring_metrics.total_shards} |
 | Shards Owned by This Node | {summary.hash_ring_metrics.shards_owned} |
+| Central Storage Loads | {summary.hash_ring_metrics.central_storage_loads} |
+| Local Cache Loads | {summary.hash_ring_metrics.local_cache_loads} |
+| Cache Writes | {summary.hash_ring_metrics.cache_write_count} |
+| Orphaned Shards | {summary.hash_ring_metrics.orphaned_shards} |
+| Reassigned Shards | {summary.hash_ring_metrics.reassigned_shards} |
+| Re-cached Shards | {summary.hash_ring_metrics.recached_shards} |
 | Shard Recovery Count | {summary.hash_ring_metrics.shard_recovery_count} |
 | Total Recovery Time | {summary.hash_ring_metrics.recovery_time_sec:.1f}s |
+| Last Load Source | {summary.hash_ring_metrics.last_load_source or 'N/A'} |
 
 ## Fault Tolerance Metrics
 
@@ -487,10 +532,24 @@ class MetricsExporter:
 |--------|-------|
 | Injected Faults | {summary.fault_metrics.injected_faults} |
 | Detected Faults | {summary.fault_metrics.detected_faults} |
+| Recovery Attempts | {summary.fault_metrics.recovery_attempts} |
 | Successfully Recovered | {summary.fault_metrics.recovered_successfully} |
 | Recovery Failures | {summary.fault_metrics.recovery_failures} |
 | Checkpoint Integrity Failures | {summary.fault_metrics.checkpoint_integrity_failures} |
 | Total Recovery Time | {summary.fault_metrics.total_recovery_time_sec:.1f}s |
+| Runtime Fault Triggered | {summary.fault_metrics.runtime_fault_triggered} |
+| Runtime Fault Checkpoint | {summary.fault_metrics.runtime_fault_checkpoint_id or 'N/A'} |
+| Runtime Fault Epoch | {summary.fault_metrics.runtime_fault_epoch if summary.fault_metrics.runtime_fault_epoch is not None else 'N/A'} |
+| Runtime Fault Global Step | {summary.fault_metrics.runtime_fault_global_step if summary.fault_metrics.runtime_fault_global_step is not None else 'N/A'} |
+| Resume Attempted | {summary.fault_metrics.resume_attempted} |
+| Resume Succeeded | {summary.fault_metrics.resume_succeeded} |
+| Resumed From Epoch | {summary.fault_metrics.resumed_from_epoch if summary.fault_metrics.resumed_from_epoch is not None else 'N/A'} |
+| Resumed Checkpoint | {summary.fault_metrics.resumed_checkpoint_id or 'N/A'} |
+| Resume Load Source | {summary.fault_metrics.resume_load_source or 'N/A'} |
+| Time to Resume | {summary.fault_metrics.time_to_resume_sec:.1f}s |
+| Rollback Epochs | {summary.fault_metrics.rollback_epochs:.2f} |
+| Rollback Steps | {summary.fault_metrics.rollback_steps} |
+| Lost Work Time | {summary.fault_metrics.lost_work_sec:.1f}s |
 
 ## Distributed Training Metrics
 
