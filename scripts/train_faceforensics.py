@@ -1369,7 +1369,23 @@ Examples:
                     theta2=convergence_scheduler._last_fit.theta2 if convergence_scheduler._last_fit else None,
                 )
                 
-                if convergence_scheduler.should_checkpoint(now=now):
+                should_checkpoint_now = convergence_scheduler.should_checkpoint(now=now)
+
+                # Keep checkpoint/save barrier flow consistent across ranks.
+                # In DDP, a rank-local decision can deadlock if some ranks enter
+                # checkpoint_manager.save() (which contains dist.barrier()) and others do not.
+                if is_distributed_initialized():
+                    checkpoint_flag = torch.tensor(
+                        [1 if should_checkpoint_now else 0],
+                        device=device,
+                        dtype=torch.int32,
+                    )
+                    if not is_main_process():
+                        checkpoint_flag.zero_()
+                    torch.distributed.broadcast(checkpoint_flag, src=0)
+                    should_checkpoint_now = bool(checkpoint_flag.item())
+
+                if should_checkpoint_now:
                     checkpoint_id = f"step_{global_step:012d}"
                     ckpt_start = time.time()
                     checkpoint_manager.save(
