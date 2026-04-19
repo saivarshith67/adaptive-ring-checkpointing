@@ -908,18 +908,18 @@
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
       "source_location": "L179",
-      "id": "hash_ring_checkpoint_manager_rationale_179",
       "community": 1,
-      "norm_label": "start the heartbeat fault-detection thread for liveness monitoring.          a"
+      "norm_label": "start the heartbeat fault-detection thread for liveness monitoring.          a",
+      "id": "hash_ring_checkpoint_manager_rationale_179"
     },
     {
       "label": "Stop the heartbeat fault-detection thread gracefully.          Args:",
       "file_type": "rationale",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
       "source_location": "L189",
-      "id": "hash_ring_checkpoint_manager_rationale_189",
       "community": 1,
-      "norm_label": "stop the heartbeat fault-detection thread gracefully.          args:"
+      "norm_label": "stop the heartbeat fault-detection thread gracefully.          args:",
+      "id": "hash_ring_checkpoint_manager_rationale_189"
     },
     {
       "label": "strategy.py",
@@ -1869,16 +1869,16 @@
     {
       "label": "fault_detector.py",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L1",
-      "id": "src_coci_hashing_fault_detector_py",
+      "id": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_fault_detector_py",
       "community": 3,
       "norm_label": "fault_detector.py"
     },
     {
       "label": "NodeStatus",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L10",
       "id": "fault_detector_nodestatus",
       "community": 3,
@@ -1887,7 +1887,7 @@
     {
       "label": "FaultDetector",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L16",
       "id": "fault_detector_faultdetector",
       "community": 3,
@@ -1896,7 +1896,7 @@
     {
       "label": ".__init__()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L17",
       "id": "fault_detector_faultdetector_init",
       "community": 3,
@@ -1905,7 +1905,7 @@
     {
       "label": "is_distributed()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L45",
       "id": "fault_detector_is_distributed",
       "community": 3,
@@ -1914,7 +1914,7 @@
     {
       "label": ".register_node()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L57",
       "id": "fault_detector_faultdetector_register_node",
       "community": 3,
@@ -1923,7 +1923,7 @@
     {
       "label": ".mark_alive()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L64",
       "id": "fault_detector_faultdetector_mark_alive",
       "community": 3,
@@ -1932,7 +1932,7 @@
     {
       "label": ".register_suspicion()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L72",
       "id": "fault_detector_faultdetector_register_suspicion",
       "community": 3,
@@ -1941,7 +1941,7 @@
     {
       "label": ".check_timeout()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L90",
       "id": "fault_detector_faultdetector_check_timeout",
       "community": 3,
@@ -1950,7 +1950,7 @@
     {
       "label": ".get_status()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L102",
       "id": "fault_detector_faultdetector_get_status",
       "community": 3,
@@ -1959,7 +1959,7 @@
     {
       "label": ".get_dead_nodes()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L105",
       "id": "fault_detector_faultdetector_get_dead_nodes",
       "community": 3,
@@ -1968,7 +1968,7 @@
     {
       "label": ".get_suspected_nodes()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L112",
       "id": "fault_detector_faultdetector_get_suspected_nodes",
       "community": 3,
@@ -1977,7 +1977,7 @@
     {
       "label": ".get_alive_nodes()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L119",
       "id": "fault_detector_faultdetector_get_alive_nodes",
       "community": 3,
@@ -1986,7 +1986,7 @@
     {
       "label": ".broadcast_heartbeat()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L126",
       "id": "fault_detector_faultdetector_broadcast_heartbeat",
       "community": 3,
@@ -1995,7 +1995,7 @@
     {
       "label": ".gather_suspicions()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L168",
       "id": "fault_detector_faultdetector_gather_suspicions",
       "community": 3,
@@ -2004,7 +2004,7 @@
     {
       "label": ".start_heartbeat_thread()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L207",
       "id": "fault_detector_faultdetector_start_heartbeat_thread",
       "community": 3,
@@ -2013,7 +2013,7 @@
     {
       "label": ".stop_heartbeat_thread()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L227",
       "id": "fault_detector_faultdetector_stop_heartbeat_thread",
       "community": 3,
@@ -2022,7 +2022,7 @@
     {
       "label": "._heartbeat_loop()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L244",
       "id": "fault_detector_faultdetector_heartbeat_loop",
       "community": 3,
@@ -2031,7 +2031,7 @@
     {
       "label": ".get_status_summary()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L266",
       "id": "fault_detector_faultdetector_get_status_summary",
       "community": 3,
@@ -2040,7 +2040,7 @@
     {
       "label": "ElasticRecaching",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L286",
       "id": "fault_detector_elasticrecaching",
       "community": 4,
@@ -2049,7 +2049,7 @@
     {
       "label": ".__init__()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L287",
       "id": "fault_detector_elasticrecaching_init",
       "community": 4,
@@ -2058,7 +2058,7 @@
     {
       "label": ".handle_node_failure()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L291",
       "id": "fault_detector_elasticrecaching_handle_node_failure",
       "community": 4,
@@ -2067,7 +2067,7 @@
     {
       "label": ".recache_shard()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L298",
       "id": "fault_detector_elasticrecaching_recache_shard",
       "community": 4,
@@ -2076,7 +2076,7 @@
     {
       "label": ".get_recache_candidates()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L310",
       "id": "fault_detector_elasticrecaching_get_recache_candidates",
       "community": 4,
@@ -2148,16 +2148,16 @@
     {
       "label": "hash_ring.py",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L1",
-      "id": "src_coci_hashing_hash_ring_py",
+      "id": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_hash_ring_py",
       "community": 4,
       "norm_label": "hash_ring.py"
     },
     {
       "label": "HashRing",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L13",
       "id": "hash_ring_hashring",
       "community": 4,
@@ -2166,7 +2166,7 @@
     {
       "label": ".__init__()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L14",
       "id": "hash_ring_hashring_init",
       "community": 4,
@@ -2175,7 +2175,7 @@
     {
       "label": "._hash_position()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L20",
       "id": "hash_ring_hashring_hash_position",
       "community": 4,
@@ -2184,7 +2184,7 @@
     {
       "label": ".add_node()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L25",
       "id": "hash_ring_hashring_add_node",
       "community": 4,
@@ -2193,7 +2193,7 @@
     {
       "label": ".remove_node()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L39",
       "id": "hash_ring_hashring_remove_node",
       "community": 4,
@@ -2202,7 +2202,7 @@
     {
       "label": ".get_node()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L49",
       "id": "hash_ring_hashring_get_node",
       "community": 4,
@@ -2211,7 +2211,7 @@
     {
       "label": ".get_nodes()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L61",
       "id": "hash_ring_hashring_get_nodes",
       "community": 4,
@@ -2220,7 +2220,7 @@
     {
       "label": ".get_virtual_node_count()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L64",
       "id": "hash_ring_hashring_get_virtual_node_count",
       "community": 4,
@@ -2229,7 +2229,7 @@
     {
       "label": "ShardManager",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L68",
       "id": "hash_ring_shardmanager",
       "community": 4,
@@ -2238,7 +2238,7 @@
     {
       "label": ".__init__()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L77",
       "id": "hash_ring_shardmanager_init",
       "community": 4,
@@ -2247,7 +2247,7 @@
     {
       "label": ".register_shard()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L82",
       "id": "hash_ring_shardmanager_register_shard",
       "community": 4,
@@ -2256,7 +2256,7 @@
     {
       "label": ".get_shard()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L101",
       "id": "hash_ring_shardmanager_get_shard",
       "community": 4,
@@ -2265,7 +2265,7 @@
     {
       "label": ".get_owner()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L104",
       "id": "hash_ring_shardmanager_get_owner",
       "community": 4,
@@ -2274,7 +2274,7 @@
     {
       "label": ".update_status()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L108",
       "id": "hash_ring_shardmanager_update_status",
       "community": 4,
@@ -2283,7 +2283,7 @@
     {
       "label": ".reassign_shard()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L112",
       "id": "hash_ring_shardmanager_reassign_shard",
       "community": 4,
@@ -2292,7 +2292,7 @@
     {
       "label": ".get_orphaned_shards()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L122",
       "id": "hash_ring_shardmanager_get_orphaned_shards",
       "community": 4,
@@ -2301,7 +2301,7 @@
     {
       "label": ".get_all_shards()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L130",
       "id": "hash_ring_shardmanager_get_all_shards",
       "community": 4,
@@ -2310,7 +2310,7 @@
     {
       "label": ".cache_shard()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L133",
       "id": "hash_ring_shardmanager_cache_shard",
       "community": 4,
@@ -2319,7 +2319,7 @@
     {
       "label": ".load_cached_shard()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L164",
       "id": "hash_ring_shardmanager_load_cached_shard",
       "community": 4,
@@ -2328,7 +2328,7 @@
     {
       "label": ".verify_shard()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L182",
       "id": "hash_ring_shardmanager_verify_shard",
       "community": 4,
@@ -2337,7 +2337,7 @@
     {
       "label": ".get_cache_usage()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L195",
       "id": "hash_ring_shardmanager_get_cache_usage",
       "community": 6,
@@ -2346,7 +2346,7 @@
     {
       "label": ".cleanup_orphaned_files()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L205",
       "id": "hash_ring_shardmanager_cleanup_orphaned_files",
       "community": 4,
@@ -2400,16 +2400,16 @@
     {
       "label": "recovery_scheduler.py",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L1",
-      "id": "src_coci_hashing_recovery_scheduler_py",
+      "id": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_recovery_scheduler_py",
       "community": 3,
       "norm_label": "recovery_scheduler.py"
     },
     {
       "label": "ResumeMode",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L5",
       "id": "recovery_scheduler_resumemode",
       "community": 3,
@@ -2418,7 +2418,7 @@
     {
       "label": "RecoveryScheduler",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L11",
       "id": "recovery_scheduler_recoveryscheduler",
       "community": 3,
@@ -2427,7 +2427,7 @@
     {
       "label": ".__init__()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L12",
       "id": "recovery_scheduler_recoveryscheduler_init",
       "community": 3,
@@ -2436,7 +2436,7 @@
     {
       "label": ".select_resume_mode()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L24",
       "id": "recovery_scheduler_recoveryscheduler_select_resume_mode",
       "community": 3,
@@ -2445,7 +2445,7 @@
     {
       "label": ".compute_rollback()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L36",
       "id": "recovery_scheduler_recoveryscheduler_compute_rollback",
       "community": 3,
@@ -2454,7 +2454,7 @@
     {
       "label": ".rebalance_work()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L57",
       "id": "recovery_scheduler_recoveryscheduler_rebalance_work",
       "community": 3,
@@ -2463,7 +2463,7 @@
     {
       "label": ".create_manifest()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L88",
       "id": "recovery_scheduler_recoveryscheduler_create_manifest",
       "community": 3,
@@ -2472,16 +2472,16 @@
     {
       "label": "__init__.py",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\__init__.py",
       "source_location": "L1",
-      "id": "src_coci_hashing_init_py",
+      "id": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_init_py",
       "community": 3,
       "norm_label": "__init__.py"
     },
     {
       "label": "create_hash_ring()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\__init__.py",
       "source_location": "L17",
       "id": "init_create_hash_ring",
       "community": 3,
@@ -2490,7 +2490,7 @@
     {
       "label": "register_fault_detector_nodes()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\__init__.py",
       "source_location": "L24",
       "id": "init_register_fault_detector_nodes",
       "community": 3,
@@ -2499,7 +2499,7 @@
     {
       "label": "create_shard_manager()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\__init__.py",
       "source_location": "L38",
       "id": "init_create_shard_manager",
       "community": 3,
@@ -2508,7 +2508,7 @@
     {
       "label": "create_fault_detector()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\__init__.py",
       "source_location": "L45",
       "id": "init_create_fault_detector",
       "community": 3,
@@ -2517,7 +2517,7 @@
     {
       "label": "create_recovery_scheduler()",
       "file_type": "code",
-      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\__init__.py",
       "source_location": "L59",
       "id": "init_create_recovery_scheduler",
       "community": 3,
@@ -5380,7 +5380,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L1428",
+      "source_location": "L1430",
       "weight": 1.0,
       "_src": "train_faceforensics_main",
       "_tgt": "train_faceforensics_train_epoch",
@@ -5428,7 +5428,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\scripts\\train_faceforensics.py",
-      "source_location": "L1444",
+      "source_location": "L1446",
       "weight": 1.0,
       "_src": "train_faceforensics_main",
       "_tgt": "train_faceforensics_evaluate",
@@ -7026,11 +7026,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
       "source_location": "L6",
       "weight": 0.8,
-      "_src": "hash_ring_checkpoint_manager_rationale_179",
-      "_tgt": "checkpoint_manager_checkpointmanager",
+      "_src": "checkpoint_manager_checkpointmanager",
+      "_tgt": "hash_ring_checkpoint_manager_rationale_179",
+      "confidence_score": 0.5,
       "source": "checkpoint_manager_checkpointmanager",
-      "target": "hash_ring_checkpoint_manager_rationale_179",
-      "confidence_score": 0.5
+      "target": "hash_ring_checkpoint_manager_rationale_179"
     },
     {
       "relation": "uses",
@@ -7038,11 +7038,11 @@
       "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\checkpointing\\hash_ring_checkpoint_manager.py",
       "source_location": "L6",
       "weight": 0.8,
-      "_src": "hash_ring_checkpoint_manager_rationale_189",
-      "_tgt": "checkpoint_manager_checkpointmanager",
+      "_src": "checkpoint_manager_checkpointmanager",
+      "_tgt": "hash_ring_checkpoint_manager_rationale_189",
+      "confidence_score": 0.5,
       "source": "checkpoint_manager_checkpointmanager",
-      "target": "hash_ring_checkpoint_manager_rationale_189",
-      "confidence_score": 0.5
+      "target": "hash_ring_checkpoint_manager_rationale_189"
     },
     {
       "relation": "calls",
@@ -10527,19 +10527,19 @@
     {
       "relation": "imports_from",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L4",
       "weight": 1.0,
-      "_src": "src_coci_hashing_fault_detector_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_fault_detector_py",
       "_tgt": "enum",
       "source": "enum",
-      "target": "src_coci_hashing_fault_detector_py",
+      "target": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_fault_detector_py",
       "confidence_score": 1.0
     },
     {
       "relation": "inherits",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L10",
       "weight": 1.0,
       "_src": "fault_detector_nodestatus",
@@ -10551,19 +10551,19 @@
     {
       "relation": "imports_from",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L1",
       "weight": 1.0,
-      "_src": "src_coci_hashing_recovery_scheduler_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_recovery_scheduler_py",
       "_tgt": "enum",
       "source": "enum",
-      "target": "src_coci_hashing_recovery_scheduler_py",
+      "target": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_recovery_scheduler_py",
       "confidence_score": 1.0
     },
     {
       "relation": "inherits",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L5",
       "weight": 1.0,
       "_src": "recovery_scheduler_resumemode",
@@ -11415,61 +11415,61 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L10",
       "weight": 1.0,
-      "_src": "src_coci_hashing_fault_detector_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_fault_detector_py",
       "_tgt": "fault_detector_nodestatus",
-      "source": "src_coci_hashing_fault_detector_py",
+      "source": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_fault_detector_py",
       "target": "fault_detector_nodestatus",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L16",
       "weight": 1.0,
-      "_src": "src_coci_hashing_fault_detector_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_fault_detector_py",
       "_tgt": "fault_detector_faultdetector",
-      "source": "src_coci_hashing_fault_detector_py",
+      "source": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_fault_detector_py",
       "target": "fault_detector_faultdetector",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L45",
       "weight": 1.0,
-      "_src": "src_coci_hashing_fault_detector_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_fault_detector_py",
       "_tgt": "fault_detector_is_distributed",
-      "source": "src_coci_hashing_fault_detector_py",
+      "source": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_fault_detector_py",
       "target": "fault_detector_is_distributed",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L286",
       "weight": 1.0,
-      "_src": "src_coci_hashing_fault_detector_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_fault_detector_py",
       "_tgt": "fault_detector_elasticrecaching",
-      "source": "src_coci_hashing_fault_detector_py",
+      "source": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_fault_detector_py",
       "target": "fault_detector_elasticrecaching",
       "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\__init__.py",
       "source_location": "L2",
       "weight": 1.0,
-      "_src": "src_coci_hashing_init_py",
-      "_tgt": "src_coci_hashing_fault_detector_py",
-      "source": "src_coci_hashing_fault_detector_py",
-      "target": "src_coci_hashing_init_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_init_py",
+      "_tgt": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_fault_detector_py",
+      "source": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_fault_detector_py",
+      "target": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_init_py",
       "confidence_score": 1.0
     },
     {
@@ -11487,7 +11487,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L17",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector",
@@ -11499,7 +11499,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L57",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector",
@@ -11511,7 +11511,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L64",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector",
@@ -11523,7 +11523,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L72",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector",
@@ -11535,7 +11535,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L90",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector",
@@ -11547,7 +11547,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L102",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector",
@@ -11559,7 +11559,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L105",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector",
@@ -11571,7 +11571,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L112",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector",
@@ -11583,7 +11583,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L119",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector",
@@ -11595,7 +11595,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L126",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector",
@@ -11607,7 +11607,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L168",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector",
@@ -11619,7 +11619,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L207",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector",
@@ -11631,7 +11631,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L227",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector",
@@ -11643,7 +11643,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L244",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector",
@@ -11655,7 +11655,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L266",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector",
@@ -11663,18 +11663,6 @@
       "source": "fault_detector_faultdetector",
       "target": "fault_detector_faultdetector_get_status_summary",
       "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "src\\coci\\hashing\\__init__.py",
-      "source_location": "L51",
-      "weight": 1.0,
-      "_src": "fault_detector_faultdetector",
-      "_tgt": "init_create_fault_detector",
-      "source": "fault_detector_faultdetector",
-      "target": "init_create_fault_detector"
     },
     {
       "relation": "uses",
@@ -11690,8 +11678,20 @@
     },
     {
       "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_src": "fault_detector_faultdetector",
+      "_tgt": "init_create_fault_detector",
+      "source": "fault_detector_faultdetector",
+      "target": "init_create_fault_detector"
+    },
+    {
+      "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L67",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector_mark_alive",
@@ -11715,7 +11715,7 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L258",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector_heartbeat_loop",
@@ -11727,7 +11727,7 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L253",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector_heartbeat_loop",
@@ -11739,7 +11739,7 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L249",
       "weight": 1.0,
       "_src": "fault_detector_faultdetector_heartbeat_loop",
@@ -11751,7 +11751,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L127",
       "weight": 1.0,
       "_src": "fault_detector_rationale_127",
@@ -11763,7 +11763,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L169",
       "weight": 1.0,
       "_src": "fault_detector_rationale_169",
@@ -11775,7 +11775,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L208",
       "weight": 1.0,
       "_src": "fault_detector_rationale_208",
@@ -11787,7 +11787,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L228",
       "weight": 1.0,
       "_src": "fault_detector_rationale_228",
@@ -11799,7 +11799,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L245",
       "weight": 1.0,
       "_src": "fault_detector_rationale_245",
@@ -11811,7 +11811,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L267",
       "weight": 1.0,
       "_src": "fault_detector_rationale_267",
@@ -11823,7 +11823,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L287",
       "weight": 1.0,
       "_src": "fault_detector_elasticrecaching",
@@ -11835,7 +11835,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L291",
       "weight": 1.0,
       "_src": "fault_detector_elasticrecaching",
@@ -11847,7 +11847,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L298",
       "weight": 1.0,
       "_src": "fault_detector_elasticrecaching",
@@ -11859,7 +11859,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\fault_detector.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\fault_detector.py",
       "source_location": "L310",
       "weight": 1.0,
       "_src": "fault_detector_elasticrecaching",
@@ -11943,43 +11943,43 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L13",
       "weight": 1.0,
-      "_src": "src_coci_hashing_hash_ring_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_hash_ring_py",
       "_tgt": "hash_ring_hashring",
-      "source": "src_coci_hashing_hash_ring_py",
+      "source": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_hash_ring_py",
       "target": "hash_ring_hashring",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L68",
       "weight": 1.0,
-      "_src": "src_coci_hashing_hash_ring_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_hash_ring_py",
       "_tgt": "hash_ring_shardmanager",
-      "source": "src_coci_hashing_hash_ring_py",
+      "source": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_hash_ring_py",
       "target": "hash_ring_shardmanager",
       "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\__init__.py",
       "source_location": "L1",
       "weight": 1.0,
-      "_src": "src_coci_hashing_init_py",
-      "_tgt": "src_coci_hashing_hash_ring_py",
-      "source": "src_coci_hashing_hash_ring_py",
-      "target": "src_coci_hashing_init_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_init_py",
+      "_tgt": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_hash_ring_py",
+      "source": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_hash_ring_py",
+      "target": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_init_py",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L14",
       "weight": 1.0,
       "_src": "hash_ring_hashring",
@@ -11991,7 +11991,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L20",
       "weight": 1.0,
       "_src": "hash_ring_hashring",
@@ -12003,7 +12003,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L25",
       "weight": 1.0,
       "_src": "hash_ring_hashring",
@@ -12015,7 +12015,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L39",
       "weight": 1.0,
       "_src": "hash_ring_hashring",
@@ -12027,7 +12027,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L49",
       "weight": 1.0,
       "_src": "hash_ring_hashring",
@@ -12039,7 +12039,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L61",
       "weight": 1.0,
       "_src": "hash_ring_hashring",
@@ -12051,7 +12051,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L64",
       "weight": 1.0,
       "_src": "hash_ring_hashring",
@@ -12059,18 +12059,6 @@
       "source": "hash_ring_hashring",
       "target": "hash_ring_hashring_get_virtual_node_count",
       "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "src\\coci\\hashing\\__init__.py",
-      "source_location": "L18",
-      "weight": 1.0,
-      "_src": "hash_ring_hashring",
-      "_tgt": "init_create_hash_ring",
-      "source": "hash_ring_hashring",
-      "target": "init_create_hash_ring"
     },
     {
       "relation": "uses",
@@ -12086,8 +12074,20 @@
     },
     {
       "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_src": "hash_ring_hashring",
+      "_tgt": "init_create_hash_ring",
+      "source": "hash_ring_hashring",
+      "target": "init_create_hash_ring"
+    },
+    {
+      "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L32",
       "weight": 1.0,
       "_src": "hash_ring_hashring_add_node",
@@ -12099,7 +12099,7 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L53",
       "weight": 1.0,
       "_src": "hash_ring_hashring_get_node",
@@ -12123,7 +12123,7 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L89",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager_register_shard",
@@ -12135,7 +12135,7 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L113",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager_reassign_shard",
@@ -12147,7 +12147,7 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L89",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager_register_shard",
@@ -12171,7 +12171,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L77",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager",
@@ -12183,7 +12183,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L82",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager",
@@ -12195,7 +12195,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L101",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager",
@@ -12207,7 +12207,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L104",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager",
@@ -12219,7 +12219,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L108",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager",
@@ -12231,7 +12231,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L112",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager",
@@ -12243,7 +12243,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L122",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager",
@@ -12255,7 +12255,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L130",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager",
@@ -12267,7 +12267,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L133",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager",
@@ -12279,7 +12279,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L164",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager",
@@ -12291,7 +12291,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L182",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager",
@@ -12303,7 +12303,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L195",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager",
@@ -12315,7 +12315,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L205",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager",
@@ -12323,18 +12323,6 @@
       "source": "hash_ring_shardmanager",
       "target": "hash_ring_shardmanager_cleanup_orphaned_files",
       "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "src\\coci\\hashing\\__init__.py",
-      "source_location": "L42",
-      "weight": 1.0,
-      "_src": "hash_ring_shardmanager",
-      "_tgt": "init_create_shard_manager",
-      "source": "hash_ring_shardmanager",
-      "target": "init_create_shard_manager"
     },
     {
       "relation": "uses",
@@ -12350,8 +12338,20 @@
     },
     {
       "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_src": "hash_ring_shardmanager",
+      "_tgt": "init_create_shard_manager",
+      "source": "hash_ring_shardmanager",
+      "target": "init_create_shard_manager"
+    },
+    {
+      "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L139",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager_cache_shard",
@@ -12363,7 +12363,7 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L171",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager_load_cached_shard",
@@ -12375,7 +12375,7 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L207",
       "weight": 1.0,
       "_src": "hash_ring_shardmanager_cleanup_orphaned_files",
@@ -12387,7 +12387,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L134",
       "weight": 1.0,
       "_src": "hash_ring_rationale_134",
@@ -12399,7 +12399,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L165",
       "weight": 1.0,
       "_src": "hash_ring_rationale_165",
@@ -12411,7 +12411,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L183",
       "weight": 1.0,
       "_src": "hash_ring_rationale_183",
@@ -12423,7 +12423,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L196",
       "weight": 1.0,
       "_src": "hash_ring_rationale_196",
@@ -12435,7 +12435,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\hash_ring.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\hash_ring.py",
       "source_location": "L206",
       "weight": 1.0,
       "_src": "hash_ring_rationale_206",
@@ -12447,37 +12447,37 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L5",
       "weight": 1.0,
-      "_src": "src_coci_hashing_recovery_scheduler_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_recovery_scheduler_py",
       "_tgt": "recovery_scheduler_resumemode",
-      "source": "src_coci_hashing_recovery_scheduler_py",
+      "source": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_recovery_scheduler_py",
       "target": "recovery_scheduler_resumemode",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L11",
       "weight": 1.0,
-      "_src": "src_coci_hashing_recovery_scheduler_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_recovery_scheduler_py",
       "_tgt": "recovery_scheduler_recoveryscheduler",
-      "source": "src_coci_hashing_recovery_scheduler_py",
+      "source": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_recovery_scheduler_py",
       "target": "recovery_scheduler_recoveryscheduler",
       "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\__init__.py",
       "source_location": "L3",
       "weight": 1.0,
-      "_src": "src_coci_hashing_init_py",
-      "_tgt": "src_coci_hashing_recovery_scheduler_py",
-      "source": "src_coci_hashing_recovery_scheduler_py",
-      "target": "src_coci_hashing_init_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_init_py",
+      "_tgt": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_recovery_scheduler_py",
+      "source": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_recovery_scheduler_py",
+      "target": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_init_py",
       "confidence_score": 1.0
     },
     {
@@ -12495,7 +12495,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L12",
       "weight": 1.0,
       "_src": "recovery_scheduler_recoveryscheduler",
@@ -12507,7 +12507,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L24",
       "weight": 1.0,
       "_src": "recovery_scheduler_recoveryscheduler",
@@ -12519,7 +12519,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L36",
       "weight": 1.0,
       "_src": "recovery_scheduler_recoveryscheduler",
@@ -12531,7 +12531,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L57",
       "weight": 1.0,
       "_src": "recovery_scheduler_recoveryscheduler",
@@ -12543,7 +12543,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L88",
       "weight": 1.0,
       "_src": "recovery_scheduler_recoveryscheduler",
@@ -12551,18 +12551,6 @@
       "source": "recovery_scheduler_recoveryscheduler",
       "target": "recovery_scheduler_recoveryscheduler_create_manifest",
       "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "src\\coci\\hashing\\__init__.py",
-      "source_location": "L63",
-      "weight": 1.0,
-      "_src": "recovery_scheduler_recoveryscheduler",
-      "_tgt": "init_create_recovery_scheduler",
-      "source": "recovery_scheduler_recoveryscheduler",
-      "target": "init_create_recovery_scheduler"
     },
     {
       "relation": "uses",
@@ -12578,8 +12566,20 @@
     },
     {
       "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_location": "L63",
+      "weight": 1.0,
+      "_src": "recovery_scheduler_recoveryscheduler",
+      "_tgt": "init_create_recovery_scheduler",
+      "source": "recovery_scheduler_recoveryscheduler",
+      "target": "init_create_recovery_scheduler"
+    },
+    {
+      "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\recovery_scheduler.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\recovery_scheduler.py",
       "source_location": "L43",
       "weight": 1.0,
       "_src": "recovery_scheduler_recoveryscheduler_compute_rollback",
@@ -12591,67 +12591,67 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\__init__.py",
       "source_location": "L17",
       "weight": 1.0,
-      "_src": "src_coci_hashing_init_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_init_py",
       "_tgt": "init_create_hash_ring",
-      "source": "src_coci_hashing_init_py",
+      "source": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_init_py",
       "target": "init_create_hash_ring",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\__init__.py",
       "source_location": "L24",
       "weight": 1.0,
-      "_src": "src_coci_hashing_init_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_init_py",
       "_tgt": "init_register_fault_detector_nodes",
-      "source": "src_coci_hashing_init_py",
+      "source": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_init_py",
       "target": "init_register_fault_detector_nodes",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\__init__.py",
       "source_location": "L38",
       "weight": 1.0,
-      "_src": "src_coci_hashing_init_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_init_py",
       "_tgt": "init_create_shard_manager",
-      "source": "src_coci_hashing_init_py",
+      "source": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_init_py",
       "target": "init_create_shard_manager",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\__init__.py",
       "source_location": "L45",
       "weight": 1.0,
-      "_src": "src_coci_hashing_init_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_init_py",
       "_tgt": "init_create_fault_detector",
-      "source": "src_coci_hashing_init_py",
+      "source": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_init_py",
       "target": "init_create_fault_detector",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\__init__.py",
       "source_location": "L59",
       "weight": 1.0,
-      "_src": "src_coci_hashing_init_py",
+      "_src": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_init_py",
       "_tgt": "init_create_recovery_scheduler",
-      "source": "src_coci_hashing_init_py",
+      "source": "d_sai_hpc_project_adaptive_ring_checkpointing_src_coci_hashing_init_py",
       "target": "init_create_recovery_scheduler",
       "confidence_score": 1.0
     },
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\coci\\hashing\\__init__.py",
+      "source_file": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\src\\coci\\hashing\\__init__.py",
       "source_location": "L28",
       "weight": 1.0,
       "_src": "init_rationale_28",

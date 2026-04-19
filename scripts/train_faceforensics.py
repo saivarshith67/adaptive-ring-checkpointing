@@ -1352,6 +1352,8 @@ Examples:
 
             def checkpoint_callback(_batch_idx: int, batch_loss: float):
                 nonlocal global_step
+                nonlocal calibrated_checkpoint_cost_sec
+                nonlocal checkpoint_cost_calibration_count
                 global_step += 1
 
                 if convergence_scheduler is None:
