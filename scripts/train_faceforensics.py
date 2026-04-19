@@ -1344,76 +1344,83 @@ Examples:
 
     def maybe_inject_runtime_fault(checkpoint_label: str) -> None:
         nonlocal runtime_fault_saves_seen, runtime_fault_triggered
+        should_raise = False
 
-        if not args.runtime_fault_injection or runtime_fault_triggered:
-            return
+        if args.runtime_fault_injection and not runtime_fault_triggered:
+            if is_main_process():
+                runtime_fault_saves_seen += 1
+                if runtime_fault_saves_seen >= args.runtime_fault_after_checkpoints:
+                    runtime_fault_cfg = replace(
+                        fault_cfg,
+                        enabled=True,
+                        num_processes=world_size,
+                    )
+                    runtime_injector = CheckpointBitFlipInjector(
+                        config=runtime_fault_cfg,
+                        rank=rank,
+                        world_size=world_size,
+                        dt_mechanism="runtime",
+                    )
 
-        if not is_main_process():
-            return
+                    model_state = copy.deepcopy(
+                        model.module.state_dict()
+                        if isinstance(model, DDP)
+                        else model.state_dict()
+                    )
+                    optimizer_state = copy.deepcopy(optimizer.state_dict())
+                    runtime_checkpoint = {
+                        "epoch": epoch + 1,
+                        "model_state_dict": model_state,
+                        "optimizer_state_dict": optimizer_state,
+                        "loss": 0.0,
+                        "checkpoint_id": f"runtime_{checkpoint_label}",
+                    }
+                    runtime_path = os.path.join(
+                        args.checkpoint_dir, f"runtime_fault_{checkpoint_label}.pt"
+                    )
+                    runtime_injector.inject(runtime_checkpoint, runtime_path)
 
-        runtime_fault_saves_seen += 1
-        if runtime_fault_saves_seen < args.runtime_fault_after_checkpoints:
-            return
+                    load_target = model.module if isinstance(model, DDP) else model
+                    load_target.load_state_dict(runtime_checkpoint["model_state_dict"])
+                    optimizer.load_state_dict(runtime_checkpoint["optimizer_state_dict"])
 
-        runtime_fault_cfg = replace(
-            fault_cfg,
-            enabled=True,
-            num_processes=world_size,
-        )
-        runtime_injector = CheckpointBitFlipInjector(
-            config=runtime_fault_cfg,
-            rank=rank,
-            world_size=world_size,
-            dt_mechanism="runtime",
-        )
+                    runtime_fault_triggered = True
+                    fault_wall_time = time.time()
+                    metrics.record_runtime_fault(
+                        checkpoint_id=checkpoint_label,
+                        epoch=epoch + 1,
+                        global_step=global_step,
+                        wall_time_sec=fault_wall_time,
+                    )
+                    save_recovery_context(
+                        args.checkpoint_dir,
+                        {
+                            "checkpoint_label": checkpoint_label,
+                            "fault_epoch": epoch + 1,
+                            "fault_global_step": global_step,
+                            "fault_wall_time_sec": fault_wall_time,
+                            "runtime_fault_after_checkpoints": runtime_fault_saves_seen,
+                            "crash_after_injection": args.runtime_fault_crash_after_injection,
+                            "training_mode": active_training_mode,
+                        },
+                    )
+                    log_on_main(
+                        "  [Runtime Fault] Injected live checkpoint fault "
+                        f"after {runtime_fault_saves_seen} saved checkpoint(s) "
+                        f"at {checkpoint_label} | crash_after_injection={args.runtime_fault_crash_after_injection}"
+                    )
+                    should_raise = args.runtime_fault_crash_after_injection
 
-        model_state = copy.deepcopy(
-            model.module.state_dict() if isinstance(model, DDP) else model.state_dict()
-        )
-        optimizer_state = copy.deepcopy(optimizer.state_dict())
-        runtime_checkpoint = {
-            "epoch": epoch + 1,
-            "model_state_dict": model_state,
-            "optimizer_state_dict": optimizer_state,
-            "loss": 0.0,
-            "checkpoint_id": f"runtime_{checkpoint_label}",
-        }
-        runtime_path = os.path.join(
-            args.checkpoint_dir, f"runtime_fault_{checkpoint_label}.pt"
-        )
-        runtime_injector.inject(runtime_checkpoint, runtime_path)
+            if is_distributed_initialized():
+                crash_flag = torch.tensor(
+                    [1 if should_raise else 0],
+                    device=device,
+                    dtype=torch.int32,
+                )
+                torch.distributed.broadcast(crash_flag, src=0)
+                should_raise = bool(crash_flag.item())
 
-        load_target = model.module if isinstance(model, DDP) else model
-        load_target.load_state_dict(runtime_checkpoint["model_state_dict"])
-        optimizer.load_state_dict(runtime_checkpoint["optimizer_state_dict"])
-
-        runtime_fault_triggered = True
-        fault_wall_time = time.time()
-        metrics.record_runtime_fault(
-            checkpoint_id=checkpoint_label,
-            epoch=epoch + 1,
-            global_step=global_step,
-            wall_time_sec=fault_wall_time,
-        )
-        save_recovery_context(
-            args.checkpoint_dir,
-            {
-                "checkpoint_label": checkpoint_label,
-                "fault_epoch": epoch + 1,
-                "fault_global_step": global_step,
-                "fault_wall_time_sec": fault_wall_time,
-                "runtime_fault_after_checkpoints": runtime_fault_saves_seen,
-                "crash_after_injection": args.runtime_fault_crash_after_injection,
-                "training_mode": active_training_mode,
-            },
-        )
-        log_on_main(
-            "  [Runtime Fault] Injected live checkpoint fault "
-            f"after {runtime_fault_saves_seen} saved checkpoint(s) "
-            f"at {checkpoint_label} | crash_after_injection={args.runtime_fault_crash_after_injection}"
-        )
-
-        if args.runtime_fault_crash_after_injection:
+        if should_raise:
             raise RuntimeError(
                 "Injected runtime fault for fault-tolerance recovery test"
             )
