@@ -1724,18 +1724,31 @@ Examples:
                 global_step=global_step,
             )
 
-            # Emergency checkpoint save with current epoch and val_loss
-            checkpoint_manager.save(
-                model, optimizer, epoch, val_loss if "val_loss" in dir() else 0.0
+            # A deliberate runtime fault is raised immediately after a normal
+            # checkpoint save. Writing an extra emergency checkpoint here would
+            # become the newest checkpoint and hide the intended recovery point.
+            injected_runtime_fault = (
+                str(e) == "Injected runtime fault for fault-tolerance recovery test"
             )
-            sync_hash_ring_metrics()
+
+            if not injected_runtime_fault:
+                checkpoint_manager.save(
+                    model, optimizer, epoch, val_loss if "val_loss" in dir() else 0.0
+                )
+                sync_hash_ring_metrics()
 
             if use_hash_ring:
                 checkpoint_manager.stop_heartbeat_thread()
 
             # Log error
             log_on_main(f"Training failed at epoch {epoch}: {e}")
-            log_on_main("Saving emergency checkpoint and exiting...")
+            if injected_runtime_fault:
+                log_on_main(
+                    "Runtime fault test triggered after a normal checkpoint save. "
+                    "Exiting so the runner can restart from the intended checkpoint..."
+                )
+            else:
+                log_on_main("Saving emergency checkpoint and exiting...")
 
             # Re-raise to trigger torchrun restart
             raise
