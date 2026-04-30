@@ -1,0 +1,5 @@
+Mode,Recovery Success,Resume Source,Resumed From Epoch,Resume Time (s)
+Epoch,1,central-storage,10,55.05
+Convergence,1,central-storage,17,54.06
+Hash-Ring Epoch,1,local-cache,20,60.26
+Convergence + Hash Ring,1,local-cache,20,36.36

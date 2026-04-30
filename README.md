@@ -61,14 +61,92 @@ bash scripts/run_faceforensics_hashring_epoch.sh
 bash scripts/run_faceforensics_convergence_hashring.sh
 ```
 
-### 7) Fault Injection Test
+### 7) Reproducible Fault-Tolerance Metrics Runs
+
+Use the shell runners with an experiment profile.
+
+#### Baseline Runs
+
+These runs measure no-failure training cost and model quality:
+
+```bash
+EXPERIMENT_PROFILE=baseline bash scripts/run_faceforensics_epoch.sh
+EXPERIMENT_PROFILE=baseline bash scripts/run_faceforensics_convergence.sh
+EXPERIMENT_PROFILE=baseline bash scripts/run_faceforensics_hashring_epoch.sh
+EXPERIMENT_PROFILE=baseline bash scripts/run_faceforensics_convergence_hashring.sh
+```
+
+#### Resilience Runs
+
+These runs inject a runtime fault, restart automatically, and capture recovery metrics:
+
+```bash
+EXPERIMENT_PROFILE=resilience bash scripts/run_faceforensics_epoch.sh
+EXPERIMENT_PROFILE=resilience bash scripts/run_faceforensics_convergence.sh
+EXPERIMENT_PROFILE=resilience bash scripts/run_faceforensics_hashring_epoch.sh
+EXPERIMENT_PROFILE=resilience bash scripts/run_faceforensics_convergence_hashring.sh
+```
+
+#### Failure Timing Sweep
+
+Early fault:
+
+```bash
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=1 bash scripts/run_faceforensics_epoch.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=1 bash scripts/run_faceforensics_convergence.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=1 bash scripts/run_faceforensics_hashring_epoch.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=1 bash scripts/run_faceforensics_convergence_hashring.sh
+```
+
+Mid fault:
+
+```bash
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=3 bash scripts/run_faceforensics_epoch.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=3 bash scripts/run_faceforensics_convergence.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=3 bash scripts/run_faceforensics_hashring_epoch.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=3 bash scripts/run_faceforensics_convergence_hashring.sh
+```
+
+Late fault:
+
+```bash
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=5 bash scripts/run_faceforensics_epoch.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=5 bash scripts/run_faceforensics_convergence.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=5 bash scripts/run_faceforensics_hashring_epoch.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=5 bash scripts/run_faceforensics_convergence_hashring.sh
+```
+
+Run each resilience configuration at least 3 times, ideally 5 times, before comparing methods.
+
+#### Metrics Output
+
+Use these outputs for analysis:
+
+- [experiment_results/experiment_summaries.jsonl](experiment_results/experiment_summaries.jsonl)
+- per-run JSON, Markdown, HTML, and CSV files under `experiment_results/`
+- [RESILIENCE_EXPERIMENT_PROTOCOL.md](RESILIENCE_EXPERIMENT_PROTOCOL.md)
+
+Important resilience metrics to compare:
+
+- `resume_succeeded`
+- `time_to_resume_sec`
+- `rollback_epochs`
+- `rollback_steps`
+- `resume_load_source`
+- `local_cache_loads`
+- `central_storage_loads`
+- `recovered_successfully`
+- `checkpoint_overhead_percent`
+- `final_val_accuracy`
+
+### 8) Fault Injection Test
 
 ```bash
 bash scripts/test_fault_tolerance.sh 1
 bash scripts/test_fault_tolerance.sh 2
 ```
 
-### 8) Common Useful Flags
+### 9) Common Useful Flags
 
 ```bash
 --epochs 20 --batch-size 2 --num-workers 4

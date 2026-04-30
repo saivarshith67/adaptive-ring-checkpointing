@@ -1,0 +1,15 @@
+{
+  "full_training_modes": [
+    "epoch",
+    "convergence",
+    "hash-ring-epoch",
+    "convergence-hash-ring"
+  ],
+  "recovery_modes": [
+    "epoch",
+    "convergence",
+    "hash-ring-epoch",
+    "convergence-hash-ring"
+  ],
+  "output_dir": "D:\\Sai\\HPC\\project\\adaptive-ring-checkpointing\\experiment_results\\review2_assets"
+}

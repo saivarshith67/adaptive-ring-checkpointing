@@ -27,6 +27,18 @@ class HashRingCheckpointManager:
         self.node_id = node_id
         self.all_node_ids = all_node_ids
         self.cache_root = cache_root
+        self.last_load_metadata = None
+        self.last_save_metadata = None
+        self.local_cache_hits = 0
+        self.local_cache_misses = 0
+        self.local_cache_loads = 0
+        self.central_storage_loads = 0
+        self.cache_write_count = 0
+        self.orphaned_shards = 0
+        self.reassigned_shards = 0
+        self.recached_shards = 0
+        self.shard_recovery_count = 0
+        self.recovery_time_sec = 0.0
 
         self.base_manager = CheckpointManager(
             checkpoint_dir=checkpoint_dir,
@@ -108,6 +120,7 @@ class HashRingCheckpointManager:
             metric=metric,
             checkpoint_id=checkpoint_id,
         )
+        self.last_save_metadata = self.base_manager.last_save_metadata
 
         self._register_shard_if_needed(epoch, checkpoint_id)
         shard_id = self._shard_id(epoch, checkpoint_id)
@@ -121,6 +134,7 @@ class HashRingCheckpointManager:
             state_dict = torch.load(path, map_location="cpu")
             cached = self.shard_manager.cache_shard(shard_id, state_dict)
             if cached:
+                self.cache_write_count += 1
                 self.shard_manager.verify_shard(shard_id)
         except Exception:
             # Central checkpoint remains authoritative.
@@ -159,6 +173,15 @@ class HashRingCheckpointManager:
         if self.shard_manager.get_owner(shard_id) == self.node_id:
             cached = self.shard_manager.load_cached_shard(shard_id)
             if cached is not None:
+                self.local_cache_hits += 1
+                self.local_cache_loads += 1
+                self.last_load_metadata = {
+                    "path": path,
+                    "epoch": epoch,
+                    "checkpoint_id": checkpoint_id,
+                    "metric": checkpoint.get("metric", 0.0) if "checkpoint" in locals() else 0.0,
+                    "load_source": "local-cache",
+                }
                 return self._restore(
                     cached,
                     model,
@@ -166,14 +189,18 @@ class HashRingCheckpointManager:
                     checkpoint_path=path,
                     checkpoint_injector=checkpoint_injector,
                 )
+            self.local_cache_misses += 1
 
         # Fallback path if local ring cache is not available.
-        return self.base_manager.load_latest(
+        self.central_storage_loads += 1
+        result = self.base_manager.load_latest(
             model,
             optimizer,
             device,
             checkpoint_injector=checkpoint_injector,
         )
+        self.last_load_metadata = self.base_manager.last_load_metadata
+        return result
 
     def start_heartbeat_thread(self, rank: int, world_size: int) -> None:
         """Start the heartbeat fault-detection thread for liveness monitoring.
@@ -193,3 +220,34 @@ class HashRingCheckpointManager:
         """
         if self.fault_detector is not None:
             self.fault_detector.stop_heartbeat_thread(timeout=timeout)
+
+    def get_runtime_metrics(self):
+        """Return runtime metrics for resilience analysis and reporting."""
+        cache_usage = self.shard_manager.get_cache_usage()
+        total_shards = len(self.shard_manager.get_all_shards())
+        shards_owned = sum(
+            1
+            for shard_id in self.shard_manager.get_all_shards()
+            if self.shard_manager.get_owner(shard_id) == self.node_id
+        )
+        return {
+            "load_source": (
+                self.last_load_metadata.get("load_source")
+                if self.last_load_metadata
+                else "central-storage"
+            ),
+            "local_cache_hits": self.local_cache_hits,
+            "local_cache_misses": self.local_cache_misses,
+            "local_cache_loads": self.local_cache_loads,
+            "central_storage_loads": self.central_storage_loads,
+            "cache_write_count": self.cache_write_count,
+            "total_shards": total_shards,
+            "cache_size_mb": cache_usage["total_bytes"] / (1024 * 1024),
+            "max_cache_size_mb": cache_usage["total_bytes"] / (1024 * 1024),
+            "shards_owned": shards_owned,
+            "orphaned_shards": self.orphaned_shards,
+            "reassigned_shards": self.reassigned_shards,
+            "recached_shards": self.recached_shards,
+            "shard_recovery_count": self.shard_recovery_count,
+            "recovery_time_sec": self.recovery_time_sec,
+        }

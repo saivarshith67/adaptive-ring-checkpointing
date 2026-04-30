@@ -4,6 +4,9 @@
 # FaceForensics++ Deepfake Detection Training (Hash-Ring Mode)
 # ------------------------------------------------------------
 
+EXPERIMENT_PROFILE=${EXPERIMENT_PROFILE:-baseline}
+RESTART_DELAY_SEC=${RESTART_DELAY_SEC:-5}
+
 # --- Parse Arguments ---
 # Usage:
 #   ./scripts/run_faceforensics_hash_ring.sh           # auto-detect GPUs
@@ -100,8 +103,10 @@ EXTRA_FLAGS=""
 
 # --- Checkpoint Fault Injection Settings (latest module in train_faceforensics.py) ---
 # Note: injection is applied during checkpoint load, so resume must be enabled.
-ENABLE_FAULT_INJECTION=true
-AUTO_RESUME=true
+ENABLE_FAULT_INJECTION=false
+AUTO_RESUME=false
+ENABLE_RUNTIME_FAULT_INJECTION=false
+RUNTIME_FAULT_AFTER_CHECKPOINTS=${RUNTIME_FAULT_AFTER_CHECKPOINTS:-1}
 # Fault type selection (uncomment exactly one)
 FAULT_TYPE="RANDOM_BIT"
 # FAULT_TYPE="SPECIFIC_BIT"   # Requires FAULT_SPECIFIC_BIT to be set
@@ -117,11 +122,23 @@ FAULT_TARGET_LAYERS=""
 FAULT_SPECIFIC_BIT=""
 FAULT_SEED=42
 
+EXTRA_FLAGS=${EXTRA_FLAGS:-""}
+
+if [ "$EXPERIMENT_PROFILE" = "resilience" ]; then
+    AUTO_RESUME=true
+    ENABLE_RUNTIME_FAULT_INJECTION=true
+elif [ "$EXPERIMENT_PROFILE" != "baseline" ]; then
+    echo "Unsupported EXPERIMENT_PROFILE: $EXPERIMENT_PROFILE"
+    echo "Use 'baseline' or 'resilience'."
+    exit 1
+fi
+
 # --- Run Training ---
 echo ""
 echo "=================================================="
 echo "FaceForensics++ Deepfake Detection Training"
 echo "=================================================="
+echo "  Profile:            $EXPERIMENT_PROFILE"
 echo "  GPUs:               $NUM_GPUS"
 if [ "$USE_FAST_VIDEO_MODE" = true ]; then
     echo "  Mode:               Fast Video ($NUM_FRAMES frames, pre-extracted)"
@@ -139,6 +156,7 @@ echo "  Checkpoint Mode:    $CHECKPOINT_MODE"
 echo "  Hash Ring VNodes:   $HASH_RING_VIRTUAL_NODES"
 echo "  Hash Ring Cache:    $HASH_RING_CACHE_DIR"
 echo "  Fault Inject:       $ENABLE_FAULT_INJECTION"
+echo "  Runtime Fault:      $ENABLE_RUNTIME_FAULT_INJECTION"
 if [ "$ENABLE_FAULT_INJECTION" = true ]; then
     echo "  Fault Type:         $FAULT_TYPE"
     echo "  Fault Loc:          $FAULT_LOCATION"
@@ -177,6 +195,10 @@ if [ "$AUTO_RESUME" = true ]; then
     CMD="$CMD --resume"
 fi
 
+if [ "$ENABLE_RUNTIME_FAULT_INJECTION" = true ]; then
+    CMD="$CMD --runtime-fault-injection --runtime-fault-after-checkpoints $RUNTIME_FAULT_AFTER_CHECKPOINTS"
+fi
+
 if [ "$ENABLE_FAULT_INJECTION" = true ]; then
     CMD="$CMD --fault-type $FAULT_TYPE --fault-location $FAULT_LOCATION --fault-probability $FAULT_PROBABILITY --fault-bit-flips $FAULT_BIT_FLIPS --fault-num-processes $FAULT_NUM_PROCESSES --fault-log-path \"$FAULT_LOG_PATH\" --fault-seed $FAULT_SEED"
     if [ -n "$FAULT_BIT_RANGE" ]; then
@@ -211,6 +233,6 @@ while true; do
     fi
 
     echo ""
-    echo "Training exited with code $EXIT_CODE. Restarting in 5 seconds..."
-    sleep 5
+    echo "Training exited with code $EXIT_CODE. Restarting in $RESTART_DELAY_SEC seconds..."
+    sleep "$RESTART_DELAY_SEC"
 done
