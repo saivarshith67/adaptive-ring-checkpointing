@@ -12,7 +12,10 @@ import numpy as np
 from src.coci.models.model import get_model
 from src.coci.data_ingestor.cifar import get_cifar100_dataset
 from src.coci.config import load_config
-from src.coci.checkpointing.checkpoint_manager import CheckpointManager
+from src.coci.checkpointing.framework_checkpoint_manager import (
+    FRAMEWORK_BACKENDS,
+    create_checkpoint_manager,
+)
 from src.coci.checkpointing.strategy import CheckpointStrategyFactory
 from src.coci.metrics import MetricsCollector, MetricsExporter
 from src.coci.fault.checkpoint_fault_injector import (
@@ -40,6 +43,22 @@ def train(
     inject_fault=False,
     start_epoch=0,
 ):
+    epoch_style_strategies = {"epoch"} | FRAMEWORK_BACKENDS
+
+    def sync_checkpoint_runtime_metrics():
+        if metrics is None:
+            return
+        runtime_metrics = getattr(checkpoint_manager, "get_runtime_metrics", lambda: {})()
+        if not runtime_metrics:
+            return
+        metrics.update_framework_checkpoint_metrics(
+            checkpoint_backend=runtime_metrics.get("checkpoint_backend", cfg.strategy),
+            framework_save_count=runtime_metrics.get("framework_save_count", 0),
+            framework_load_count=runtime_metrics.get("framework_load_count", 0),
+            artifact_log_count=runtime_metrics.get("artifact_log_count", 0),
+            framework_delegated=runtime_metrics.get("framework_delegated", False),
+            last_checkpoint_path=runtime_metrics.get("last_checkpoint_path"),
+        )
 
     for epoch in range(start_epoch, cfg.epochs):
         if metrics:
@@ -72,7 +91,7 @@ def train(
             # -------------------------
             # Time-based checkpointing
             # -------------------------
-            if cfg.strategy != "epoch":
+            if cfg.strategy not in epoch_style_strategies:
                 if strategy.should_checkpoint():
                     ckpt_start = time.time()
                     checkpoint_manager.save(model, optimizer, epoch, total_loss)
@@ -80,6 +99,7 @@ def train(
                     
                     if metrics:
                         metrics.record_batch_checkpoint(batch_id=batch_idx, checkpoint_size_mb=0.0, save_time_sec=ckpt_time)
+                        sync_checkpoint_runtime_metrics()
                     
                     strategy.update_checkpoint_time()
 
@@ -115,13 +135,14 @@ def train(
         # -------------------------
         # Epoch-based checkpointing
         # -------------------------
-        if cfg.strategy == "epoch":
+        if cfg.strategy in epoch_style_strategies:
             ckpt_start = time.time()
             checkpoint_manager.save(model, optimizer, epoch, train_loss)
             ckpt_time = time.time() - ckpt_start
             
             if metrics:
                 metrics.record_checkpoint(checkpoint_size_mb=0.0, save_time_sec=ckpt_time)
+                sync_checkpoint_runtime_metrics()
 
     return True
 
@@ -224,7 +245,9 @@ def main():
     # -------------------------
     # Checkpoint Manager
     # -------------------------
-    checkpoint_manager = CheckpointManager()
+    checkpoint_manager = create_checkpoint_manager(
+        backend=cfg.strategy if cfg.strategy in FRAMEWORK_BACKENDS else "normal",
+    )
 
     bit_range = None
     if args.fault_bit_range:
@@ -305,6 +328,9 @@ def main():
     )
     
     metrics.set_distributed_config(world_size=1)
+    metrics.update_framework_checkpoint_metrics(
+        checkpoint_backend=cfg.strategy if cfg.strategy in FRAMEWORK_BACKENDS else "normal"
+    )
     print(f"Metrics collection enabled | experiment: {experiment_name}")
 
     # -------------------------

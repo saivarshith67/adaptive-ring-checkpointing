@@ -6,6 +6,7 @@ from .collector import (
     EpochMetrics,
     ConvergenceMetrics,
     HashRingMetrics,
+    FrameworkCheckpointMetrics,
     FaultMetrics,
     DistributedMetrics,
 )
@@ -18,6 +19,7 @@ __all__ = [
     "EpochMetrics",
     "ConvergenceMetrics",
     "HashRingMetrics",
+    "FrameworkCheckpointMetrics",
     "FaultMetrics",
     "DistributedMetrics",
 ]

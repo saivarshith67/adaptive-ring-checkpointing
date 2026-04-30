@@ -82,8 +82,11 @@ from src.coci.data_ingestor.faceforensics import (
     precompute_face_crops,
     preextract_frames,
 )
-from src.coci.checkpointing.checkpoint_manager import CheckpointManager
 from src.coci.checkpointing.hash_ring_checkpoint_manager import HashRingCheckpointManager
+from src.coci.checkpointing.framework_checkpoint_manager import (
+    FRAMEWORK_BACKENDS,
+    create_checkpoint_manager,
+)
 from src.coci.checkpointing.convergence_scheduler import ConvergenceAwareScheduler
 from src.coci.hashing import create_hash_ring, HashRing
 from src.coci.metrics import MetricsCollector, MetricsExporter
@@ -127,6 +130,18 @@ TRAINING_MODE_EPOCH = "epoch"
 TRAINING_MODE_CONVERGENCE = "convergence"
 TRAINING_MODE_HASH_RING_EPOCH = "hash-ring-epoch"
 TRAINING_MODE_CONVERGENCE_HASH_RING = "convergence-hash-ring"
+TRAINING_MODE_PYTORCH_LIGHTNING = "pytorch-lightning"
+TRAINING_MODE_HF_TRAINER = "hf-trainer"
+TRAINING_MODE_DEEPSPEED = "deepspeed"
+TRAINING_MODE_FSDP = "fsdp"
+TRAINING_MODE_WANDB_ARTIFACTS = "wandb-artifacts"
+FRAMEWORK_TRAINING_MODES = {
+    TRAINING_MODE_PYTORCH_LIGHTNING,
+    TRAINING_MODE_HF_TRAINER,
+    TRAINING_MODE_DEEPSPEED,
+    TRAINING_MODE_FSDP,
+    TRAINING_MODE_WANDB_ARTIFACTS,
+}
 RECOVERY_CONTEXT_FILENAME = "recovery_context.json"
 
 
@@ -704,20 +719,27 @@ Examples:
             TRAINING_MODE_CONVERGENCE,
             TRAINING_MODE_HASH_RING_EPOCH,
             TRAINING_MODE_CONVERGENCE_HASH_RING,
+            TRAINING_MODE_PYTORCH_LIGHTNING,
+            TRAINING_MODE_HF_TRAINER,
+            TRAINING_MODE_DEEPSPEED,
+            TRAINING_MODE_FSDP,
+            TRAINING_MODE_WANDB_ARTIFACTS,
         ],
         help=(
             "Checkpoint behavior mode. "
             "epoch=epoch checkpoints only, "
             "convergence=COCI timing + normal storage, "
             "hash-ring-epoch=epoch timing + hash ring storage, "
-            "convergence-hash-ring=COCI timing + hash ring storage"
+            "convergence-hash-ring=COCI timing + hash ring storage, "
+            "pytorch-lightning/hf-trainer/deepspeed/fsdp/wandb-artifacts="
+            "epoch timing + framework-native storage when available"
         ),
     )
     parser.add_argument(
         "--checkpoint-mode",
         type=str,
         default="normal",
-        choices=["normal", "hash-ring"],
+        choices=["normal", "hash-ring"] + sorted(FRAMEWORK_BACKENDS),
         help="Legacy backend selector (default: normal)",
     )
     parser.add_argument(
@@ -824,6 +846,8 @@ Examples:
     if args.training_mode is None:
         if args.checkpoint_mode == "hash-ring":
             active_training_mode = TRAINING_MODE_HASH_RING_EPOCH
+        elif args.checkpoint_mode in FRAMEWORK_BACKENDS:
+            active_training_mode = args.checkpoint_mode
         else:
             active_training_mode = TRAINING_MODE_EPOCH
     else:
@@ -833,6 +857,7 @@ Examples:
         TRAINING_MODE_HASH_RING_EPOCH,
         TRAINING_MODE_CONVERGENCE_HASH_RING,
     }
+    use_framework_checkpointing = active_training_mode in FRAMEWORK_TRAINING_MODES
     use_convergence = active_training_mode in {
         TRAINING_MODE_CONVERGENCE,
         TRAINING_MODE_CONVERGENCE_HASH_RING,
@@ -1202,10 +1227,15 @@ Examples:
             f"Hash ring checkpointing enabled | cache_root={args.hash_ring_cache_dir} | vnodes={args.hash_ring_virtual_nodes}"
         )
     else:
-        checkpoint_manager = CheckpointManager(
+        checkpoint_manager = create_checkpoint_manager(
+            backend=active_training_mode if use_framework_checkpointing else "normal",
             checkpoint_dir=args.checkpoint_dir,
             is_ddp_wrapped=True,
         )
+        if use_framework_checkpointing:
+            log_on_main(
+                f"Framework checkpointing enabled | backend={active_training_mode}"
+            )
 
     # Start heartbeat thread for hash-ring systems
     if use_hash_ring:
@@ -1259,6 +1289,17 @@ Examples:
         runtime_metrics = getattr(checkpoint_manager, "get_runtime_metrics", lambda: {})()
         if not runtime_metrics:
             return
+        metrics.update_framework_checkpoint_metrics(
+            checkpoint_backend=runtime_metrics.get(
+                "checkpoint_backend",
+                active_training_mode if use_framework_checkpointing else "normal",
+            ),
+            framework_save_count=runtime_metrics.get("framework_save_count", 0),
+            framework_load_count=runtime_metrics.get("framework_load_count", 0),
+            artifact_log_count=runtime_metrics.get("artifact_log_count", 0),
+            framework_delegated=runtime_metrics.get("framework_delegated", False),
+            last_checkpoint_path=runtime_metrics.get("last_checkpoint_path"),
+        )
         metrics.update_hash_ring_metrics(
             total_shards=runtime_metrics.get("total_shards", 0),
             cache_size_mb=runtime_metrics.get("cache_size_mb", 0.0),
