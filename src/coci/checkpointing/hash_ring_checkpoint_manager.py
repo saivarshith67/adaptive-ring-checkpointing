@@ -100,7 +100,8 @@ class HashRingCheckpointManager:
         optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
         epoch = checkpoint["epoch"]
         best_metric = checkpoint.get("metric", 0.0)
-        return epoch + 1, best_metric
+        # epoch from checkpoint is 1-indexed (epochs completed)
+        return epoch, best_metric
 
     def save(
         self,

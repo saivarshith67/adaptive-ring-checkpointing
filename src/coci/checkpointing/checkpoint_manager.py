@@ -149,7 +149,9 @@ class CheckpointManager:
         )
 
         # Return next epoch to train and best metric for proper checkpoint tracking
-        return epoch + 1, best_metric
+        # epoch from checkpoint is 1-indexed (epochs completed), which equals
+        # the next epoch to run (0-indexed)
+        return epoch, best_metric
 
     def get_runtime_metrics(self):
         """Return checkpoint-manager runtime metrics in a hash-ring-compatible shape."""

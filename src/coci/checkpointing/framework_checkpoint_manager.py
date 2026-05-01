@@ -408,7 +408,8 @@ class FrameworkCheckpointManager(CheckpointManager):
                     "load_source": self.backend,
                     "checkpoint_backend": self.backend,
                 }
-                return epoch + 1, best_metric
+                # epoch from checkpoint is 1-indexed (epochs completed)
+                return epoch, best_metric
 
         result = super().load_latest(
             model,
