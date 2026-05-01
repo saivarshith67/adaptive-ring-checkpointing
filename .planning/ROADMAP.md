@@ -304,11 +304,12 @@
 4. Helper script available for generating consistent future experiment names
 5. No data is lost during migration
 
-**Plans:** 3/3 plans complete
+**Plans:** 4 plans (3 complete, 1 gap closure pending)
 
-- [ ] 13-01-PLAN.md — Parse experiments and create migration script
-- [ ] 13-02-PLAN.md — Execute migration and update indexes
-- [ ] 13-03-PLAN.md — Create documentation and helper tools
+- [x] 13-01-PLAN.md — Parse experiments and create migration script
+- [x] 13-02-PLAN.md — Execute migration and update indexes
+- [x] 13-03-PLAN.md — Create documentation and helper tools
+- [ ] 13-04-PLAN.md — Integrate experiment_helpers with training scripts (gap closure)
 
 ---
 
