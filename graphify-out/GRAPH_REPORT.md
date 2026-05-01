@@ -1,11 +1,11 @@
-# Graph Report - D:\Sai\HPC\project\adaptive-ring-checkpointing  (2026-04-30)
+# Graph Report - D:\Sai\HPC\project\adaptive-ring-checkpointing  (2026-05-01)
 
 ## Corpus Check
-- 35 files · ~86,694 words
+- 35 files · ~136,131 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 573 nodes · 1234 edges · 86 communities detected
+- 573 nodes · 1234 edges · 82 communities detected
 - Extraction: 46% EXTRACTED · 54% INFERRED · 0% AMBIGUOUS · INFERRED: 665 edges (avg confidence: 0.58)
 - Token cost: 0 input · 0 output
 
@@ -92,10 +92,6 @@
 - [[_COMMUNITY_Community 79|Community 79]]
 - [[_COMMUNITY_Community 80|Community 80]]
 - [[_COMMUNITY_Community 81|Community 81]]
-- [[_COMMUNITY_Community 82|Community 82]]
-- [[_COMMUNITY_Community 83|Community 83]]
-- [[_COMMUNITY_Community 84|Community 84]]
-- [[_COMMUNITY_Community 85|Community 85]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `CheckpointBitFlipInjector` - 68 edges
@@ -124,24 +120,24 @@
 ## Communities
 
 ### Community 0 - "Community 0"
+Cohesion: 0.05
+Nodes (104): CheckpointBitFlipInjector, CheckpointFaultConfig, enforce_determinism(), FaultType, Force deterministic behavior to isolate bit-flip impact from training noise., Inject bit-flips into checkpoint tensors before model/optimizer restore., CheckpointManager, Return checkpoint-manager runtime metrics in a hash-ring-compatible shape. (+96 more)
+
+### Community 1 - "Community 1"
 Cohesion: 0.03
 Nodes (81): get_cifar100_dataset(), ConvergenceMetrics, DistributedMetrics, EpochMetrics, ExperimentSummary, FaultMetrics, FrameworkCheckpointMetrics, HashRingMetrics (+73 more)
 
-### Community 1 - "Community 1"
-Cohesion: 0.07
-Nodes (87): CheckpointBitFlipInjector, CheckpointFaultConfig, FaultType, Inject bit-flips into checkpoint tensors before model/optimizer restore., CheckpointManager, Return checkpoint-manager runtime metrics in a hash-ring-compatible shape., ConvergenceAwareScheduler, ConvergenceFit (+79 more)
-
 ### Community 2 - "Community 2"
-Cohesion: 0.05
-Nodes (20): enforce_determinism(), Force deterministic behavior to isolate bit-flip impact from training noise., Enum, FaultDetector, NodeStatus, Broadcast heartbeat signals to all peers using dist.all_reduce.          Returns, Gather suspicion votes from all ranks using dist.all_gather.          Returns ag, Start background thread for periodic heartbeat broadcast.          Args: (+12 more)
+Cohesion: 0.06
+Nodes (18): Enum, FaultDetector, NodeStatus, Broadcast heartbeat signals to all peers using dist.all_reduce.          Returns, Gather suspicion votes from all ranks using dist.all_gather.          Returns ag, Start background thread for periodic heartbeat broadcast.          Args:, Stop the heartbeat thread gracefully.          Args:             timeout: Maximu, Background loop that periodically broadcasts heartbeats. (+10 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.05
-Nodes (43): Save a checkpoint.          Args:             model: The model to save (or DD, Record where a checkpoint was loaded from., Record detected fault., Record that a resume was attempted., Record a successful resume event and its rollback characteristics., Record the last observed failure state., Record recovery attempt.                  Args:             success: Whether, Record the latest known training progress for recovery metrics. (+35 more)
+Cohesion: 0.06
+Nodes (36): Save a checkpoint.          Args:             model: The model to save (or DD, Record where a checkpoint was loaded from., Record detected fault., Record that a resume was attempted., Record a successful resume event and its rollback characteristics., Record the last observed failure state., Record recovery attempt.                  Args:             success: Whether, Record the latest known training progress for recovery metrics. (+28 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.09
-Nodes (11): ElasticRecaching, HashRingCheckpointManager, Checkpoint manager that layers hash-ring local shard caching over normal checkpo, Start the heartbeat fault-detection thread for liveness monitoring.          A, Stop the heartbeat fault-detection thread gracefully.          Args:, Return runtime metrics for resilience analysis and reporting., Write shard to local NVMe cache with atomic rename pattern., Load shard from local cache with verification. (+3 more)
+Cohesion: 0.08
+Nodes (13): preextract_frames(), Pre-extract frames from videos and save as .npy files.      This function proc, ElasticRecaching, HashRingCheckpointManager, Checkpoint manager that layers hash-ring local shard caching over normal checkpo, Start the heartbeat fault-detection thread for liveness monitoring.          A, Stop the heartbeat fault-detection thread gracefully.          Args:, Return runtime metrics for resilience analysis and reporting. (+5 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.14
@@ -160,40 +156,40 @@ Cohesion: 0.24
 Nodes (8): get_efficientnet_binary(), get_model(), get_multiframe_model(), MultiFrameModel, Multi-frame video classification model.      Processes multiple frames through, Forward pass.          Args:             x: Input tensor of shape (B, T, C, H, Create EfficientNet-B0 model for binary classification.      Args:         pr, Create a multi-frame model for video-level deepfake detection.      This model
 
 ### Community 9 - "Community 9"
-Cohesion: 0.22
-Nodes (5): get_faceforensics_transforms(), Load samples from pre-computed crop cache., Set up for on-the-fly MTCNN detection (slow)., Get transforms for FaceForensics++ face images.      Args:         include_re, Load all .npy file paths from real/fake directories.
-
-### Community 10 - "Community 10"
-Cohesion: 0.33
-Nodes (2): Dataset, ImageDataset
-
-### Community 11 - "Community 11"
 Cohesion: 0.33
 Nodes (3): Load all image paths from the dataset directory., Recursively collect image paths from video folder structure., Load images from flat directory structure.
 
-### Community 12 - "Community 12"
+### Community 10 - "Community 10"
 Cohesion: 0.33
 Nodes (3): Get a single sample from the dataset.          If using pre-computed crops (re, Load pre-computed face crop from numpy file., Detect face using MTCNN (slow).
 
-### Community 13 - "Community 13"
+### Community 11 - "Community 11"
 Cohesion: 0.33
 Nodes (2): FaultInjector, Rank-aware fault injector for simulating GPU/node failures.      Supports two
 
-### Community 14 - "Community 14"
+### Community 12 - "Community 12"
 Cohesion: 0.33
 Nodes (6): Adaptive Ring Checkpointing, Convergence-Aware Checkpointing (COCI), Soft Error Injection Mechanism, Hash Ring Checkpointing, Loss Curve Model (Exponential Decay), Piecewise Online Fitting (POF)
 
-### Community 15 - "Community 15"
+### Community 13 - "Community 13"
 Cohesion: 0.5
 Nodes (2): Get frames from a single video.          Args:             idx: Index of the, Load a single frame and apply transforms.
 
-### Community 16 - "Community 16"
+### Community 14 - "Community 14"
 Cohesion: 0.5
 Nodes (4): End-to-End Fault Tolerance Verification, Phase 4 - Exception Handling, Phase 5 - Fault Injection, Phase 6 - Checkpoint Recovery
 
+### Community 15 - "Community 15"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 16 - "Community 16"
+Cohesion: 1.0
+Nodes (0): 
+
 ### Community 17 - "Community 17"
 Cohesion: 1.0
-Nodes (2): Config, load_config()
+Nodes (0): 
 
 ### Community 18 - "Community 18"
 Cohesion: 1.0
@@ -201,7 +197,7 @@ Nodes (0):
 
 ### Community 19 - "Community 19"
 Cohesion: 1.0
-Nodes (1): Get frames from a single video.          Returns:             tuple: (frames_
+Nodes (0): 
 
 ### Community 20 - "Community 20"
 Cohesion: 1.0
@@ -225,396 +221,378 @@ Nodes (0):
 
 ### Community 25 - "Community 25"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Check if running in distributed mode.
 
 ### Community 26 - "Community 26"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Distributed training metrics.
 
 ### Community 27 - "Community 27"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Overall experiment summary.
 
 ### Community 28 - "Community 28"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Collects metrics throughout training for later export and analysis.
 
 ### Community 29 - "Community 29"
 Cohesion: 1.0
-Nodes (1): Check if running in distributed mode.
+Nodes (1): Initialize metrics collector.                  Args:             experiment_n
 
 ### Community 30 - "Community 30"
 Cohesion: 1.0
-Nodes (1): Distributed training metrics.
+Nodes (1): Mark the start of an epoch.
 
 ### Community 31 - "Community 31"
 Cohesion: 1.0
-Nodes (1): Overall experiment summary.
+Nodes (1): Record metrics for completed epoch.                  Args:             epoch:
 
 ### Community 32 - "Community 32"
 Cohesion: 1.0
-Nodes (1): Collects metrics throughout training for later export and analysis.
+Nodes (1): Record checkpoint metrics.                  Args:             checkpoint_size
 
 ### Community 33 - "Community 33"
 Cohesion: 1.0
-Nodes (1): Initialize metrics collector.                  Args:             experiment_n
+Nodes (1): Record in-epoch checkpoint metrics (e.g., convergence-based).
 
 ### Community 34 - "Community 34"
 Cohesion: 1.0
-Nodes (1): Mark the start of an epoch.
+Nodes (1): Update convergence-aware scheduler metrics.                  Args:
 
 ### Community 35 - "Community 35"
 Cohesion: 1.0
-Nodes (1): Record metrics for completed epoch.                  Args:             epoch:
+Nodes (1): Increment convergence-based checkpoint counter.
 
 ### Community 36 - "Community 36"
 Cohesion: 1.0
-Nodes (1): Record checkpoint metrics.                  Args:             checkpoint_size
+Nodes (1): Record that convergence fitting segment restarted (POF).
 
 ### Community 37 - "Community 37"
 Cohesion: 1.0
-Nodes (1): Record in-epoch checkpoint metrics (e.g., convergence-based).
+Nodes (1): Update hash-ring checkpoint metrics.                  Args:             total
 
 ### Community 38 - "Community 38"
 Cohesion: 1.0
-Nodes (1): Update convergence-aware scheduler metrics.                  Args:
+Nodes (1): Record local cache hit.
 
 ### Community 39 - "Community 39"
 Cohesion: 1.0
-Nodes (1): Increment convergence-based checkpoint counter.
+Nodes (1): Record where a checkpoint was loaded from.
 
 ### Community 40 - "Community 40"
 Cohesion: 1.0
-Nodes (1): Record that convergence fitting segment restarted (POF).
+Nodes (1): Record a shard being written to local cache.
 
 ### Community 41 - "Community 41"
 Cohesion: 1.0
-Nodes (1): Update hash-ring checkpoint metrics.                  Args:             total
+Nodes (1): Record shard reassignment after a failure.
 
 ### Community 42 - "Community 42"
 Cohesion: 1.0
-Nodes (1): Record local cache hit.
+Nodes (1): Record shard recovery event.                  Args:             recovery_time
 
 ### Community 43 - "Community 43"
 Cohesion: 1.0
-Nodes (1): Record where a checkpoint was loaded from.
+Nodes (1): Record injected fault.
 
 ### Community 44 - "Community 44"
 Cohesion: 1.0
-Nodes (1): Record a shard being written to local cache.
+Nodes (1): Record a runtime fault injection event.
 
 ### Community 45 - "Community 45"
 Cohesion: 1.0
-Nodes (1): Record shard reassignment after a failure.
+Nodes (1): Record that a resume was attempted.
 
 ### Community 46 - "Community 46"
 Cohesion: 1.0
-Nodes (1): Record shard recovery event.                  Args:             recovery_time
+Nodes (1): Record a successful resume event and its rollback characteristics.
 
 ### Community 47 - "Community 47"
 Cohesion: 1.0
-Nodes (1): Record injected fault.
+Nodes (1): Record the last observed failure state.
 
 ### Community 48 - "Community 48"
 Cohesion: 1.0
-Nodes (1): Record a runtime fault injection event.
+Nodes (1): Record recovery attempt.                  Args:             success: Whether r
 
 ### Community 49 - "Community 49"
 Cohesion: 1.0
-Nodes (1): Record that a resume was attempted.
+Nodes (1): Record checkpoint integrity check failure.
 
 ### Community 50 - "Community 50"
 Cohesion: 1.0
-Nodes (1): Record a successful resume event and its rollback characteristics.
+Nodes (1): Set distributed training configuration.                  Args:             wo
 
 ### Community 51 - "Community 51"
 Cohesion: 1.0
-Nodes (1): Record the last observed failure state.
+Nodes (1): Record collective synchronization operation.                  Args:
 
 ### Community 52 - "Community 52"
 Cohesion: 1.0
-Nodes (1): Record recovery attempt.                  Args:             success: Whether r
+Nodes (1): Increment batch counter.                  Args:             samples: Number of s
 
 ### Community 53 - "Community 53"
 Cohesion: 1.0
-Nodes (1): Record checkpoint integrity check failure.
+Nodes (1): Record the latest known training progress for recovery metrics.
 
 ### Community 54 - "Community 54"
 Cohesion: 1.0
-Nodes (1): Set distributed training configuration.                  Args:             wo
+Nodes (1): Get all epoch metrics as dictionaries for export.
 
 ### Community 55 - "Community 55"
 Cohesion: 1.0
-Nodes (1): Record collective synchronization operation.                  Args:
+Nodes (1): Get current state snapshot for debugging.
 
 ### Community 56 - "Community 56"
 Cohesion: 1.0
-Nodes (1): Increment batch counter.                  Args:             samples: Number of s
+Nodes (1): Save a checkpoint.          Args:             model: The model to save (or DD
 
 ### Community 57 - "Community 57"
 Cohesion: 1.0
-Nodes (1): Record the latest known training progress for recovery metrics.
+Nodes (1): Load the latest checkpoint and restore model/optimizer state.          Args:
 
 ### Community 58 - "Community 58"
 Cohesion: 1.0
-Nodes (1): Get all epoch metrics as dictionaries for export.
+Nodes (1): Fault injection and recovery metrics.
 
 ### Community 59 - "Community 59"
 Cohesion: 1.0
-Nodes (1): Get current state snapshot for debugging.
+Nodes (1): Distributed training metrics.
 
 ### Community 60 - "Community 60"
 Cohesion: 1.0
-Nodes (1): Save a checkpoint.          Args:             model: The model to save (or DD
+Nodes (1): Overall experiment summary.
 
 ### Community 61 - "Community 61"
 Cohesion: 1.0
-Nodes (1): Load the latest checkpoint and restore model/optimizer state.          Args:
+Nodes (1): Collects metrics throughout training for later export and analysis.
 
 ### Community 62 - "Community 62"
 Cohesion: 1.0
-Nodes (1): Fault injection and recovery metrics.
+Nodes (1): Initialize metrics collector.                  Args:             experiment_n
 
 ### Community 63 - "Community 63"
 Cohesion: 1.0
-Nodes (1): Distributed training metrics.
+Nodes (1): Mark the start of an epoch.
 
 ### Community 64 - "Community 64"
 Cohesion: 1.0
-Nodes (1): Overall experiment summary.
+Nodes (1): Record metrics for completed epoch.                  Args:             epoch:
 
 ### Community 65 - "Community 65"
 Cohesion: 1.0
-Nodes (1): Collects metrics throughout training for later export and analysis.
+Nodes (1): Record checkpoint metrics.                  Args:             checkpoint_size
 
 ### Community 66 - "Community 66"
 Cohesion: 1.0
-Nodes (1): Initialize metrics collector.                  Args:             experiment_n
+Nodes (1): Record in-epoch checkpoint metrics (e.g., convergence-based).
 
 ### Community 67 - "Community 67"
 Cohesion: 1.0
-Nodes (1): Mark the start of an epoch.
+Nodes (1): Increment convergence-based checkpoint counter.
 
 ### Community 68 - "Community 68"
 Cohesion: 1.0
-Nodes (1): Record metrics for completed epoch.                  Args:             epoch:
+Nodes (1): Record that convergence fitting segment restarted (POF).
 
 ### Community 69 - "Community 69"
 Cohesion: 1.0
-Nodes (1): Record checkpoint metrics.                  Args:             checkpoint_size
+Nodes (1): Update hash-ring checkpoint metrics.                  Args:             total
 
 ### Community 70 - "Community 70"
 Cohesion: 1.0
-Nodes (1): Record in-epoch checkpoint metrics (e.g., convergence-based).
+Nodes (1): Record local cache hit.
 
 ### Community 71 - "Community 71"
 Cohesion: 1.0
-Nodes (1): Increment convergence-based checkpoint counter.
+Nodes (1): Record local cache miss.
 
 ### Community 72 - "Community 72"
 Cohesion: 1.0
-Nodes (1): Record that convergence fitting segment restarted (POF).
+Nodes (1): Record shard recovery event.                  Args:             recovery_time
 
 ### Community 73 - "Community 73"
 Cohesion: 1.0
-Nodes (1): Update hash-ring checkpoint metrics.                  Args:             total
+Nodes (1): Record injected fault.
 
 ### Community 74 - "Community 74"
 Cohesion: 1.0
-Nodes (1): Record local cache hit.
+Nodes (1): Record detected fault.
 
 ### Community 75 - "Community 75"
 Cohesion: 1.0
-Nodes (1): Record local cache miss.
+Nodes (1): Record recovery attempt.                  Args:             success: Whether
 
 ### Community 76 - "Community 76"
 Cohesion: 1.0
-Nodes (1): Record shard recovery event.                  Args:             recovery_time
+Nodes (1): Set distributed training configuration.                  Args:             wo
 
 ### Community 77 - "Community 77"
 Cohesion: 1.0
-Nodes (1): Record injected fault.
+Nodes (1): Record collective synchronization operation.                  Args:
 
 ### Community 78 - "Community 78"
 Cohesion: 1.0
-Nodes (1): Record detected fault.
+Nodes (1): Increment batch counter.                  Args:             samples: Number o
 
 ### Community 79 - "Community 79"
 Cohesion: 1.0
-Nodes (1): Record recovery attempt.                  Args:             success: Whether
+Nodes (1): Generate final summary metrics.
 
 ### Community 80 - "Community 80"
 Cohesion: 1.0
-Nodes (1): Set distributed training configuration.                  Args:             wo
-
-### Community 81 - "Community 81"
-Cohesion: 1.0
-Nodes (1): Record collective synchronization operation.                  Args:
-
-### Community 82 - "Community 82"
-Cohesion: 1.0
-Nodes (1): Increment batch counter.                  Args:             samples: Number o
-
-### Community 83 - "Community 83"
-Cohesion: 1.0
-Nodes (1): Generate final summary metrics.
-
-### Community 84 - "Community 84"
-Cohesion: 1.0
 Nodes (1): Get all epoch metrics as dictionaries for export.
 
-### Community 85 - "Community 85"
+### Community 81 - "Community 81"
 Cohesion: 1.0
 Nodes (1): Get current state snapshot for debugging.
 
 ## Knowledge Gaps
 - **163 isolated node(s):** `Example of training loop with metrics collection.`, `Example of comparing results across modes.`, `Distributed training utilities for multi-GPU coordination.  Provides functions`, `Check if the default process group is initialized.      Returns:         bool`, `Get the rank of the current process in the distributed group.      Returns:` (+158 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 18`** (2 nodes): `main()`, `main.py`
+- **Thin community `Community 15`** (2 nodes): `main()`, `main.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 19`** (2 nodes): `Get frames from a single video.          Returns:             tuple: (frames_`, `.__getitem__()`
+- **Thin community `Community 16`** (1 nodes): `train_convergence_hashring.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 20`** (1 nodes): `train_convergence_hashring.py`
+- **Thin community `Community 17`** (1 nodes): `train_convergence_normal.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 21`** (1 nodes): `train_convergence_normal.py`
+- **Thin community `Community 18`** (1 nodes): `train_deepspeed.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 22`** (1 nodes): `train_deepspeed.py`
+- **Thin community `Community 19`** (1 nodes): `train_epoch_based.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 23`** (1 nodes): `train_epoch_based.py`
+- **Thin community `Community 20`** (1 nodes): `train_fsdp.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 24`** (1 nodes): `train_fsdp.py`
+- **Thin community `Community 21`** (1 nodes): `train_hashring_epoch.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 25`** (1 nodes): `train_hashring_epoch.py`
+- **Thin community `Community 22`** (1 nodes): `train_hf_trainer.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 26`** (1 nodes): `train_hf_trainer.py`
+- **Thin community `Community 23`** (1 nodes): `train_pytorch_lightning.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 27`** (1 nodes): `train_pytorch_lightning.py`
+- **Thin community `Community 24`** (1 nodes): `train_wandb_artifacts.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 28`** (1 nodes): `train_wandb_artifacts.py`
+- **Thin community `Community 25`** (1 nodes): `Check if running in distributed mode.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 29`** (1 nodes): `Check if running in distributed mode.`
+- **Thin community `Community 26`** (1 nodes): `Distributed training metrics.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 30`** (1 nodes): `Distributed training metrics.`
+- **Thin community `Community 27`** (1 nodes): `Overall experiment summary.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 31`** (1 nodes): `Overall experiment summary.`
+- **Thin community `Community 28`** (1 nodes): `Collects metrics throughout training for later export and analysis.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 32`** (1 nodes): `Collects metrics throughout training for later export and analysis.`
+- **Thin community `Community 29`** (1 nodes): `Initialize metrics collector.                  Args:             experiment_n`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 33`** (1 nodes): `Initialize metrics collector.                  Args:             experiment_n`
+- **Thin community `Community 30`** (1 nodes): `Mark the start of an epoch.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 34`** (1 nodes): `Mark the start of an epoch.`
+- **Thin community `Community 31`** (1 nodes): `Record metrics for completed epoch.                  Args:             epoch:`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 35`** (1 nodes): `Record metrics for completed epoch.                  Args:             epoch:`
+- **Thin community `Community 32`** (1 nodes): `Record checkpoint metrics.                  Args:             checkpoint_size`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 36`** (1 nodes): `Record checkpoint metrics.                  Args:             checkpoint_size`
+- **Thin community `Community 33`** (1 nodes): `Record in-epoch checkpoint metrics (e.g., convergence-based).`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 37`** (1 nodes): `Record in-epoch checkpoint metrics (e.g., convergence-based).`
+- **Thin community `Community 34`** (1 nodes): `Update convergence-aware scheduler metrics.                  Args:`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 38`** (1 nodes): `Update convergence-aware scheduler metrics.                  Args:`
+- **Thin community `Community 35`** (1 nodes): `Increment convergence-based checkpoint counter.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 39`** (1 nodes): `Increment convergence-based checkpoint counter.`
+- **Thin community `Community 36`** (1 nodes): `Record that convergence fitting segment restarted (POF).`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 40`** (1 nodes): `Record that convergence fitting segment restarted (POF).`
+- **Thin community `Community 37`** (1 nodes): `Update hash-ring checkpoint metrics.                  Args:             total`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 41`** (1 nodes): `Update hash-ring checkpoint metrics.                  Args:             total`
+- **Thin community `Community 38`** (1 nodes): `Record local cache hit.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 42`** (1 nodes): `Record local cache hit.`
+- **Thin community `Community 39`** (1 nodes): `Record where a checkpoint was loaded from.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 43`** (1 nodes): `Record where a checkpoint was loaded from.`
+- **Thin community `Community 40`** (1 nodes): `Record a shard being written to local cache.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 44`** (1 nodes): `Record a shard being written to local cache.`
+- **Thin community `Community 41`** (1 nodes): `Record shard reassignment after a failure.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 45`** (1 nodes): `Record shard reassignment after a failure.`
+- **Thin community `Community 42`** (1 nodes): `Record shard recovery event.                  Args:             recovery_time`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 46`** (1 nodes): `Record shard recovery event.                  Args:             recovery_time`
+- **Thin community `Community 43`** (1 nodes): `Record injected fault.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 47`** (1 nodes): `Record injected fault.`
+- **Thin community `Community 44`** (1 nodes): `Record a runtime fault injection event.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 48`** (1 nodes): `Record a runtime fault injection event.`
+- **Thin community `Community 45`** (1 nodes): `Record that a resume was attempted.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 49`** (1 nodes): `Record that a resume was attempted.`
+- **Thin community `Community 46`** (1 nodes): `Record a successful resume event and its rollback characteristics.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 50`** (1 nodes): `Record a successful resume event and its rollback characteristics.`
+- **Thin community `Community 47`** (1 nodes): `Record the last observed failure state.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 51`** (1 nodes): `Record the last observed failure state.`
+- **Thin community `Community 48`** (1 nodes): `Record recovery attempt.                  Args:             success: Whether r`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 52`** (1 nodes): `Record recovery attempt.                  Args:             success: Whether r`
+- **Thin community `Community 49`** (1 nodes): `Record checkpoint integrity check failure.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 53`** (1 nodes): `Record checkpoint integrity check failure.`
+- **Thin community `Community 50`** (1 nodes): `Set distributed training configuration.                  Args:             wo`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 54`** (1 nodes): `Set distributed training configuration.                  Args:             wo`
+- **Thin community `Community 51`** (1 nodes): `Record collective synchronization operation.                  Args:`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 55`** (1 nodes): `Record collective synchronization operation.                  Args:`
+- **Thin community `Community 52`** (1 nodes): `Increment batch counter.                  Args:             samples: Number of s`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 56`** (1 nodes): `Increment batch counter.                  Args:             samples: Number of s`
+- **Thin community `Community 53`** (1 nodes): `Record the latest known training progress for recovery metrics.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 57`** (1 nodes): `Record the latest known training progress for recovery metrics.`
+- **Thin community `Community 54`** (1 nodes): `Get all epoch metrics as dictionaries for export.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 58`** (1 nodes): `Get all epoch metrics as dictionaries for export.`
+- **Thin community `Community 55`** (1 nodes): `Get current state snapshot for debugging.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 59`** (1 nodes): `Get current state snapshot for debugging.`
+- **Thin community `Community 56`** (1 nodes): `Save a checkpoint.          Args:             model: The model to save (or DD`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 60`** (1 nodes): `Save a checkpoint.          Args:             model: The model to save (or DD`
+- **Thin community `Community 57`** (1 nodes): `Load the latest checkpoint and restore model/optimizer state.          Args:`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 61`** (1 nodes): `Load the latest checkpoint and restore model/optimizer state.          Args:`
+- **Thin community `Community 58`** (1 nodes): `Fault injection and recovery metrics.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 62`** (1 nodes): `Fault injection and recovery metrics.`
+- **Thin community `Community 59`** (1 nodes): `Distributed training metrics.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 63`** (1 nodes): `Distributed training metrics.`
+- **Thin community `Community 60`** (1 nodes): `Overall experiment summary.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 64`** (1 nodes): `Overall experiment summary.`
+- **Thin community `Community 61`** (1 nodes): `Collects metrics throughout training for later export and analysis.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 65`** (1 nodes): `Collects metrics throughout training for later export and analysis.`
+- **Thin community `Community 62`** (1 nodes): `Initialize metrics collector.                  Args:             experiment_n`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 66`** (1 nodes): `Initialize metrics collector.                  Args:             experiment_n`
+- **Thin community `Community 63`** (1 nodes): `Mark the start of an epoch.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 67`** (1 nodes): `Mark the start of an epoch.`
+- **Thin community `Community 64`** (1 nodes): `Record metrics for completed epoch.                  Args:             epoch:`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 68`** (1 nodes): `Record metrics for completed epoch.                  Args:             epoch:`
+- **Thin community `Community 65`** (1 nodes): `Record checkpoint metrics.                  Args:             checkpoint_size`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 69`** (1 nodes): `Record checkpoint metrics.                  Args:             checkpoint_size`
+- **Thin community `Community 66`** (1 nodes): `Record in-epoch checkpoint metrics (e.g., convergence-based).`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 70`** (1 nodes): `Record in-epoch checkpoint metrics (e.g., convergence-based).`
+- **Thin community `Community 67`** (1 nodes): `Increment convergence-based checkpoint counter.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 71`** (1 nodes): `Increment convergence-based checkpoint counter.`
+- **Thin community `Community 68`** (1 nodes): `Record that convergence fitting segment restarted (POF).`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 72`** (1 nodes): `Record that convergence fitting segment restarted (POF).`
+- **Thin community `Community 69`** (1 nodes): `Update hash-ring checkpoint metrics.                  Args:             total`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 73`** (1 nodes): `Update hash-ring checkpoint metrics.                  Args:             total`
+- **Thin community `Community 70`** (1 nodes): `Record local cache hit.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 74`** (1 nodes): `Record local cache hit.`
+- **Thin community `Community 71`** (1 nodes): `Record local cache miss.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 75`** (1 nodes): `Record local cache miss.`
+- **Thin community `Community 72`** (1 nodes): `Record shard recovery event.                  Args:             recovery_time`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 76`** (1 nodes): `Record shard recovery event.                  Args:             recovery_time`
+- **Thin community `Community 73`** (1 nodes): `Record injected fault.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 77`** (1 nodes): `Record injected fault.`
+- **Thin community `Community 74`** (1 nodes): `Record detected fault.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 78`** (1 nodes): `Record detected fault.`
+- **Thin community `Community 75`** (1 nodes): `Record recovery attempt.                  Args:             success: Whether`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 79`** (1 nodes): `Record recovery attempt.                  Args:             success: Whether`
+- **Thin community `Community 76`** (1 nodes): `Set distributed training configuration.                  Args:             wo`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 80`** (1 nodes): `Set distributed training configuration.                  Args:             wo`
+- **Thin community `Community 77`** (1 nodes): `Record collective synchronization operation.                  Args:`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 81`** (1 nodes): `Record collective synchronization operation.                  Args:`
+- **Thin community `Community 78`** (1 nodes): `Increment batch counter.                  Args:             samples: Number o`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 82`** (1 nodes): `Increment batch counter.                  Args:             samples: Number o`
+- **Thin community `Community 79`** (1 nodes): `Generate final summary metrics.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 83`** (1 nodes): `Generate final summary metrics.`
+- **Thin community `Community 80`** (1 nodes): `Get all epoch metrics as dictionaries for export.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 84`** (1 nodes): `Get all epoch metrics as dictionaries for export.`
-  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 85`** (1 nodes): `Get current state snapshot for debugging.`
+- **Thin community `Community 81`** (1 nodes): `Get current state snapshot for debugging.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `main()` connect `Community 3` to `Community 0`, `Community 1`, `Community 2`, `Community 4`, `Community 5`, `Community 6`, `Community 8`, `Community 9`?**
+- **Why does `main()` connect `Community 3` to `Community 0`, `Community 1`, `Community 2`, `Community 4`, `Community 5`, `Community 6`, `Community 8`?**
   _High betweenness centrality (0.341) - this node is a cross-community bridge._
-- **Why does `MetricsCollector` connect `Community 0` to `Community 1`, `Community 3`?**
+- **Why does `MetricsCollector` connect `Community 1` to `Community 0`, `Community 3`?**
   _High betweenness centrality (0.201) - this node is a cross-community bridge._
-- **Why does `CheckpointManager` connect `Community 1` to `Community 0`, `Community 2`, `Community 3`, `Community 4`, `Community 5`, `Community 6`?**
+- **Why does `CheckpointManager` connect `Community 0` to `Community 1`, `Community 2`, `Community 3`, `Community 4`, `Community 5`, `Community 6`?**
   _High betweenness centrality (0.103) - this node is a cross-community bridge._
 - **Are the 56 inferred relationships involving `CheckpointBitFlipInjector` (e.g. with `Distributed training entry point using torchrun.  This script is designed to b` and `Seed worker for reproducible data loading across epochs.     Ensures each worke`) actually correct?**
   _`CheckpointBitFlipInjector` has 56 INFERRED edges - model-reasoned connections that need verification._
