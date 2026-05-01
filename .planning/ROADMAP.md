@@ -1,7 +1,7 @@
 # Roadmap: Adaptive Ring Checkpointing
 
 **Created:** 2026-03-16
-**Updated:** 2026-04-18 (v1.2 milestone)
+**Updated:** 2026-05-01 (added Phase 13 - Experiment Organization)
 **Core Value:** Enable reliable long-running deep learning training with minimal checkpoint overhead through adaptive ring-based checkpoint strategies.
 **Granularity:** Coarse (3-5 phases)
 
@@ -15,7 +15,7 @@
 - [x] **Phase 2: DDP Model & Checkpoint Integration** - Wrap model with DDP, implement rank-aware checkpointing and metrics aggregation
 - [x] **Phase 3: Dataset Integration** - Integrate DFD dataset with face detection preprocessing
 
-### v1.1 Milestone (CURRENT - COMPLETED)
+### v1.1 Milestone (COMPLETED)
 
 - [x] **Phase 4: Exception Handling** - Wrap training loop with try/except for fault detection and graceful handling (completed 2026-04-17)
 - [x] **Phase 5: Multi-GPU Fault Injection** - Add rank-aware fault injection to simulate node/GPU failures (completed 2026-04-17)
@@ -32,6 +32,10 @@
   (completed 2026-04-18)
 - [ ] **Phase 11: Elastic Recaching** - Implement one-time central storage recaching after failures
 - [ ] **Phase 12: Recovery Scheduling** - Implement epoch rollback and work rebalancing
+
+### v1.3 Milestone (Proposed)
+
+- [ ] **Phase 13: Experiment Results Organization** - Organize experiment results with clear naming convention
 
 ---
 
@@ -144,7 +148,7 @@
 
 ---
 
-### Phase 6: Checkpoint Recovery (v1.1 - IN PROGRESS)
+### Phase 6: Checkpoint Recovery (v1.1 - COMPLETED)
 
 **Goal:** Resume training from checkpoint after failure detected
 
@@ -185,7 +189,7 @@
 
 ---
 
-### Phase 8: Hash Ring (v1.2 - IN PROGRESS)
+### Phase 8: Hash Ring (v1.2 - COMPLETED)
 
 **Goal:** Implement consistent hashing with virtual nodes for shard management
 
@@ -201,7 +205,7 @@
 
 **Plans:** 1/1 plans complete
 
-- [ ] 08-01-PLAN.md — Hash ring with virtual nodes
+- [x] 08-01-PLAN.md — Hash ring with virtual nodes
 
 ---
 
@@ -285,6 +289,29 @@
 
 ---
 
+### Phase 13: Experiment Results Organization (PLANNED)
+
+**Goal:** Organize experiment results with a clear naming convention and documentation
+
+**Depends on:** None (independent task)
+
+**Requirements:** EXP-01, EXP-02, EXP-03
+
+**Success Criteria** (what must be TRUE):
+1. All 20 experiment directories use organized naming convention (mode_framework_date_time)
+2. experiment_summaries.jsonl updated with new experiment names
+3. README.md documents the structure and naming convention
+4. Helper script available for generating consistent future experiment names
+5. No data is lost during migration
+
+**Plans:** 3 plans
+
+- [ ] 13-01-PLAN.md — Parse experiments and create migration script
+- [ ] 13-02-PLAN.md — Execute migration and update indexes
+- [ ] 13-03-PLAN.md — Create documentation and helper tools
+
+---
+
 ## Progress Table
 
 | Phase | Plans Complete | Status | Completed |
@@ -296,15 +323,26 @@
 | 5. Multi-GPU Fault Injection | 1/1 | Completed | 2026-04-17 |
 | 6. Checkpoint Recovery | 1/1 | Completed | 2026-04-17 |
 | 7. Fault Tolerance Verification | 1/1 | Completed | 2026-04-17 |
-| 8. Hash Ring | 1/1 | Complete    | 2026-04-18 |
-| 9. Shard Manager | 1/1 | Complete    | 2026-04-18 |
-| 10. Fault Detector | 1/1 | Complete   | 2026-04-18 |
+| 8. Hash Ring | 1/1 | Completed | 2026-04-18 |
+| 9. Shard Manager | 1/1 | Completed | 2026-04-18 |
+| 10. Fault Detector | 1/1 | Completed | 2026-04-18 |
 | 11. Elastic Recaching | 0/1 | Pending | — |
 | 12. Recovery Scheduling | 0/1 | Pending | — |
+| 13. Experiment Organization | 0/3 | Pending | — |
 
 ---
 
 ## Coverage
+
+### v1.3 (Proposed)
+
+**Total v1.3 Requirements:** 3
+**Mapped to Phases:** 3 (Phase 13)
+**Orphaned:** 0 ✓
+
+| Phase | Requirements | Count |
+|-------|--------------|-------|
+| 13 - Experiment Organization | EXP-01, EXP-02, EXP-03 | 3 |
 
 ### v1.0 (Completed)
 
@@ -349,5 +387,6 @@
 - **Key optimization:** Each orphaned shard triggers exactly ONE central storage access (vs naive: every epoch)
 
 ---
+
 *Roadmap created: 2026-03-16*
-*Updated: 2026-04-18 for v1.2 milestone*
+*Updated: 2026-05-01 for v1.3 milestone (Phase 13 - Experiment Organization)*
