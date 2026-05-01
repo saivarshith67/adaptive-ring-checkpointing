@@ -1,0 +1,162 @@
+[
+  {
+    "old_name": "faceforensics_epoch_20260419_101309",
+    "new_name": "epoch_vanilla_20260419_101309",
+    "mode": "epoch",
+    "framework": "vanilla",
+    "date": "20260419",
+    "time": "101309"
+  },
+  {
+    "old_name": "faceforensics_convergence_20260419_104954",
+    "new_name": "convergence_vanilla_20260419_104954",
+    "mode": "convergence",
+    "framework": "vanilla",
+    "date": "20260419",
+    "time": "104954"
+  },
+  {
+    "old_name": "faceforensics_hash_ring_epoch_20260419_112016",
+    "new_name": "epoch_hashring_vanilla_20260419_112016",
+    "mode": "epoch_hashring",
+    "framework": "vanilla",
+    "date": "20260419",
+    "time": "112016"
+  },
+  {
+    "old_name": "faceforensics_convergence_hash_ring_20260419_113143",
+    "new_name": "convergence_hashring_vanilla_20260419_113143",
+    "mode": "convergence_hashring",
+    "framework": "vanilla",
+    "date": "20260419",
+    "time": "113143"
+  },
+  {
+    "old_name": "faceforensics_epoch_20260419_133656",
+    "new_name": "epoch_vanilla_20260419_133656",
+    "mode": "epoch",
+    "framework": "vanilla",
+    "date": "20260419",
+    "time": "133656"
+  },
+  {
+    "old_name": "faceforensics_convergence_20260419_134523",
+    "new_name": "convergence_vanilla_20260419_134523",
+    "mode": "convergence",
+    "framework": "vanilla",
+    "date": "20260419",
+    "time": "134523"
+  },
+  {
+    "old_name": "faceforensics_hash_ring_epoch_20260419_135405",
+    "new_name": "epoch_hashring_vanilla_20260419_135405",
+    "mode": "epoch_hashring",
+    "framework": "vanilla",
+    "date": "20260419",
+    "time": "135405"
+  },
+  {
+    "old_name": "faceforensics_convergence_hash_ring_20260419_140224",
+    "new_name": "convergence_hashring_vanilla_20260419_140224",
+    "mode": "convergence_hashring",
+    "framework": "vanilla",
+    "date": "20260419",
+    "time": "140224"
+  },
+  {
+    "old_name": "faceforensics_epoch_20260419_141101",
+    "new_name": "epoch_vanilla_20260419_141101",
+    "mode": "epoch",
+    "framework": "vanilla",
+    "date": "20260419",
+    "time": "141101"
+  },
+  {
+    "old_name": "faceforensics_epoch_20260419_144917",
+    "new_name": "epoch_vanilla_20260419_144917",
+    "mode": "epoch",
+    "framework": "vanilla",
+    "date": "20260419",
+    "time": "144917"
+  },
+  {
+    "old_name": "faceforensics_epoch_20260419_145817",
+    "new_name": "epoch_vanilla_20260419_145817",
+    "mode": "epoch",
+    "framework": "vanilla",
+    "date": "20260419",
+    "time": "145817"
+  },
+  {
+    "old_name": "faceforensics_convergence_20260419_151409",
+    "new_name": "convergence_vanilla_20260419_151409",
+    "mode": "convergence",
+    "framework": "vanilla",
+    "date": "20260419",
+    "time": "151409"
+  },
+  {
+    "old_name": "faceforensics_hash_ring_epoch_20260419_151920",
+    "new_name": "epoch_hashring_vanilla_20260419_151920",
+    "mode": "epoch_hashring",
+    "framework": "vanilla",
+    "date": "20260419",
+    "time": "151920"
+  },
+  {
+    "old_name": "faceforensics_hash_ring_epoch_20260419_153004",
+    "new_name": "epoch_hashring_vanilla_20260419_153004",
+    "mode": "epoch_hashring",
+    "framework": "vanilla",
+    "date": "20260419",
+    "time": "153004"
+  },
+  {
+    "old_name": "faceforensics_convergence_hash_ring_20260419_155131",
+    "new_name": "convergence_hashring_vanilla_20260419_155131",
+    "mode": "convergence_hashring",
+    "framework": "vanilla",
+    "date": "20260419",
+    "time": "155131"
+  },
+  {
+    "old_name": "faceforensics_pytorch_lightning_20260430_172607",
+    "new_name": "epoch_lightning_20260430_172607",
+    "mode": "epoch",
+    "framework": "lightning",
+    "date": "20260430",
+    "time": "172607"
+  },
+  {
+    "old_name": "faceforensics_hf_trainer_20260430_174300",
+    "new_name": "epoch_hf_trainer_20260430_174300",
+    "mode": "epoch",
+    "framework": "hf_trainer",
+    "date": "20260430",
+    "time": "174300"
+  },
+  {
+    "old_name": "faceforensics_deepspeed_20260430_175303",
+    "new_name": "epoch_deepspeed_20260430_175303",
+    "mode": "epoch",
+    "framework": "deepspeed",
+    "date": "20260430",
+    "time": "175303"
+  },
+  {
+    "old_name": "faceforensics_fsdp_20260430_182642",
+    "new_name": "epoch_fsdp_20260430_182642",
+    "mode": "epoch",
+    "framework": "fsdp",
+    "date": "20260430",
+    "time": "182642"
+  },
+  {
+    "old_name": "faceforensics_wandb_artifacts_20260430_184333",
+    "new_name": "epoch_wandb_20260430_184333",
+    "mode": "epoch",
+    "framework": "wandb",
+    "date": "20260430",
+    "time": "184333"
+  }
+]
