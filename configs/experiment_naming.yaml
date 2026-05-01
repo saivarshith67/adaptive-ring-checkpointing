@@ -1,0 +1,47 @@
+# Experiment Naming Configuration
+# This file defines the naming convention for all experiment directories
+# Used by experiment_helpers.py to generate consistent experiment names
+
+# Naming pattern template
+# Components: {mode}_{framework}_{date}_{time}
+naming_pattern: "{mode}_{framework}_{date}_{time}"
+
+# Valid training modes
+valid_modes:
+  - epoch                  # Standard epoch-based training
+  - convergence            # Convergence-based checkpointing (fixed step interval)
+  - epoch_hashring         # Epoch-based with hash ring fault tolerance
+  - convergence_hashring   # Convergence-based with hash ring fault tolerance
+
+# Valid training frameworks
+valid_frameworks:
+  - vanilla      # Standard PyTorch training loop
+  - deepspeed    # DeepSpeed distributed training
+  - fsdp         # PyTorch FSDP (Fully Sharded Data Parallel)
+  - lightning    # PyTorch Lightning
+  - hf_trainer   # HuggingFace Trainer
+  - wandb         # Weights & Biases artifacts integration
+
+# Date format (YYYYMMDD)
+date_format: "%Y%m%d"
+
+# Time format (HHMMSS)
+time_format: "%H%M%S"
+
+# Training scripts that should be updated to use this naming convention
+# These scripts should import and use experiment_helpers.generate_experiment_name()
+training_scripts:
+  - scripts/train_epoch_based.py
+  - scripts/train_convergence_normal.py
+  - scripts/train_convergence_hashring.py
+  - scripts/train_deepspeed.py
+  - scripts/train_fsdp.py
+  - scripts/train_pytorch_lightning.py
+  - scripts/train_hf_trainer.py
+  - scripts/train_wandb_artifacts.py
+
+# Backup settings for migration
+migration:
+  backup_suffix: ".backup"
+  backup_dir: "experiment_results_backup"
+  dry_run_default: true
