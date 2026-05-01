@@ -31,6 +31,7 @@ class CheckpointManager:
         loss,
         metric=None,
         checkpoint_id=None,
+        metrics_history=None,
     ):
         """
         Save a checkpoint.
@@ -41,6 +42,7 @@ class CheckpointManager:
             epoch: Current epoch number.
             loss: Current loss value.
             metric: Optional metric value (e.g., accuracy) to save.
+            metrics_history: Optional dict with training history to save.
         """
         # Only rank 0 saves checkpoint to avoid file conflicts
         rank = dist.get_rank() if dist.is_available() and dist.is_initialized() else 0
@@ -71,6 +73,12 @@ class CheckpointManager:
 
         if metric is not None:
             checkpoint_data["metric"] = metric
+
+        # Save training history for metrics restoration
+        if metrics_history is not None:
+            checkpoint_data["train_losses"] = metrics_history.get("train_losses", [])
+            checkpoint_data["val_losses"] = metrics_history.get("val_losses", [])
+            checkpoint_data["val_accuracies"] = metrics_history.get("val_accuracies", [])
 
         torch.save(checkpoint_data, path)
 
@@ -143,6 +151,9 @@ class CheckpointManager:
             "checkpoint_id": checkpoint.get("checkpoint_id"),
             "metric": best_metric,
             "load_source": "central-storage",
+            "train_losses": checkpoint.get("train_losses", []),
+            "val_losses": checkpoint.get("val_losses", []),
+            "val_accuracies": checkpoint.get("val_accuracies", []),
         }
         print(
             f"[Checkpoint] Resumed from {latest} (epoch {epoch}, best_metric {best_metric:.4f})"

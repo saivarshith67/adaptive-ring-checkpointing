@@ -1471,20 +1471,39 @@ Examples:
     best_val_acc = 0.0
     if args.resume:
         metrics.record_resume_attempt()
+        # Measure actual checkpoint load time for accurate resume metrics
+        _resume_load_start = time.time()
         start_epoch, best_val_acc = checkpoint_manager.load_latest(
             model,
             optimizer,
             device,
             checkpoint_injector=checkpoint_injector,
         )
+        _actual_resume_sec = time.time() - _resume_load_start
+
         load_metadata = getattr(checkpoint_manager, "last_load_metadata", None) or {}
         load_source = load_metadata.get("load_source", "central-storage")
         metrics.record_hash_ring_load(load_source)
-        if pending_recovery_context:
-            time_to_resume_sec = max(
-                0.0,
-                time.time() - pending_recovery_context.get("fault_wall_time_sec", time.time()),
+
+        # Restore training history from checkpoint for accurate metrics
+        train_losses = load_metadata.get("train_losses", [])
+        val_losses = load_metadata.get("val_losses", [])
+        val_accuracies = load_metadata.get("val_accuracies", [])
+        if train_losses:
+            metrics._train_losses = train_losses
+            metrics._val_losses = val_losses
+            metrics._val_accuracies = val_accuracies
+            log_on_main(
+                f"  Restored training history: {len(train_losses)} epochs of metrics"
             )
+
+        # Update last_completed_epoch to reflect resumed state
+        if start_epoch > 0:
+            metrics.current_faults.last_completed_epoch = start_epoch - 1
+            metrics.mark_progress(epoch=start_epoch - 1, global_step=start_epoch * max(1, len(train_loader)))
+        if pending_recovery_context:
+            # Use actual load time, not cross-run fault_wall_time_sec
+            time_to_resume_sec = _actual_resume_sec
             loaded_epoch = int(load_metadata.get("epoch", max(0, start_epoch - 1)))
             loaded_step = parse_step_from_checkpoint_id(load_metadata.get("checkpoint_id"))
             rollback_epochs = max(
@@ -1536,6 +1555,45 @@ Examples:
     # best_val_acc already initialized above (0.0 for fresh start, or loaded from checkpoint on resume)
 
     global_step = start_epoch * max(1, len(train_loader))
+
+    # Helper to bundle training history for checkpoint persistence
+    def _make_metrics_history():
+        return {
+            "train_losses": list(metrics._train_losses),
+            "val_losses": list(metrics._val_losses),
+            "val_accuracies": list(metrics._val_accuracies),
+        }
+
+    if start_epoch >= args.epochs:
+        log_on_main(
+            f"WARNING: start_epoch ({start_epoch}) >= total epochs ({args.epochs}). "
+            f"No training will be performed. If this is unexpected, delete stale checkpoints "
+            f"in {args.checkpoint_dir} and re-run."
+        )
+        # Update last_completed_epoch to reflect that training was already complete.
+        # start_epoch is the next epoch to run; last completed is start_epoch - 1.
+        metrics.current_faults.last_completed_epoch = max(0, start_epoch - 1)
+        # Reset start_time so total_training_time_sec reflects only this no-op run
+        metrics.start_time = time.time()
+        # Export metrics and exit early since no training will happen
+        if is_main_process():
+            log_on_main("Exporting metrics for no-op run (resume only, no training)...")
+            exporter = MetricsExporter(base_export_dir="./experiment_results")
+            try:
+                json_path = exporter.export_summary_json(metrics)
+                log_on_main(f"  ✓ JSON summary: {json_path}")
+            except Exception as e:
+                log_on_main(f"  ✗ JSON export failed: {e}")
+            try:
+                jsonl_path = exporter.export_summary_jsonl(metrics)
+                log_on_main(f"  ✓ JSONL aggregated: {jsonl_path}")
+            except Exception as e:
+                log_on_main(f"  ✗ JSONL export failed: {e}")
+        if is_distributed_initialized():
+            cleanup_distributed()
+        return 0
+    else:
+        log_on_main(f"Training will start from epoch {start_epoch}")
 
     for epoch in range(start_epoch, args.epochs):
         try:
@@ -1592,6 +1650,7 @@ Examples:
                         epoch + 1,
                         batch_loss,
                         checkpoint_id=checkpoint_id,
+                        metrics_history=_make_metrics_history(),
                     )
                     ckpt_time = time.time() - ckpt_start
                     
@@ -1714,6 +1773,7 @@ Examples:
                         val_loss,
                         metric=val_acc,
                         checkpoint_id=best_checkpoint_id,
+                        metrics_history=_make_metrics_history(),
                     )
                     ckpt_time = time.time() - ckpt_start
                     
@@ -1737,7 +1797,8 @@ Examples:
                 if should_save or is_best:
                     ckpt_start = time.time()
                     checkpoint_manager.save(
-                        model, optimizer, epoch + 1, val_loss, metric=val_acc
+                        model, optimizer, epoch + 1, val_loss, metric=val_acc,
+                        metrics_history=_make_metrics_history(),
                     )
                     ckpt_time = time.time() - ckpt_start
                     
@@ -1774,7 +1835,8 @@ Examples:
 
             if not injected_runtime_fault:
                 checkpoint_manager.save(
-                    model, optimizer, epoch, val_loss if "val_loss" in dir() else 0.0
+                    model, optimizer, epoch, val_loss if "val_loss" in dir() else 0.0,
+                    metrics_history=_make_metrics_history(),
                 )
                 sync_hash_ring_metrics()
 
