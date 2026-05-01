@@ -48,9 +48,25 @@ class EpochStrategy(CheckpointStrategy):
 
     def should_checkpoint(self, **kwargs):
         return True 
+
+
+class FrameworkEpochStrategy(EpochStrategy):
+    """Epoch checkpoint trigger for framework-native checkpoint backends."""
+
+    def __init__(self, backend):
+        super().__init__()
+        self.backend = backend
         
         
 class CheckpointStrategyFactory:
+
+    FRAMEWORK_STRATEGIES = {
+        "pytorch-lightning",
+        "hf-trainer",
+        "deepspeed",
+        "fsdp",
+        "wandb-artifacts",
+    }
 
     @staticmethod
     def create(cfg, checkpoint_cost=None, mtbf=None):
@@ -63,6 +79,9 @@ class CheckpointStrategyFactory:
 
         elif cfg.strategy == "epoch":
             return EpochStrategy()
+
+        elif cfg.strategy in CheckpointStrategyFactory.FRAMEWORK_STRATEGIES:
+            return FrameworkEpochStrategy(cfg.strategy)
 
         else:
             raise ValueError("Unknown checkpoint strategy")

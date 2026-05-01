@@ -24,6 +24,11 @@ MODE_ORDER = [
     "convergence",
     "hash-ring-epoch",
     "convergence-hash-ring",
+    "pytorch-lightning",
+    "hf-trainer",
+    "deepspeed",
+    "fsdp",
+    "wandb-artifacts",
 ]
 
 DISPLAY_NAMES = {
@@ -31,6 +36,11 @@ DISPLAY_NAMES = {
     "convergence": "Convergence",
     "hash-ring-epoch": "Hash-Ring Epoch",
     "convergence-hash-ring": "Convergence + Hash Ring",
+    "pytorch-lightning": "PyTorch Lightning",
+    "hf-trainer": "Hugging Face Trainer",
+    "deepspeed": "DeepSpeed",
+    "fsdp": "FairScale/FSDP",
+    "wandb-artifacts": "W&B Artifacts",
 }
 
 
@@ -43,7 +53,10 @@ def load_rows() -> list[dict]:
 
 
 def mode_key(row: dict) -> int:
-    return MODE_ORDER.index(row["training_mode"])
+    try:
+        return MODE_ORDER.index(row["training_mode"])
+    except ValueError:
+        return len(MODE_ORDER)
 
 
 def export_markdown_table(path: Path, headers: list[str], rows: list[list[str]]) -> None:

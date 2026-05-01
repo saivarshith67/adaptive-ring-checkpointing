@@ -132,6 +132,13 @@ class MetricsExporter:
             'recached_shards': summary.hash_ring_metrics.recached_shards,
             'shard_recovery_count': summary.hash_ring_metrics.shard_recovery_count,
             'last_load_source': summary.hash_ring_metrics.last_load_source,
+            # Framework checkpoint backend metrics
+            'checkpoint_backend': summary.framework_checkpoint_metrics.checkpoint_backend,
+            'framework_save_count': summary.framework_checkpoint_metrics.framework_save_count,
+            'framework_load_count': summary.framework_checkpoint_metrics.framework_load_count,
+            'artifact_log_count': summary.framework_checkpoint_metrics.artifact_log_count,
+            'framework_delegated': summary.framework_checkpoint_metrics.framework_delegated,
+            'last_checkpoint_path': summary.framework_checkpoint_metrics.last_checkpoint_path,
             # Fault metrics
             'injected_faults': summary.fault_metrics.injected_faults,
             'detected_faults': summary.fault_metrics.detected_faults,
@@ -337,6 +344,18 @@ class MetricsExporter:
                 <div class="metric-label">Checkpoint Overhead</div>
                 <div class="metric-value">{summary.checkpoint_overhead_percent:.1f}%</div>
             </div>
+            <div class="metric-card">
+                <div class="metric-label">Checkpoint Backend</div>
+                <div class="metric-value">{summary.framework_checkpoint_metrics.checkpoint_backend}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Framework Saves</div>
+                <div class="metric-value">{summary.framework_checkpoint_metrics.framework_save_count}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Artifacts Logged</div>
+                <div class="metric-value">{summary.framework_checkpoint_metrics.artifact_log_count}</div>
+            </div>
         </div>
         
         <h2>Convergence Scheduler Metrics</h2>
@@ -495,6 +514,12 @@ class MetricsExporter:
 | Total Checkpoint Count | {summary.total_checkpoint_count} |
 | Total Checkpoint Time | {summary.total_checkpoint_time_sec:.1f}s |
 | Checkpoint Overhead | {summary.checkpoint_overhead_percent:.1f}% |
+| Checkpoint Backend | {summary.framework_checkpoint_metrics.checkpoint_backend} |
+| Framework-Native Saves | {summary.framework_checkpoint_metrics.framework_save_count} |
+| Framework-Native Loads | {summary.framework_checkpoint_metrics.framework_load_count} |
+| Artifacts Logged | {summary.framework_checkpoint_metrics.artifact_log_count} |
+| Framework Delegated | {summary.framework_checkpoint_metrics.framework_delegated} |
+| Last Checkpoint Path | {summary.framework_checkpoint_metrics.last_checkpoint_path or 'N/A'} |
 
 ## Convergence Scheduler Metrics
 

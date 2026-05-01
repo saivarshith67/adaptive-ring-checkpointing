@@ -52,6 +52,17 @@ class HashRingMetrics:
 
 
 @dataclass
+class FrameworkCheckpointMetrics:
+    """Framework-native checkpoint backend metrics."""
+    checkpoint_backend: str = "normal"
+    framework_save_count: int = 0
+    framework_load_count: int = 0
+    artifact_log_count: int = 0
+    framework_delegated: bool = False
+    last_checkpoint_path: Optional[str] = None
+
+
+@dataclass
 class FaultMetrics:
     """Fault injection and recovery metrics."""
     injected_faults: int = 0
@@ -121,6 +132,7 @@ class ExperimentSummary:
     # Sub-metrics
     convergence_metrics: ConvergenceMetrics = field(default_factory=ConvergenceMetrics)
     hash_ring_metrics: HashRingMetrics = field(default_factory=HashRingMetrics)
+    framework_checkpoint_metrics: FrameworkCheckpointMetrics = field(default_factory=FrameworkCheckpointMetrics)
     fault_metrics: FaultMetrics = field(default_factory=FaultMetrics)
     distributed_metrics: DistributedMetrics = field(default_factory=DistributedMetrics)
 
@@ -174,6 +186,7 @@ class MetricsCollector:
         # Current state for active tracking
         self.current_convergence = ConvergenceMetrics()
         self.current_hash_ring = HashRingMetrics()
+        self.current_framework_checkpoint = FrameworkCheckpointMetrics()
         self.current_faults = FaultMetrics()
         self.current_distributed = DistributedMetrics()
         
@@ -253,6 +266,23 @@ class MetricsCollector:
         self._checkpoint_sizes.append(checkpoint_size_mb)
         self._total_checkpoint_time += save_time_sec
         self._checkpoint_times.append(save_time_sec)
+
+    def update_framework_checkpoint_metrics(
+        self,
+        checkpoint_backend: str,
+        framework_save_count: int = 0,
+        framework_load_count: int = 0,
+        artifact_log_count: int = 0,
+        framework_delegated: bool = False,
+        last_checkpoint_path: Optional[str] = None,
+    ) -> None:
+        """Update framework-native checkpoint backend metrics."""
+        self.current_framework_checkpoint.checkpoint_backend = checkpoint_backend
+        self.current_framework_checkpoint.framework_save_count = framework_save_count
+        self.current_framework_checkpoint.framework_load_count = framework_load_count
+        self.current_framework_checkpoint.artifact_log_count = artifact_log_count
+        self.current_framework_checkpoint.framework_delegated = framework_delegated
+        self.current_framework_checkpoint.last_checkpoint_path = last_checkpoint_path
     
     # ============================================
     # Convergence Scheduler Metrics
@@ -511,6 +541,7 @@ class MetricsCollector:
             final_val_accuracy=final_val_accuracy,
             convergence_metrics=self.current_convergence,
             hash_ring_metrics=self.current_hash_ring,
+            framework_checkpoint_metrics=self.current_framework_checkpoint,
             fault_metrics=self.current_faults,
             distributed_metrics=self.current_distributed,
         )
@@ -532,6 +563,7 @@ class MetricsCollector:
             'checkpoint_count': self._checkpoint_count,
             'convergence_metrics': asdict(self.current_convergence),
             'hash_ring_metrics': asdict(self.current_hash_ring),
+            'framework_checkpoint_metrics': asdict(self.current_framework_checkpoint),
             'fault_metrics': asdict(self.current_faults),
             'distributed_metrics': asdict(self.current_distributed),
         }
