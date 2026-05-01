@@ -177,6 +177,18 @@ test_single_gpu() {
 # Test 2: Multi-GPU Fault Tolerance
 # =============================================================================
 
+# Function to select N least-used GPUs based on memory usage
+select_least_used_gpus() {
+    local N=$1
+    # Query GPU memory usage, sort by memory used (ascending), pick top N
+    # Output format: "gpu_id,gpu_id,..."
+    nvidia-smi --query-gpu=index,memory.used --format=csv,noheader,nounits 2>/dev/null | \
+        sort -t',' -k2 -n | \
+        head -n "$N" | \
+        cut -d',' -f1 | \
+        paste -sd ',' -
+}
+
 test_multi_gpu() {
     log_info "=============================================="
     log_info "Test 2: Multi-GPU Fault Tolerance (GPU=$GPU)"
@@ -188,6 +200,12 @@ test_multi_gpu() {
     fi
     
     cleanup
+    
+    # Select least-used GPUs for multi-GPU test
+    log_info "Selecting $GPU least-used GPUs..."
+    SELECTED_GPUS=$(select_least_used_gpus $GPU)
+    export CUDA_VISIBLE_DEVICES=$SELECTED_GPUS
+    log_info "Selected GPUs: $SELECTED_GPUS"
     
     log_info "Step 1: Multi-GPU training with fault injection on rank 0"
     log_info "Command: torchrun --nproc_per_node=$GPU scripts/train_faceforensics.py --epochs $EPOCHS --checkpoint_interval $CKPT_INTERVAL --inject-fault --inject-rank 0 --inject-rate 0.5 --limit $LIMIT"

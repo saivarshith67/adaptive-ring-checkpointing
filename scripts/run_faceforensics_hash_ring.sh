@@ -49,15 +49,29 @@ fi
 
 echo "Using $NUM_GPUS GPU(s) for training."
 
+# Function to select N least-used GPUs based on memory usage
+select_least_used_gpus() {
+    local N=$1
+    # Query GPU memory usage, sort by memory used (ascending), pick top N
+    # Output format: "gpu_id,gpu_id,..."
+    nvidia-smi --query-gpu=index,memory.used --format=csv,noheader,nounits 2>/dev/null | \
+        sort -t',' -k2 -n | \
+        head -n "$N" | \
+        cut -d',' -f1 | \
+        paste -sd ',' -
+}
+
 # --- Training Mode ---
 if [ "$NUM_GPUS" -gt 1 ]; then
-    echo "Multi-GPU mode: using $NUM_GPUS GPUs via torchrun."
+    echo "Multi-GPU mode: selecting $NUM_GPUS least-used GPUs..."
+    SELECTED_GPUS=$(select_least_used_gpus $NUM_GPUS)
+    export CUDA_VISIBLE_DEVICES=$SELECTED_GPUS
+    echo "Selected GPUs: $SELECTED_GPUS"
     LAUNCHER="torchrun --nproc_per_node=$NUM_GPUS"
-    unset CUDA_VISIBLE_DEVICES
 else
     echo "Single-GPU mode: selecting least-used GPU..."
-    GPU_ID=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits | \
-        awk '{print NR-1 " " $1}' | sort -k2 -n | head -1 | awk '{print $1}')
+    GPU_ID=$(nvidia-smi --query-gpu=index,memory.used --format=csv,noheader,nounits | \
+        sort -t',' -k2 -n | head -1 | cut -d',' -f1)
     export CUDA_VISIBLE_DEVICES=$GPU_ID
     echo "Selected GPU: $GPU_ID"
     LAUNCHER="python"
