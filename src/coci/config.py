@@ -29,4 +29,10 @@ def load_config(path: str) -> Config:
     with open(path) as f:
         data = yaml.safe_load(f)
 
+    if "failure_rate_per_sec" in data and "failure_rate_per_second" not in data:
+        data["failure_rate_per_second"] = data.pop("failure_rate_per_sec")
+    data.setdefault("strategy", "epoch")
+    data.setdefault("fixed_interval", float(data.get("checkpoint_interval", 30)))
+    data.setdefault("checkpoint_cost_estimate", 1.0)
+
     return Config(**data)

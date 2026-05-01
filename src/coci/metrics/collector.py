@@ -37,11 +37,29 @@ class HashRingMetrics:
     total_shards: int = 0
     local_cache_hits: int = 0
     local_cache_misses: int = 0
+    local_cache_loads: int = 0
+    central_storage_loads: int = 0
+    cache_write_count: int = 0
     cache_size_mb: float = 0.0
     max_cache_size_mb: float = 0.0
     shards_owned: int = 0
+    orphaned_shards: int = 0
+    reassigned_shards: int = 0
+    recached_shards: int = 0
     shard_recovery_count: int = 0
     recovery_time_sec: float = 0.0
+    last_load_source: Optional[str] = None
+
+
+@dataclass
+class FrameworkCheckpointMetrics:
+    """Framework-native checkpoint backend metrics."""
+    checkpoint_backend: str = "normal"
+    framework_save_count: int = 0
+    framework_load_count: int = 0
+    artifact_log_count: int = 0
+    framework_delegated: bool = False
+    last_checkpoint_path: Optional[str] = None
 
 
 @dataclass
@@ -49,10 +67,29 @@ class FaultMetrics:
     """Fault injection and recovery metrics."""
     injected_faults: int = 0
     detected_faults: int = 0
+    recovery_attempts: int = 0
     recovered_successfully: int = 0
     recovery_failures: int = 0
     total_recovery_time_sec: float = 0.0
     checkpoint_integrity_failures: int = 0
+    runtime_fault_triggered: bool = False
+    runtime_fault_checkpoint_id: Optional[str] = None
+    runtime_fault_epoch: Optional[int] = None
+    runtime_fault_global_step: Optional[int] = None
+    runtime_fault_wall_time_sec: Optional[float] = None
+    resume_attempted: bool = False
+    resume_succeeded: bool = False
+    resumed_from_epoch: Optional[int] = None
+    resumed_checkpoint_id: Optional[str] = None
+    resumed_checkpoint_path: Optional[str] = None
+    resume_load_source: Optional[str] = None
+    time_to_resume_sec: float = 0.0
+    rollback_epochs: float = 0.0
+    rollback_steps: int = 0
+    lost_work_sec: float = 0.0
+    failure_reason: Optional[str] = None
+    last_completed_epoch: int = 0
+    last_completed_global_step: int = 0
 
 
 @dataclass
@@ -95,6 +132,7 @@ class ExperimentSummary:
     # Sub-metrics
     convergence_metrics: ConvergenceMetrics = field(default_factory=ConvergenceMetrics)
     hash_ring_metrics: HashRingMetrics = field(default_factory=HashRingMetrics)
+    framework_checkpoint_metrics: FrameworkCheckpointMetrics = field(default_factory=FrameworkCheckpointMetrics)
     fault_metrics: FaultMetrics = field(default_factory=FaultMetrics)
     distributed_metrics: DistributedMetrics = field(default_factory=DistributedMetrics)
 
@@ -148,6 +186,7 @@ class MetricsCollector:
         # Current state for active tracking
         self.current_convergence = ConvergenceMetrics()
         self.current_hash_ring = HashRingMetrics()
+        self.current_framework_checkpoint = FrameworkCheckpointMetrics()
         self.current_faults = FaultMetrics()
         self.current_distributed = DistributedMetrics()
         
@@ -227,6 +266,23 @@ class MetricsCollector:
         self._checkpoint_sizes.append(checkpoint_size_mb)
         self._total_checkpoint_time += save_time_sec
         self._checkpoint_times.append(save_time_sec)
+
+    def update_framework_checkpoint_metrics(
+        self,
+        checkpoint_backend: str,
+        framework_save_count: int = 0,
+        framework_load_count: int = 0,
+        artifact_log_count: int = 0,
+        framework_delegated: bool = False,
+        last_checkpoint_path: Optional[str] = None,
+    ) -> None:
+        """Update framework-native checkpoint backend metrics."""
+        self.current_framework_checkpoint.checkpoint_backend = checkpoint_backend
+        self.current_framework_checkpoint.framework_save_count = framework_save_count
+        self.current_framework_checkpoint.framework_load_count = framework_load_count
+        self.current_framework_checkpoint.artifact_log_count = artifact_log_count
+        self.current_framework_checkpoint.framework_delegated = framework_delegated
+        self.current_framework_checkpoint.last_checkpoint_path = last_checkpoint_path
     
     # ============================================
     # Convergence Scheduler Metrics
@@ -283,10 +339,36 @@ class MetricsCollector:
     def increment_cache_hit(self) -> None:
         """Record local cache hit."""
         self.current_hash_ring.local_cache_hits += 1
-    
+        self.current_hash_ring.local_cache_loads += 1
+        self.current_hash_ring.last_load_source = "local-cache"
+
     def increment_cache_miss(self) -> None:
         """Record local cache miss."""
         self.current_hash_ring.local_cache_misses += 1
+        self.current_hash_ring.last_load_source = "central-storage"
+
+    def record_hash_ring_load(self, source: str) -> None:
+        """Record where a checkpoint was loaded from."""
+        self.current_hash_ring.last_load_source = source
+        if source == "local-cache":
+            self.current_hash_ring.local_cache_hits += 1
+            self.current_hash_ring.local_cache_loads += 1
+        elif source == "central-storage":
+            self.current_hash_ring.local_cache_misses += 1
+            self.current_hash_ring.central_storage_loads += 1
+
+    def record_hash_ring_cache_write(self) -> None:
+        """Record a shard being written to local cache."""
+        self.current_hash_ring.cache_write_count += 1
+
+    def record_hash_ring_reassignment(self, orphaned_shards: int, reassigned_shards: int) -> None:
+        """Record shard reassignment after a failure."""
+        self.current_hash_ring.orphaned_shards += orphaned_shards
+        self.current_hash_ring.reassigned_shards += reassigned_shards
+
+    def record_recached_shards(self, count: int) -> None:
+        """Record how many orphaned shards were re-cached."""
+        self.current_hash_ring.recached_shards += count
     
     def record_shard_recovery(self, recovery_time_sec: float) -> None:
         """Record shard recovery event.
@@ -308,7 +390,60 @@ class MetricsCollector:
     def increment_detected_fault(self) -> None:
         """Record detected fault."""
         self.current_faults.detected_faults += 1
-    
+
+    def record_runtime_fault(
+        self,
+        checkpoint_id: str,
+        epoch: int,
+        global_step: int,
+        wall_time_sec: Optional[float] = None,
+    ) -> None:
+        """Record a runtime fault injection event."""
+        self.current_faults.injected_faults += 1
+        self.current_faults.runtime_fault_triggered = True
+        self.current_faults.runtime_fault_checkpoint_id = checkpoint_id
+        self.current_faults.runtime_fault_epoch = epoch
+        self.current_faults.runtime_fault_global_step = global_step
+        self.current_faults.runtime_fault_wall_time_sec = wall_time_sec
+
+    def record_resume_attempt(self) -> None:
+        """Record that a resume was attempted."""
+        self.current_faults.resume_attempted = True
+        self.current_faults.recovery_attempts += 1
+
+    def record_resume_success(
+        self,
+        resumed_from_epoch: int,
+        checkpoint_id: Optional[str],
+        checkpoint_path: Optional[str],
+        load_source: Optional[str],
+        time_to_resume_sec: float = 0.0,
+        rollback_epochs: float = 0.0,
+        rollback_steps: int = 0,
+        lost_work_sec: float = 0.0,
+    ) -> None:
+        """Record a successful resume event and its rollback characteristics."""
+        self.current_faults.resume_succeeded = True
+        self.current_faults.resumed_from_epoch = resumed_from_epoch
+        self.current_faults.resumed_checkpoint_id = checkpoint_id
+        self.current_faults.resumed_checkpoint_path = checkpoint_path
+        self.current_faults.resume_load_source = load_source
+        self.current_faults.time_to_resume_sec += time_to_resume_sec
+        self.current_faults.rollback_epochs = rollback_epochs
+        self.current_faults.rollback_steps = rollback_steps
+        self.current_faults.lost_work_sec = lost_work_sec
+
+    def record_failure_event(
+        self,
+        reason: str,
+        epoch: int,
+        global_step: int,
+    ) -> None:
+        """Record the last observed failure state."""
+        self.current_faults.failure_reason = reason
+        self.current_faults.last_completed_epoch = epoch
+        self.current_faults.last_completed_global_step = global_step
+
     def record_recovery(self, success: bool, recovery_time_sec: float) -> None:
         """Record recovery attempt.
         
@@ -358,6 +493,11 @@ class MetricsCollector:
             samples: Number of samples processed in batch
         """
         self._batch_count += 1
+
+    def mark_progress(self, epoch: int, global_step: int) -> None:
+        """Record the latest known training progress for recovery metrics."""
+        self.current_faults.last_completed_epoch = epoch
+        self.current_faults.last_completed_global_step = global_step
     
     # ============================================
     # Finalization & Summary
@@ -401,6 +541,7 @@ class MetricsCollector:
             final_val_accuracy=final_val_accuracy,
             convergence_metrics=self.current_convergence,
             hash_ring_metrics=self.current_hash_ring,
+            framework_checkpoint_metrics=self.current_framework_checkpoint,
             fault_metrics=self.current_faults,
             distributed_metrics=self.current_distributed,
         )
@@ -422,6 +563,7 @@ class MetricsCollector:
             'checkpoint_count': self._checkpoint_count,
             'convergence_metrics': asdict(self.current_convergence),
             'hash_ring_metrics': asdict(self.current_hash_ring),
+            'framework_checkpoint_metrics': asdict(self.current_framework_checkpoint),
             'fault_metrics': asdict(self.current_faults),
             'distributed_metrics': asdict(self.current_distributed),
         }

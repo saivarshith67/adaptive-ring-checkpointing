@@ -5,6 +5,9 @@
 # Convergence-aware timing + hash ring storage
 # -----------------------------------------------
 
+EXPERIMENT_PROFILE=${EXPERIMENT_PROFILE:-baseline}
+RESTART_DELAY_SEC=${RESTART_DELAY_SEC:-5}
+
 echo "Detecting available GPUs..."
 GPU_COUNT=$(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | wc -l)
 
@@ -74,10 +77,10 @@ TEMPORAL_MODEL="mean"
 # Checkpoint fault injection settings (latest module in train_faceforensics.py)
 # Note: injection is applied during checkpoint load, so resume must be enabled.
 ENABLE_FAULT_INJECTION=false
-AUTO_RESUME=true
-ENABLE_RUNTIME_FAULT_INJECTION=true
-RUNTIME_FAULT_AFTER_CHECKPOINTS=1
-RUNTIME_FAULT_CRASH_AFTER_INJECTION=false
+AUTO_RESUME=false
+ENABLE_RUNTIME_FAULT_INJECTION=false
+RUNTIME_FAULT_AFTER_CHECKPOINTS=${RUNTIME_FAULT_AFTER_CHECKPOINTS:-1}
+RUNTIME_FAULT_CRASH_AFTER_INJECTION=true
 # Fault type selection (uncomment exactly one)
 FAULT_TYPE="RANDOM_BIT"
 # FAULT_TYPE="SPECIFIC_BIT"   # Requires FAULT_SPECIFIC_BIT to be set
@@ -93,13 +96,24 @@ FAULT_TARGET_LAYERS=""
 FAULT_SPECIFIC_BIT=""
 FAULT_SEED=42
 
-EXTRA_FLAGS=""
+EXTRA_FLAGS=${EXTRA_FLAGS:-""}
+
+if [ "$EXPERIMENT_PROFILE" = "resilience" ]; then
+    AUTO_RESUME=true
+    ENABLE_RUNTIME_FAULT_INJECTION=true
+    RUNTIME_FAULT_CRASH_AFTER_INJECTION=true
+elif [ "$EXPERIMENT_PROFILE" != "baseline" ]; then
+    echo "Unsupported EXPERIMENT_PROFILE: $EXPERIMENT_PROFILE"
+    echo "Use 'baseline' or 'resilience'."
+    exit 1
+fi
 
 echo ""
 echo "=================================================="
 echo "FaceForensics++ Deepfake Detection Training"
 echo "Mode: Convergence + Hash Ring"
 echo "=================================================="
+echo "  Profile:       $EXPERIMENT_PROFILE"
 echo "  GPUs:          $NUM_GPUS"
 echo "  Model:         $MODEL"
 echo "  Epochs:        $EPOCHS"
@@ -199,6 +213,6 @@ while true; do
     fi
 
     echo ""
-    echo "Training exited with code $EXIT_CODE. Restarting in 5 seconds..."
-    sleep 5
+    echo "Training exited with code $EXIT_CODE. Restarting in $RESTART_DELAY_SEC seconds..."
+    sleep "$RESTART_DELAY_SEC"
 done

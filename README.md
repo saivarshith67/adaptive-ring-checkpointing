@@ -25,22 +25,32 @@ pip install -r requirements.txt
 python scripts/train_faceforensics.py --download-dataset
 ```
 
-### 3) Train - 4 Modes (Single GPU)
+### 3) Train - 9 Modes (Single GPU)
 
 ```bash
 python scripts/train_epoch_based.py --dataset-path ./data/faceforensics/FF++
 python scripts/train_convergence_normal.py --dataset-path ./data/faceforensics/FF++
 python scripts/train_hashring_epoch.py --dataset-path ./data/faceforensics/FF++
 python scripts/train_convergence_hashring.py --dataset-path ./data/faceforensics/FF++
+python scripts/train_pytorch_lightning.py --dataset-path ./data/faceforensics/FF++
+python scripts/train_hf_trainer.py --dataset-path ./data/faceforensics/FF++
+python scripts/train_deepspeed.py --dataset-path ./data/faceforensics/FF++
+python scripts/train_fsdp.py --dataset-path ./data/faceforensics/FF++
+python scripts/train_wandb_artifacts.py --dataset-path ./data/faceforensics/FF++
 ```
 
-### 4) Train - 4 Modes (Multi GPU)
+### 4) Train - 9 Modes (Multi GPU)
 
 ```bash
 torchrun --nproc_per_node=4 scripts/train_epoch_based.py --dataset-path ./data/faceforensics/FF++
 torchrun --nproc_per_node=4 scripts/train_convergence_normal.py --dataset-path ./data/faceforensics/FF++
 torchrun --nproc_per_node=4 scripts/train_hashring_epoch.py --dataset-path ./data/faceforensics/FF++
 torchrun --nproc_per_node=4 scripts/train_convergence_hashring.py --dataset-path ./data/faceforensics/FF++
+torchrun --nproc_per_node=4 scripts/train_pytorch_lightning.py --dataset-path ./data/faceforensics/FF++
+torchrun --nproc_per_node=4 scripts/train_hf_trainer.py --dataset-path ./data/faceforensics/FF++
+torchrun --nproc_per_node=4 scripts/train_deepspeed.py --dataset-path ./data/faceforensics/FF++
+torchrun --nproc_per_node=4 scripts/train_fsdp.py --dataset-path ./data/faceforensics/FF++
+torchrun --nproc_per_node=4 scripts/train_wandb_artifacts.py --dataset-path ./data/faceforensics/FF++
 ```
 
 ### 5) Resume Training
@@ -59,16 +69,124 @@ bash scripts/run_faceforensics_epoch.sh
 bash scripts/run_faceforensics_convergence.sh
 bash scripts/run_faceforensics_hashring_epoch.sh
 bash scripts/run_faceforensics_convergence_hashring.sh
+bash scripts/run_faceforensics_pytorch_lightning.sh
+bash scripts/run_faceforensics_hf_trainer.sh
+bash scripts/run_faceforensics_deepspeed.sh
+bash scripts/run_faceforensics_fsdp.sh
+bash scripts/run_faceforensics_wandb_artifacts.sh
 ```
 
-### 7) Fault Injection Test
+### 7) Reproducible Fault-Tolerance Metrics Runs
+
+Use the shell runners with an experiment profile.
+
+#### Baseline Runs
+
+These runs measure no-failure training cost and model quality:
+
+```bash
+EXPERIMENT_PROFILE=baseline bash scripts/run_faceforensics_epoch.sh
+EXPERIMENT_PROFILE=baseline bash scripts/run_faceforensics_convergence.sh
+EXPERIMENT_PROFILE=baseline bash scripts/run_faceforensics_hashring_epoch.sh
+EXPERIMENT_PROFILE=baseline bash scripts/run_faceforensics_convergence_hashring.sh
+EXPERIMENT_PROFILE=baseline bash scripts/run_faceforensics_pytorch_lightning.sh
+EXPERIMENT_PROFILE=baseline bash scripts/run_faceforensics_hf_trainer.sh
+EXPERIMENT_PROFILE=baseline bash scripts/run_faceforensics_deepspeed.sh
+EXPERIMENT_PROFILE=baseline bash scripts/run_faceforensics_fsdp.sh
+EXPERIMENT_PROFILE=baseline bash scripts/run_faceforensics_wandb_artifacts.sh
+```
+
+#### Resilience Runs
+
+These runs inject a runtime fault, restart automatically, and capture recovery metrics:
+
+```bash
+EXPERIMENT_PROFILE=resilience bash scripts/run_faceforensics_epoch.sh
+EXPERIMENT_PROFILE=resilience bash scripts/run_faceforensics_convergence.sh
+EXPERIMENT_PROFILE=resilience bash scripts/run_faceforensics_hashring_epoch.sh
+EXPERIMENT_PROFILE=resilience bash scripts/run_faceforensics_convergence_hashring.sh
+EXPERIMENT_PROFILE=resilience bash scripts/run_faceforensics_pytorch_lightning.sh
+EXPERIMENT_PROFILE=resilience bash scripts/run_faceforensics_hf_trainer.sh
+EXPERIMENT_PROFILE=resilience bash scripts/run_faceforensics_deepspeed.sh
+EXPERIMENT_PROFILE=resilience bash scripts/run_faceforensics_fsdp.sh
+EXPERIMENT_PROFILE=resilience bash scripts/run_faceforensics_wandb_artifacts.sh
+```
+
+#### Failure Timing Sweep
+
+Early fault:
+
+```bash
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=1 bash scripts/run_faceforensics_epoch.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=1 bash scripts/run_faceforensics_convergence.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=1 bash scripts/run_faceforensics_hashring_epoch.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=1 bash scripts/run_faceforensics_convergence_hashring.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=1 bash scripts/run_faceforensics_pytorch_lightning.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=1 bash scripts/run_faceforensics_hf_trainer.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=1 bash scripts/run_faceforensics_deepspeed.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=1 bash scripts/run_faceforensics_fsdp.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=1 bash scripts/run_faceforensics_wandb_artifacts.sh
+```
+
+Mid fault:
+
+```bash
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=3 bash scripts/run_faceforensics_epoch.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=3 bash scripts/run_faceforensics_convergence.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=3 bash scripts/run_faceforensics_hashring_epoch.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=3 bash scripts/run_faceforensics_convergence_hashring.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=3 bash scripts/run_faceforensics_pytorch_lightning.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=3 bash scripts/run_faceforensics_hf_trainer.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=3 bash scripts/run_faceforensics_deepspeed.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=3 bash scripts/run_faceforensics_fsdp.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=3 bash scripts/run_faceforensics_wandb_artifacts.sh
+```
+
+Late fault:
+
+```bash
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=5 bash scripts/run_faceforensics_epoch.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=5 bash scripts/run_faceforensics_convergence.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=5 bash scripts/run_faceforensics_hashring_epoch.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=5 bash scripts/run_faceforensics_convergence_hashring.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=5 bash scripts/run_faceforensics_pytorch_lightning.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=5 bash scripts/run_faceforensics_hf_trainer.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=5 bash scripts/run_faceforensics_deepspeed.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=5 bash scripts/run_faceforensics_fsdp.sh
+EXPERIMENT_PROFILE=resilience RUNTIME_FAULT_AFTER_CHECKPOINTS=5 bash scripts/run_faceforensics_wandb_artifacts.sh
+```
+
+Run each resilience configuration at least 3 times, ideally 5 times, before comparing methods.
+
+#### Metrics Output
+
+Use these outputs for analysis:
+
+- [experiment_results/experiment_summaries.jsonl](experiment_results/experiment_summaries.jsonl)
+- per-run JSON, Markdown, HTML, and CSV files under `experiment_results/`
+- [RESILIENCE_EXPERIMENT_PROTOCOL.md](RESILIENCE_EXPERIMENT_PROTOCOL.md)
+
+Important resilience metrics to compare:
+
+- `resume_succeeded`
+- `time_to_resume_sec`
+- `rollback_epochs`
+- `rollback_steps`
+- `resume_load_source`
+- `local_cache_loads`
+- `central_storage_loads`
+- `recovered_successfully`
+- `checkpoint_overhead_percent`
+- `final_val_accuracy`
+
+### 8) Fault Injection Test
 
 ```bash
 bash scripts/test_fault_tolerance.sh 1
 bash scripts/test_fault_tolerance.sh 2
 ```
 
-### 8) Common Useful Flags
+### 9) Common Useful Flags
 
 ```bash
 --epochs 20 --batch-size 2 --num-workers 4
@@ -81,12 +199,17 @@ bash scripts/test_fault_tolerance.sh 2
 
 ## What This Project Implements
 
-This codebase supports four checkpointing modes:
+This codebase supports nine checkpointing modes:
 
 1. Pure epoch based
 2. Pure convergence aware + normal storage
 3. Hash ring + epoch based
 4. Convergence timing + hash ring storage/recovery
+5. PyTorch Lightning ModelCheckpoint-compatible backend
+6. Hugging Face Trainer checkpointing backend
+7. DeepSpeed checkpointing backend
+8. FairScale / FSDP-style full-state checkpointing backend
+9. Weights & Biases Artifacts checkpoint publishing backend
 
 The implementation is layered so existing epoch-based behavior remains available.
 
@@ -148,6 +271,11 @@ This script supports:
 | `convergence` | Convergence-aware scheduler | Normal checkpoint storage | [scripts/train_convergence_normal.py](scripts/train_convergence_normal.py) |
 | `hash-ring-epoch` | Epoch interval | Hash ring + local shard cache | [scripts/train_hashring_epoch.py](scripts/train_hashring_epoch.py) |
 | `convergence-hash-ring` | Convergence-aware scheduler | Hash ring + local shard cache | [scripts/train_convergence_hashring.py](scripts/train_convergence_hashring.py) |
+| `pytorch-lightning` | Epoch interval | PyTorch Lightning `Trainer.save_checkpoint` when supplied, otherwise project checkpoint format | [scripts/train_pytorch_lightning.py](scripts/train_pytorch_lightning.py) |
+| `hf-trainer` | Epoch interval | Hugging Face `Trainer.save_model`/`save_state` when supplied, otherwise project checkpoint format | [scripts/train_hf_trainer.py](scripts/train_hf_trainer.py) |
+| `deepspeed` | Epoch interval | DeepSpeed engine checkpointing when supplied, otherwise project checkpoint format | [scripts/train_deepspeed.py](scripts/train_deepspeed.py) |
+| `fsdp` | Epoch interval | FSDP full-state checkpoint when wrapped, otherwise project checkpoint format | [scripts/train_fsdp.py](scripts/train_fsdp.py) |
+| `wandb-artifacts` | Epoch interval | Project checkpoint format plus W&B Artifact logging when an active run exists | [scripts/train_wandb_artifacts.py](scripts/train_wandb_artifacts.py) |
 
 ## Project Layout
 
@@ -159,11 +287,22 @@ adaptive-ring-checkpointing/
 		train_convergence_normal.py
 		train_hashring_epoch.py
 		train_convergence_hashring.py
+		train_pytorch_lightning.py
+		train_hf_trainer.py
+		train_deepspeed.py
+		train_fsdp.py
+		train_wandb_artifacts.py
 		run_faceforensics.sh
 		run_faceforensics_epoch.sh
 		run_faceforensics_convergence.sh
 		run_faceforensics_hashring_epoch.sh
 		run_faceforensics_convergence_hashring.sh
+		run_faceforensics_pytorch_lightning.sh
+		run_faceforensics_hf_trainer.sh
+		run_faceforensics_deepspeed.sh
+		run_faceforensics_fsdp.sh
+		run_faceforensics_wandb_artifacts.sh
+		run_faceforensics_framework_backend.sh
 		test_fault_tolerance.sh
 	src/coci/
 		checkpointing/
@@ -254,6 +393,36 @@ python scripts/train_hashring_epoch.py --dataset-path ./data/faceforensics/FF++
 python scripts/train_convergence_hashring.py --dataset-path ./data/faceforensics/FF++
 ```
 
+5. PyTorch Lightning ModelCheckpoint-compatible backend
+
+```bash
+python scripts/train_pytorch_lightning.py --dataset-path ./data/faceforensics/FF++
+```
+
+6. Hugging Face Trainer checkpointing backend
+
+```bash
+python scripts/train_hf_trainer.py --dataset-path ./data/faceforensics/FF++
+```
+
+7. DeepSpeed checkpointing backend
+
+```bash
+python scripts/train_deepspeed.py --dataset-path ./data/faceforensics/FF++
+```
+
+8. FairScale / FSDP checkpointing backend
+
+```bash
+python scripts/train_fsdp.py --dataset-path ./data/faceforensics/FF++
+```
+
+9. Weights & Biases Artifacts backend
+
+```bash
+python scripts/train_wandb_artifacts.py --dataset-path ./data/faceforensics/FF++
+```
+
 ### B) Run mode-specific shell runners
 
 These scripts include GPU detection, environment activation, and restart loops:
@@ -262,6 +431,11 @@ These scripts include GPU detection, environment activation, and restart loops:
 - [scripts/run_faceforensics_convergence.sh](scripts/run_faceforensics_convergence.sh)
 - [scripts/run_faceforensics_hashring_epoch.sh](scripts/run_faceforensics_hashring_epoch.sh)
 - [scripts/run_faceforensics_convergence_hashring.sh](scripts/run_faceforensics_convergence_hashring.sh)
+- [scripts/run_faceforensics_pytorch_lightning.sh](scripts/run_faceforensics_pytorch_lightning.sh)
+- [scripts/run_faceforensics_hf_trainer.sh](scripts/run_faceforensics_hf_trainer.sh)
+- [scripts/run_faceforensics_deepspeed.sh](scripts/run_faceforensics_deepspeed.sh)
+- [scripts/run_faceforensics_fsdp.sh](scripts/run_faceforensics_fsdp.sh)
+- [scripts/run_faceforensics_wandb_artifacts.sh](scripts/run_faceforensics_wandb_artifacts.sh)
 
 Examples:
 
@@ -270,6 +444,19 @@ bash scripts/run_faceforensics_epoch.sh
 bash scripts/run_faceforensics_convergence.sh
 bash scripts/run_faceforensics_hashring_epoch.sh
 bash scripts/run_faceforensics_convergence_hashring.sh
+bash scripts/run_faceforensics_pytorch_lightning.sh
+bash scripts/run_faceforensics_hf_trainer.sh
+bash scripts/run_faceforensics_deepspeed.sh
+bash scripts/run_faceforensics_fsdp.sh
+bash scripts/run_faceforensics_wandb_artifacts.sh
+```
+
+The framework shell runners share [scripts/run_faceforensics_framework_backend.sh](scripts/run_faceforensics_framework_backend.sh). Override settings the same way as the older scripts, for example:
+
+```bash
+EPOCHS=5 BATCH_SIZE=1 MAX_GPUS=1 bash scripts/run_faceforensics_deepspeed.sh
+DATASET_PATH=/datasets/FF++ CHECKPOINT_DIR=./checkpoints/fsdp_test bash scripts/run_faceforensics_fsdp.sh
+EXTRA_FLAGS="--limit 1000" bash scripts/run_faceforensics_wandb_artifacts.sh
 ```
 
 ## Important Training Arguments
@@ -291,6 +478,11 @@ Mode selection:
 	- `convergence`
 	- `hash-ring-epoch`
 	- `convergence-hash-ring`
+	- `pytorch-lightning`
+	- `hf-trainer`
+	- `deepspeed`
+	- `fsdp`
+	- `wandb-artifacts`
 
 Convergence-aware controls:
 

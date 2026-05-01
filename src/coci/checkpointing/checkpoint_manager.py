@@ -13,6 +13,8 @@ class CheckpointManager:
         # 🔥 Metrics
         self.num_checkpoints = 0
         self.total_checkpoint_time = 0.0
+        self.last_save_metadata = None
+        self.last_load_metadata = None
 
     def _resolve_checkpoint_path(self, epoch, checkpoint_id=None):
         if checkpoint_id is None:
@@ -76,6 +78,15 @@ class CheckpointManager:
 
         self.num_checkpoints += 1
         self.total_checkpoint_time += duration
+        self.last_save_metadata = {
+            "path": path,
+            "epoch": epoch,
+            "checkpoint_id": checkpoint_id,
+            "metric": metric,
+            "loss": loss,
+            "duration_sec": duration,
+            "load_source": "central-storage",
+        }
 
         label = checkpoint_id if checkpoint_id is not None else f"epoch_{epoch}"
         print(f"[Checkpoint] Saved {label} | Time: {duration:.4f}s")
@@ -126,9 +137,40 @@ class CheckpointManager:
 
         epoch = int(checkpoint.get("epoch", 0))
         best_metric = checkpoint.get("metric", 0.0)
+        self.last_load_metadata = {
+            "path": path,
+            "epoch": epoch,
+            "checkpoint_id": checkpoint.get("checkpoint_id"),
+            "metric": best_metric,
+            "load_source": "central-storage",
+        }
         print(
             f"[Checkpoint] Resumed from {latest} (epoch {epoch}, best_metric {best_metric:.4f})"
         )
 
         # Return next epoch to train and best metric for proper checkpoint tracking
         return epoch + 1, best_metric
+
+    def get_runtime_metrics(self):
+        """Return checkpoint-manager runtime metrics in a hash-ring-compatible shape."""
+        return {
+            "load_source": (
+                self.last_load_metadata.get("load_source")
+                if self.last_load_metadata
+                else "central-storage"
+            ),
+            "local_cache_hits": 0,
+            "local_cache_misses": 0,
+            "local_cache_loads": 0,
+            "central_storage_loads": 1 if self.last_load_metadata else 0,
+            "cache_write_count": 0,
+            "total_shards": 0,
+            "cache_size_mb": 0.0,
+            "max_cache_size_mb": 0.0,
+            "shards_owned": 0,
+            "orphaned_shards": 0,
+            "reassigned_shards": 0,
+            "recached_shards": 0,
+            "shard_recovery_count": 0,
+            "recovery_time_sec": 0.0,
+        }
