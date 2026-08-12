@@ -18,7 +18,7 @@ fi
 
 echo "Found $GPU_COUNT GPU(s)."
 
-NUM_GPUS=4
+NUM_GPUS=2
 if [ "$GPU_COUNT" -lt "$NUM_GPUS" ]; then
     NUM_GPUS=$GPU_COUNT
 fi
